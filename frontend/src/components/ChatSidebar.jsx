@@ -73,10 +73,20 @@ const ChatSidebar = ({ chats, users, ads, onChatSelect, selectedChatId, onNaviga
             )}
           </div>
         </div>
+        
+        {/* Search Users Button */}
+        <Button 
+          onClick={onSearchUsers}
+          className="w-full mb-3 bg-white/20 hover:bg-white/30 text-white border-0"
+        >
+          <Search className="h-4 w-4 mr-2" />
+          Search Users
+        </Button>
+        
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Search chats..."
+            placeholder="Filter chats..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 bg-white/90 border-0"
