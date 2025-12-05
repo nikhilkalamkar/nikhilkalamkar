@@ -219,10 +219,8 @@ const UserSearch = ({ open, onClose, onUserSelect }) => {
                 )}
               </div>
 
-              {/* Status Badge */}
-              <Badge variant={user.status === 'online' ? 'default' : 'secondary'} className="text-xs">
-                {user.status}
-              </Badge>
+              {/* Action Button */}
+              {getActionButton(user)}
             </div>
           ))}
         </div>
