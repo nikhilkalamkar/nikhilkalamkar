@@ -152,8 +152,8 @@ const Admin = () => {
         {/* Tabs for Users and Payments */}
         <Tabs defaultValue="users" className="w-full">
           <TabsList className="grid w-full md:w-[400px] grid-cols-2">
-            <TabsTrigger value="users">Users Management</TabsTrigger>
-            <TabsTrigger value="payments">Payment History</TabsTrigger>
+            <TabsTrigger value="users" className="text-xs md:text-sm">Users</TabsTrigger>
+            <TabsTrigger value="payments" className="text-xs md:text-sm">Payments</TabsTrigger>
           </TabsList>
 
           {/* Users Tab */}
