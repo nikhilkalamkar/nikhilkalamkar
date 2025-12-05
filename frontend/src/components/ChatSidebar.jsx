@@ -47,7 +47,7 @@ const ChatSidebar = ({ chats, users, onChatSelect, selectedChatId, onNavigateHom
     .sort((a, b) => new Date(b.lastMessageTime) - new Date(a.lastMessageTime));
 
   return (
-    <div className="w-80 border-r bg-white flex flex-col">
+    <div className="w-full md:w-80 border-r bg-white flex flex-col h-full">
       {/* Header */}
       <div className="p-4 border-b bg-gradient-to-r from-blue-600 to-indigo-600">
         <div className="flex items-center justify-between mb-3">
@@ -62,9 +62,14 @@ const ChatSidebar = ({ chats, users, onChatSelect, selectedChatId, onNavigateHom
             <Button variant="ghost" size="icon" onClick={onNavigateHome} className="text-white hover:bg-white/20">
               <Home className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={onNavigateAdmin} className="text-white hover:bg-white/20">
+            <Button variant="ghost" size="icon" onClick={onNavigateAdmin} className="text-white hover:bg-white/20 hidden md:flex">
               <Shield className="h-4 w-4" />
             </Button>
+            {onClose && (
+              <Button variant="ghost" size="icon" onClick={onClose} className="text-white hover:bg-white/20 md:hidden">
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
         <div className="relative">
