@@ -83,7 +83,7 @@ async def login(user_data: UserLogin, db: AsyncIOMotorDatabase = Depends(get_db)
     if not verify_password(user_data.password, user["password"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password"
+            detail="Invalid credentials"
         )
     
     # Update last active
