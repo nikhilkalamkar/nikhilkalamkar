@@ -44,11 +44,23 @@ const Admin = () => {
       setAds(adsRes.data);
     } catch (error) {
       console.error('Error fetching admin data:', error);
+      
+      let errorMessage = "Failed to load admin data";
+      if (error.response?.status === 403) {
+        errorMessage = "Access denied. Admin privileges required. Please logout and login again.";
+      } else if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to load admin data",
-        variant: "destructive"
+        description: errorMessage,
+        variant: "destructive",
+        duration: 8000
       });
+      
+      // Redirect to home after showing error
+      setTimeout(() => navigate('/'), 3000);
     }
   };
 
