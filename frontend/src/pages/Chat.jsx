@@ -36,18 +36,24 @@ const Chat = () => {
   useEffect(() => {
     if (!loading && !user) {
       setShowAuthModal(true);
-    }
-  }, [user, loading]);
-
-  useEffect(() => {
-    if (user) {
+    } else if (user) {
       fetchChats();
       fetchUsers();
-      if (!user.isPremium) {
-        fetchAds();
-      }
+      fetchAds();
+      checkIncomingCalls();
+      
+      // Poll for incoming calls
+      const callInterval = setInterval(checkIncomingCalls, 3000);
+      
+      // Listen for call initiation events
+      window.addEventListener('initiateCall', handleInitiateCall);
+      
+      return () => {
+        clearInterval(callInterval);
+        window.removeEventListener('initiateCall', handleInitiateCall);
+      };
     }
-  }, [user]);
+  }, [user, loading]);
 
   const fetchChats = async () => {
     try {
