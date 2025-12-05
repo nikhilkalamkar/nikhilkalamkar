@@ -135,6 +135,80 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Advertiser Section */}
+      <section className="bg-gradient-to-r from-orange-50 to-yellow-50 border-y border-orange-200 py-12 md:py-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <Badge className="mb-3 bg-orange-100 text-orange-800 hover:bg-orange-100">
+                <TrendingUp className="h-3 w-3 mr-1" />
+                For Businesses
+              </Badge>
+              <h3 className="text-2xl md:text-4xl font-bold mb-3">
+                Advertise Your Business on ishukart
+              </h3>
+              <p className="text-base md:text-lg text-gray-600 mb-6">
+                Reach thousands of active users with banner ads. Starting from just ₹100
+              </p>
+            </div>
+            
+            <div className="grid sm:grid-cols-3 gap-4 mb-8">
+              <Card className="border-2 border-orange-200 hover:shadow-lg transition-all text-center">
+                <CardContent className="pt-6">
+                  <DollarSign className="h-10 w-10 text-orange-600 mx-auto mb-3" />
+                  <h4 className="font-semibold mb-2">Affordable Pricing</h4>
+                  <p className="text-sm text-gray-600">₹20 per impression</p>
+                  <p className="text-xs text-gray-500 mt-1">Min. budget: ₹100</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-2 border-orange-200 hover:shadow-lg transition-all text-center">
+                <CardContent className="pt-6">
+                  <Users className="h-10 w-10 text-orange-600 mx-auto mb-3" />
+                  <h4 className="font-semibold mb-2">Wide Reach</h4>
+                  <p className="text-sm text-gray-600">Thousands of users</p>
+                  <p className="text-xs text-gray-500 mt-1">Active engagement</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-2 border-orange-200 hover:shadow-lg transition-all text-center">
+                <CardContent className="pt-6">
+                  <Shield className="h-10 w-10 text-orange-600 mx-auto mb-3" />
+                  <h4 className="font-semibold mb-2">Safe & Moderated</h4>
+                  <p className="text-sm text-gray-600">Content approval</p>
+                  <p className="text-xs text-gray-500 mt-1">Family-friendly</p>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                size="lg"
+                onClick={() => setShowAuthModal(true)}
+                className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-base md:text-lg px-6 md:px-8 py-5 md:py-6 shadow-lg w-full sm:w-auto"
+              >
+                <TrendingUp className="mr-2 h-5 w-5" />
+                Register as Advertiser
+              </Button>
+              <Button 
+                size="lg"
+                variant="outline"
+                onClick={() => {
+                  if (user && user.role === 'advertiser') {
+                    navigate('/advertiser');
+                  } else {
+                    setShowAuthModal(true);
+                  }
+                }}
+                className="text-base md:text-lg px-6 md:px-8 py-5 md:py-6 border-2 border-orange-600 text-orange-600 hover:bg-orange-50 w-full sm:w-auto"
+              >
+                Advertiser Login
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="container mx-auto px-4 py-12 md:py-20">
         <h3 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12">Why Choose ishukart?</h3>
