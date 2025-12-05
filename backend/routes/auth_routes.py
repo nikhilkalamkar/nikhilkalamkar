@@ -55,6 +55,7 @@ async def register(user_data: UserCreate, db: AsyncIOMotorDatabase = Depends(get
             id=user.id,
             name=user.name,
             email=user.email,
+            mobile=user.mobile,
             avatar=user.avatar,
             isPremium=user.isPremium,
             subscriptionDate=user.subscriptionDate,
@@ -65,12 +66,17 @@ async def register(user_data: UserCreate, db: AsyncIOMotorDatabase = Depends(get
 
 @router.post("/login", response_model=dict)
 async def login(user_data: UserLogin, db: AsyncIOMotorDatabase = Depends(get_db)):
-    # Find user
-    user = await db.users.find_one({"email": user_data.email})
+    # Find user by email or mobile number
+    user = await db.users.find_one({
+        "$or": [
+            {"email": user_data.identifier},
+            {"mobile": user_data.identifier}
+        ]
+    })
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password"
+            detail="Invalid credentials"
         )
     
     # Verify password
