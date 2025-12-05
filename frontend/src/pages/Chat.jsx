@@ -104,6 +104,27 @@ const Chat = () => {
   };
 
   const handleUserSelect = async (selectedUser) => {
+    // Check friendship status first
+    try {
+      const statusResponse = await axiosInstance.get(`/friends/status/${selectedUser.id}`);
+      
+      if (statusResponse.data.status !== 'friends') {
+        toast({
+          title: 'Not Friends',
+          description: 'You need to be friends to start a chat',
+          variant: 'destructive'
+        });
+        return;
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to verify friendship status',
+        variant: 'destructive'
+      });
+      return;
+    }
+
     // Check if chat already exists with this user
     const existingChat = chats.find(chat => 
       chat.type === 'direct' && chat.userId === selectedUser.id
