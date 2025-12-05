@@ -186,9 +186,12 @@ const ForgotPasswordModal = ({ open, onClose }) => {
               />
             </div>
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
-              <p className="flex items-center gap-2">
+              <p className="flex items-center gap-2 mb-2">
                 <Mail className="h-4 w-4" />
-                A 6-digit verification code will be sent to your account
+                A 6-digit verification code will be generated
+              </p>
+              <p className="text-xs text-blue-700">
+                <strong>Test accounts:</strong> rahul@example.com, +919876543211, priya@example.com
               </p>
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
