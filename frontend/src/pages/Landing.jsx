@@ -195,8 +195,9 @@ const Landing = () => {
         </div>
       </footer>
 
-      {/* Premium Modal */}
+      {/* Modals */}
       <PremiumModal open={showPremiumModal} onClose={() => setShowPremiumModal(false)} />
+      <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );
 };
