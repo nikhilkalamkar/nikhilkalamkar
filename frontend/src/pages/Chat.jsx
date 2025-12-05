@@ -31,6 +31,24 @@ const Chat = () => {
     }
   }, [user]);
 
+  const fetchChats = async () => {
+    try {
+      const response = await axiosInstance.get('/chats');
+      setChats(response.data);
+    } catch (error) {
+      console.error('Error fetching chats:', error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axiosInstance.get('/users');
+      setUsers(response.data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
   const handleChatSelect = (chat) => {
     setSelectedChat(chat);
     setShowChatInfo(false);
@@ -43,11 +61,30 @@ const Chat = () => {
   const getChatDetails = () => {
     if (!selectedChat) return null;
     if (selectedChat.type === 'direct') {
-      return mockUsers.find(u => u.id === selectedChat.userId);
+      return users.find(u => u.id === selectedChat.userId) || {
+        name: selectedChat.name,
+        avatar: selectedChat.avatar,
+        isPremium: false
+      };
     } else {
-      return mockGroups.find(g => g.id === selectedChat.id);
+      return selectedChat;
     }
   };
+
+  if (!user && !loading) {
+    return <AuthModal open={showAuthModal} onClose={() => navigate('/')} />;
+  }
+
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex flex-col bg-white">
