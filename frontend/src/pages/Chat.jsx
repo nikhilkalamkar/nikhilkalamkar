@@ -72,7 +72,7 @@ const Chat = () => {
     }
   };
 
-  const handleInitiateCall = async (event) => {
+  const handleInitiateCall = useCallback(async (event) => {
     const { userId, callType } = event.detail;
     
     try {
@@ -110,7 +110,7 @@ const Chat = () => {
         variant: 'destructive'
       });
     }
-  };
+  }, [users, chats]);
   
   const handleAcceptCall = async (call) => {
     try {
