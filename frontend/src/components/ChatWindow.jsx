@@ -37,21 +37,30 @@ const ChatWindow = ({ chat, chatDetails, onUpgradeToPremium, onToggleInfo }) => 
     }
   }, [messages]);
 
-  const handleSendMessage = () => {
-    if (message.trim()) {
-      const newMessage = {
-        id: `m${Date.now()}`,
-        senderId: 'me',
-        text: message,
-        timestamp: new Date(),
-        status: 'sent'
-      };
-      setMessages([...messages, newMessage]);
-      setMessage('');
-      toast({
-        title: "Message sent",
-        description: "Your message has been delivered"
-      });
+  const handleSendMessage = async () => {
+    if (message.trim() && !isLoading) {
+      setIsLoading(true);
+      try {
+        const response = await axiosInstance.post('/messages', {
+          chatId: chat.id,
+          text: message
+        });
+        setMessages([...messages, response.data]);
+        setMessage('');
+        toast({
+          title: "Message sent",
+          description: "Your message has been delivered"
+        });
+      } catch (error) {
+        console.error('Error sending message:', error);
+        toast({
+          title: "Error",
+          description: "Failed to send message",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
