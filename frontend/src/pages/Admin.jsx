@@ -106,11 +106,11 @@ const Admin = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
           <Card className="border-2 hover:shadow-lg transition-all">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+              <CardTitle className="text-xs md:text-sm font-medium">Total Users</CardTitle>
               <Users className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalUsers}</div>
+              <div className="text-xl md:text-2xl font-bold">{stats.totalUsers}</div>
               <p className="text-xs text-gray-600 mt-1">+{stats.recentSignups} this month</p>
             </CardContent>
           </Card>
