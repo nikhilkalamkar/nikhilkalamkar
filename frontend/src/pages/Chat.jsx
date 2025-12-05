@@ -242,6 +242,11 @@ const Chat = () => {
       {/* Modals */}
       <PremiumModal open={showPremiumModal} onClose={() => setShowPremiumModal(false)} />
       <AuthModal open={showAuthModal} onClose={() => navigate('/')} />
+      <UserSearch 
+        open={showUserSearch} 
+        onClose={() => setShowUserSearch(false)}
+        onUserSelect={handleUserSelect}
+      />
     </div>
   );
 };
