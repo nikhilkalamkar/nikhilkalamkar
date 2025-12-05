@@ -247,13 +247,14 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Authentication System Fix Required"
+  stuck_tasks:
     - "Call Buttons in Chat Header"
-    - "Call Interface Component"
+    - "Call Interface Component" 
     - "Incoming Call Notification"
     - "Call Integration in Chat Page"
-  stuck_tasks: []
-  test_all: true
-  test_priority: "high_first"
+  test_all: false
+  test_priority: "stuck_first"
 
 agent_communication:
     - agent: "main"
