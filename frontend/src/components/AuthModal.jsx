@@ -13,6 +13,7 @@ const AuthModal = ({ open, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginData, setLoginData] = useState({ identifier: '', password: '' });
   const [registerData, setRegisterData] = useState({ name: '', email: '', mobile: '', password: '' });
+  const [advertiserData, setAdvertiserData] = useState({ businessName: '', email: '', mobile: '', password: '' });
 
   const handleLogin = async (e) => {
     e.preventDefault();
