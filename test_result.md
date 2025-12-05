@@ -262,14 +262,15 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Authentication System - Login Flow"
+  stuck_tasks:
     - "User Profile - Friend Count in Sidebar"
     - "User Profile Modal - Eye Icon & View Button"
     - "User Profile Modal - Detailed Profile Display"
     - "Improved Search - Word Matching"
     - "Profile Modal Actions - Friend Request Flow"
-  stuck_tasks: []
-  test_all: true
-  test_priority: "high_first"
+  test_all: false
+  test_priority: "stuck_first"
 
 agent_communication:
     - agent: "main"
