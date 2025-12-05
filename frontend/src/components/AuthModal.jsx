@@ -101,6 +101,17 @@ const AuthModal = ({ open, onClose }) => {
                 />
               </div>
               <div>
+                <Label htmlFor="register-mobile">Mobile Number</Label>
+                <Input
+                  id="register-mobile"
+                  type="tel"
+                  placeholder="+919876543210"
+                  value={registerData.mobile}
+                  onChange={(e) => setRegisterData({ ...registerData, mobile: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
                 <Label htmlFor="register-email">Email</Label>
                 <Input
                   id="register-email"
