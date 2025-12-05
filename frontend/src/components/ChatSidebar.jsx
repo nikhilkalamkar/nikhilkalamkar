@@ -1,14 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollArea } from './ui/scroll-area';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
-import { Search, MessageCircle, Home, Shield, Crown, RefreshCw, X } from 'lucide-react';
+import { Search, MessageCircle, Home, Shield, Crown, RefreshCw, X, UserPlus } from 'lucide-react';
 import AdBanner from './AdBanner';
+import axiosInstance from '../api/axios';
 
-const ChatSidebar = ({ chats, users, ads, onChatSelect, selectedChatId, onNavigateHome, onNavigateAdmin, onRefresh, onClose, onCloseAd, onSearchUsers }) => {
+const ChatSidebar = ({ chats, users, ads, onChatSelect, selectedChatId, onNavigateHome, onNavigateAdmin, onRefresh, onClose, onCloseAd, onSearchUsers, onShowFriendRequests }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [pendingRequestCount, setPendingRequestCount] = useState(0);
+
+  useEffect(() => {
+    fetchPendingRequestCount();
+    // Poll for updates every 30 seconds
+    const interval = setInterval(fetchPendingRequestCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchPendingRequestCount = async () => {
+    try {
+      const response = await axiosInstance.get('/friends/requests/received');
+      setPendingRequestCount(response.data.length);
+    } catch (error) {
+      console.error('Error fetching pending requests:', error);
+    }
+  };
 
   const getChatInfo = (chat) => {
     if (chat.type === 'direct') {
