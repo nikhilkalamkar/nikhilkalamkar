@@ -203,20 +203,53 @@ test_plan:
   test_priority: "high_first"
 
 frontend:
-  - task: "User Search Feature"
+  - task: "Friend Request System - Send Requests"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/frontend/src/components/UserSearch.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
           agent: "main"
-          comment: "User search feature implemented with modal dialog, search by name/mobile, results display with avatars, status badges, premium indicators, and chat creation/opening functionality. Backend search endpoint at /api/users/search also implemented."
-        - working: true
-          agent: "testing"
-          comment: "✅ All user search functionality tested successfully: Search Users button visible in sidebar, search modal opens correctly, search by name works (tested with 'Priya'), results display with user avatar/initial, name, mobile number, and status badge. Chat creation works - clicking search result opens new chat with toast notification 'Chat Created'. Message sending functionality confirmed working. Feature is fully functional and ready for production use."
+          comment: "Friend request sending functionality implemented in UserSearch component. Users can search for others and send friend requests via 'Add' button. Button changes to 'Request Sent' badge after sending."
+
+  - task: "Friend Request System - View & Manage Requests"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/FriendRequests.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Friend requests modal implemented with Received and Sent tabs. Shows pending requests with user avatars, names, timestamps. Accept/reject buttons for received requests, cancel button for sent requests."
+
+  - task: "Friend Request System - Chat Access Control"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/Chat.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Chat access control implemented. Users can only chat with friends. UserSearch shows different buttons based on friendship status: 'Add' for non-friends, 'Request Sent' badge if pending, 'Chat' button if friends."
+
+  - task: "Friend Request System - UI Integration"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/ChatSidebar.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Friend request button integrated in chat sidebar with red badge showing pending request count. Button opens friend requests modal. Real-time count updates implemented."
 
 metadata:
   created_by: "testing_agent"
