@@ -227,6 +227,7 @@ const Chat = () => {
             onClose={() => setMobileSidebarOpen(false)}
             onCloseAd={(adId) => setClosedAdIds([...closedAdIds, adId])}
             onSearchUsers={() => setShowUserSearch(true)}
+            onShowFriendRequests={() => setShowFriendRequests(true)}
           />
         </div>
         
