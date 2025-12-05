@@ -125,7 +125,11 @@ async def get_admin_users(current_user: dict = Depends(get_admin_user), db: Asyn
 
 @router.get("/payments", response_model=List[AdminPayment])
 async def get_admin_payments(current_user: dict = Depends(get_admin_user), db: AsyncIOMotorDatabase = Depends(get_db)):
-    payments = await db.payments.find({"status": "success"}).sort("date", -1).to_list(1000)
+    # Use projection to fetch only required fields
+    payments = await db.payments.find(
+        {"status": "success"},
+        {"_id": 0, "id": 1, "userId": 1, "userName": 1, "amount": 1, "date": 1, "status": 1, "razorpayPaymentId": 1, "razorpayOrderId": 1}
+    ).sort("date", -1).limit(1000).to_list(1000)
     
     return [AdminPayment(
         id=p["id"],
