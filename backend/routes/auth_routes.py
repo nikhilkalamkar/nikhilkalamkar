@@ -104,6 +104,7 @@ async def login(user_data: UserLogin, db: AsyncIOMotorDatabase = Depends(get_db)
             id=user["id"],
             name=user["name"],
             email=user["email"],
+            mobile=user.get("mobile"),
             avatar=user.get("avatar"),
             isPremium=user.get("isPremium", False),
             subscriptionDate=user.get("subscriptionDate"),
