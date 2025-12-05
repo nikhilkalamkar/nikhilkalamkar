@@ -7,6 +7,8 @@ import PremiumModal from '../components/PremiumModal';
 import AuthModal from '../components/AuthModal';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../api/axios';
+import { Menu } from 'lucide-react';
+import { Button } from '../components/ui/button';
 
 const Chat = () => {
   const navigate = useNavigate();
@@ -17,6 +19,7 @@ const Chat = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [chats, setChats] = useState([]);
   const [users, setUsers] = useState([]);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -52,6 +55,7 @@ const Chat = () => {
   const handleChatSelect = (chat) => {
     setSelectedChat(chat);
     setShowChatInfo(false);
+    setMobileSidebarOpen(false); // Close sidebar on mobile when chat selected
   };
 
   const handleUpgradeToPremium = () => {
@@ -88,17 +92,37 @@ const Chat = () => {
 
   return (
     <div className="h-screen flex flex-col bg-white">
+      {/* Mobile Header */}
+      <div className="md:hidden border-b bg-white p-3 flex items-center justify-between">
+        <Button 
+          variant="ghost" 
+          size="icon"
+          onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+        <h1 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          ishukart
+        </h1>
+        <div className="w-10"></div>
+      </div>
+
       <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar */}
-        <ChatSidebar 
-          chats={chats}
-          users={users}
-          onChatSelect={handleChatSelect} 
-          selectedChatId={selectedChat?.id}
-          onNavigateHome={() => navigate('/')}
-          onNavigateAdmin={() => navigate('/admin')}
-          onRefresh={fetchChats}
-        />
+        {/* Sidebar - Hidden on mobile unless toggled */}
+        <div className={`${
+          mobileSidebarOpen ? 'absolute inset-0 z-50 bg-white' : 'hidden'
+        } md:relative md:block md:z-auto`}>
+          <ChatSidebar 
+            chats={chats}
+            users={users}
+            onChatSelect={handleChatSelect} 
+            selectedChatId={selectedChat?.id}
+            onNavigateHome={() => navigate('/')}
+            onNavigateAdmin={() => navigate('/admin')}
+            onRefresh={fetchChats}
+            onClose={() => setMobileSidebarOpen(false)}
+          />
+        </div>
         
         {/* Main Chat Area */}
         <div className="flex-1 flex flex-col">
@@ -111,22 +135,24 @@ const Chat = () => {
             />
           ) : (
             <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
-              <div className="text-center">
-                <div className="text-6xl mb-4">💬</div>
-                <h3 className="text-2xl font-semibold text-gray-700 mb-2">Welcome to ishukart</h3>
-                <p className="text-gray-500">Select a chat to start messaging</p>
+              <div className="text-center px-4">
+                <div className="text-4xl md:text-6xl mb-4">💬</div>
+                <h3 className="text-xl md:text-2xl font-semibold text-gray-700 mb-2">Welcome to ishukart</h3>
+                <p className="text-gray-500 text-sm md:text-base">Select a chat to start messaging</p>
               </div>
             </div>
           )}
         </div>
 
-        {/* Right Sidebar - Chat Info */}
+        {/* Right Sidebar - Chat Info - Hidden on mobile */}
         {showChatInfo && selectedChat && (
-          <ChatInfo 
-            chatDetails={getChatDetails()} 
-            chatType={selectedChat.type}
-            onClose={() => setShowChatInfo(false)}
-          />
+          <div className="hidden lg:block">
+            <ChatInfo 
+              chatDetails={getChatDetails()} 
+              chatType={selectedChat.type}
+              onClose={() => setShowChatInfo(false)}
+            />
+          </div>
         )}
       </div>
 
