@@ -14,6 +14,23 @@ async def get_user_chats(current_user: dict = Depends(get_current_user), db: Asy
     # Get all chats where user is a participant
     chats = await db.chats.find({"participants": current_user["id"]}).to_list(1000)
     
+    # Batch fetch all user IDs to avoid N+1 query
+    user_ids = set()
+    for chat in chats:
+        if chat["type"] == "direct":
+            for participant_id in chat["participants"]:
+                if participant_id != current_user["id"]:
+                    user_ids.add(participant_id)
+    
+    # Fetch all users in one query
+    users_map = {}
+    if user_ids:
+        users = await db.users.find(
+            {"id": {"$in": list(user_ids)}},
+            {"_id": 0, "id": 1, "name": 1, "avatar": 1}
+        ).to_list(1000)
+        users_map = {user["id"]: user for user in users}
+    
     result = []
     for chat in chats:
         chat_response = ChatResponse(
@@ -26,10 +43,10 @@ async def get_user_chats(current_user: dict = Depends(get_current_user), db: Asy
             unreadCount=0  # TODO: Calculate unread count
         )
         
-        # For direct chats, get the other user's info
+        # For direct chats, get the other user's info from the map
         if chat["type"] == "direct":
             other_user_id = [p for p in chat["participants"] if p != current_user["id"]][0]
-            other_user = await db.users.find_one({"id": other_user_id})
+            other_user = users_map.get(other_user_id)
             if other_user:
                 chat_response.userId = other_user["id"]
                 chat_response.name = other_user["name"]
