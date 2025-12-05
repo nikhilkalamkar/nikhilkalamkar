@@ -28,6 +28,22 @@ const UserSearch = ({ open, onClose, onUserSelect }) => {
       const response = await axiosInstance.get(`/users/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchResults(response.data);
       
+      // Fetch friendship status for each user
+      if (response.data.length > 0) {
+        const statuses = {};
+        await Promise.all(
+          response.data.map(async (user) => {
+            try {
+              const statusRes = await axiosInstance.get(`/friends/status/${user.id}`);
+              statuses[user.id] = statusRes.data.status;
+            } catch (err) {
+              statuses[user.id] = 'not_friends';
+            }
+          })
+        );
+        setFriendshipStatuses(statuses);
+      }
+      
       if (response.data.length === 0) {
         toast({
           title: 'No Results',
