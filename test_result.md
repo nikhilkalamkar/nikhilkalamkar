@@ -179,95 +179,53 @@ test_plan:
   test_priority: "high_first"
 
 frontend:
-  - task: "User Profile - Friend Count in Sidebar"
+  - task: "Call Buttons in Chat Header"
     implemented: true
-    working: true
-    file: "/app/frontend/src/components/ChatSidebar.jsx"
+    working: "NA"
+    file: "/app/frontend/src/components/ChatWindow.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
           agent: "main"
-          comment: "Friend count display implemented in user profile section of sidebar header. Shows user avatar/initial, name, and friend count with Users icon (e.g., '5 Friends'). Count should update dynamically after accepting/adding friends."
-        - working: false
-          agent: "testing"
-          comment: "❌ CRITICAL: Authentication system blocking testing. Login functionality not working properly - users cannot access chat page to test profile features. Fixed ChatResponse model validation error (name field made Optional), but login still fails. Authentication flow needs investigation - login modal persists even after submitting valid credentials (tested both rahul@example.com/password123 and demo credentials +919876543211/password123)."
-        - working: true
-          agent: "testing"
-          comment: "✅ AUTHENTICATION FIXED: Login now works perfectly with rahul@example.com/password123. User profile in sidebar shows correctly with user name 'Rahul Kumar' and friend count display is working. Authentication flow is functioning properly and users can access chat page successfully."
+          comment: "Audio and video call buttons implemented in chat header (lines 114-137). Phone icon for audio calls, Video icon for video calls. Buttons are only enabled for direct chats, disabled for group chats. Click events dispatch custom events to initiate calls."
 
-  - task: "User Profile Modal - Eye Icon & View Button"
+  - task: "Call Interface Component"
     implemented: true
-    working: true
-    file: "/app/frontend/src/components/UserSearch.jsx"
+    working: "NA"
+    file: "/app/frontend/src/components/CallInterface.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
           agent: "main"
-          comment: "Eye icon button implemented in UserSearch component. Each search result shows 'View' button (eye icon) that opens detailed user profile modal with comprehensive user information."
-        - working: false
-          agent: "testing"
-          comment: "❌ CANNOT TEST: Unable to access search functionality due to authentication issues. Users cannot reach chat page where search feature is located. Feature implementation appears correct in code review."
-        - working: true
-          agent: "testing"
-          comment: "✅ EYE ICON WORKING: Search functionality fully operational. Eye icon button is visible and clickable in search results. Successfully tested with 'Hariom' search - eye icon opens detailed user profile modal with all required information. UI elements properly displayed including user avatar, name, and action buttons."
+          comment: "Call interface component implemented with WebRTC using simple-peer library. Features call controls (mute, video toggle, speaker, end call), local/remote video display, status indicators, and peer-to-peer connection management."
 
-  - task: "User Profile Modal - Detailed Profile Display"
+  - task: "Incoming Call Notification"
     implemented: true
-    working: true
-    file: "/app/frontend/src/components/UserProfile.jsx"
+    working: "NA"
+    file: "/app/frontend/src/components/IncomingCall.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
           agent: "main"
-          comment: "User profile modal implemented showing large avatar, user name, status badge, premium badge (if applicable), friend count prominently displayed, contact info (email/mobile if friends), and action button (Add Friend/Request Sent/Chat)."
-        - working: false
-          agent: "testing"
-          comment: "❌ CANNOT TEST: Profile modal cannot be accessed due to authentication blocking access to chat page and search functionality. Code implementation looks comprehensive with all required features."
-        - working: true
-          agent: "testing"
-          comment: "✅ PROFILE MODAL WORKING: Profile modal opens successfully and displays all required elements: large avatar, user name (Hariom), status badge (offline), friend count (0 Friends), mobile number (9975875454), and action button (Add Friend). All UI components are properly rendered and functional."
+          comment: "Incoming call notification component implemented with caller avatar, name display, call type indicator (audio/video), accept/reject buttons, and ringing animation effects."
 
-  - task: "Improved Search - Word Matching"
+  - task: "Call Integration in Chat Page"
     implemented: true
-    working: true
-    file: "/app/frontend/src/components/UserSearch.jsx"
+    working: "NA"
+    file: "/app/frontend/src/pages/Chat.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
           agent: "main"
-          comment: "Enhanced search functionality implemented to match ANY word in user names. Should find users by partial names like 'Hariom', 'Hariom Narke', or just 'Narke'. Shows 'No Results' message when no matches found."
-        - working: false
-          agent: "testing"
-          comment: "❌ CANNOT TEST: Search functionality inaccessible due to authentication system preventing access to chat page. Backend logs show successful search API calls from other users, indicating backend functionality works."
-        - working: true
-          agent: "testing"
-          comment: "✅ SEARCH WORKING: Enhanced search functionality working perfectly. Successfully tested name search ('Hariom') and mobile number search ('8380889199' for Nikhil Kalam). Both searches return correct results with proper UI display including user names, mobile numbers, avatars, and action buttons. Search modal opens/closes properly."
-
-  - task: "Profile Modal Actions - Friend Request Flow"
-    implemented: true
-    working: true
-    file: "/app/frontend/src/components/UserProfile.jsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        - working: "NA"
-          agent: "main"
-          comment: "Profile modal action buttons implemented. Add Friend button changes to 'Request Sent' after clicking, shows toast notification, and status persists when reopening profile. Different buttons shown based on friendship status."
-        - working: false
-          agent: "testing"
-          comment: "❌ CANNOT TEST: Profile modal actions cannot be tested due to authentication system blocking access to the features. Backend friend request APIs are working based on server logs."
-        - working: true
-          agent: "testing"
-          comment: "✅ ACTION BUTTONS WORKING: Profile modal action buttons are properly displayed and functional. 'Add Friend' button is visible and clickable in user profiles. Button states correctly reflect friendship status. UI properly shows different action buttons based on relationship status (Add Friend/Request Sent/Chat)."
+          comment: "Call functionality integrated into main Chat page with state management for active calls and incoming calls. Includes call initiation handlers, accept/reject logic, and polling for incoming calls every 3 seconds."
 
 metadata:
   created_by: "testing_agent"
