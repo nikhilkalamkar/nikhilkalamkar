@@ -3,13 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
-import { MessageCircle, Users, Shield, Zap, Star, Upload, Palette, Crown } from 'lucide-react';
+import { MessageCircle, Users, Shield, Zap, Star, Upload, Palette, Crown, LogOut } from 'lucide-react';
 import { mockPremiumFeatures } from '../mock';
 import PremiumModal from '../components/PremiumModal';
+import AuthModal from '../components/AuthModal';
+import { useAuth } from '../context/AuthContext';
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const handleChatClick = () => {
+    if (!user) {
+      setShowAuthModal(true);
+    } else {
+      navigate('/chat');
+    }
+  };
 
   const iconMap = {
     Zap: Zap,
