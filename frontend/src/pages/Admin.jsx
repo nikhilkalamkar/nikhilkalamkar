@@ -32,19 +32,65 @@ const Admin = () => {
 
   const fetchAdminData = async () => {
     try {
-      const [statsRes, usersRes, paymentsRes] = await Promise.all([
+      const [statsRes, usersRes, paymentsRes, adsRes] = await Promise.all([
         axiosInstance.get('/admin/stats'),
         axiosInstance.get('/admin/users'),
-        axiosInstance.get('/admin/payments')
+        axiosInstance.get('/admin/payments'),
+        axiosInstance.get('/ads/pending')
       ]);
       setStats(statsRes.data);
       setUsers(usersRes.data);
       setPayments(paymentsRes.data);
+      setAds(adsRes.data);
     } catch (error) {
       console.error('Error fetching admin data:', error);
       toast({
         title: "Error",
         description: "Failed to load admin data",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleApproveAd = async (adId) => {
+    try {
+      await axiosInstance.put(`/ads/${adId}/approve`);
+      toast({
+        title: "Success",
+        description: "Advertisement approved and activated"
+      });
+      fetchAdminData();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.response?.data?.detail || "Failed to approve ad",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleRejectAd = async (adId, reason) => {
+    if (!reason || reason.trim() === '') {
+      toast({
+        title: "Error",
+        description: "Please provide a rejection reason",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      await axiosInstance.put(`/ads/${adId}/reject?reason=${encodeURIComponent(reason)}`);
+      toast({
+        title: "Success",
+        description: "Advertisement rejected"
+      });
+      setRejectReason('');
+      fetchAdminData();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.response?.data?.detail || "Failed to reject ad",
         variant: "destructive"
       });
     }
