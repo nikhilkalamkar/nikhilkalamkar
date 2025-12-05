@@ -73,10 +73,30 @@ const ChatSidebar = ({ chats, users, ads, onChatSelect, selectedChatId, onNaviga
     <div className="w-full md:w-80 border-r bg-white flex flex-col h-full">
       {/* Header */}
       <div className="p-4 border-b bg-gradient-to-r from-blue-600 to-indigo-600">
+        {/* User Profile Section */}
+        {user && (
+          <div className="flex items-center gap-3 mb-4 p-3 bg-white/10 rounded-lg">
+            {user.avatar ? (
+              <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full border-2 border-white" />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-white/20 border-2 border-white flex items-center justify-center text-white font-semibold text-lg">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-white font-semibold truncate">{user.name}</p>
+              <div className="flex items-center gap-1 text-white/80 text-sm">
+                <Users className="h-3 w-3" />
+                <span>{user.friendCount || 0} Friends</span>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <MessageCircle className="h-6 w-6 text-white" />
-            <h2 className="text-xl font-bold text-white">ishukart</h2>
+            <h2 className="text-xl font-bold text-white">Chats</h2>
           </div>
           <div className="flex gap-1">
             <Button variant="ghost" size="icon" onClick={onRefresh} className="text-white hover:bg-white/20">
