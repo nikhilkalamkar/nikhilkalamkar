@@ -5,17 +5,31 @@ import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
 import { Send, Paperclip, Smile, MoreVertical, Phone, Video, Crown, Info } from 'lucide-react';
-import { mockMessages } from '../mock';
 import { toast } from '../hooks/use-toast';
+import axiosInstance from '../api/axios';
+import { useAuth } from '../context/AuthContext';
 
 const ChatWindow = ({ chat, chatDetails, onUpgradeToPremium, onToggleInfo }) => {
+  const { user } = useAuth();
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState(mockMessages[chat.id] || []);
+  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    setMessages(mockMessages[chat.id] || []);
-  }, [chat.id]);
+    if (chat?.id) {
+      fetchMessages();
+    }
+  }, [chat?.id]);
+
+  const fetchMessages = async () => {
+    try {
+      const response = await axiosInstance.get(`/chats/${chat.id}/messages`);
+      setMessages(response.data);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
