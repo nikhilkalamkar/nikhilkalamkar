@@ -5,6 +5,7 @@ import ChatWindow from '../components/ChatWindow';
 import ChatInfo from '../components/ChatInfo';
 import PremiumModal from '../components/PremiumModal';
 import AuthModal from '../components/AuthModal';
+import AdBanner from '../components/AdBanner';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../api/axios';
 import { Menu } from 'lucide-react';
@@ -20,6 +21,8 @@ const Chat = () => {
   const [chats, setChats] = useState([]);
   const [users, setUsers] = useState([]);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [ads, setAds] = useState([]);
+  const [closedAdIds, setClosedAdIds] = useState([]);
 
   useEffect(() => {
     if (!loading && !user) {
