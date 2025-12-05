@@ -108,7 +108,11 @@ async def get_admin_stats(current_user: dict = Depends(get_admin_user), db: Asyn
 
 @router.get("/users", response_model=List[AdminUser])
 async def get_admin_users(current_user: dict = Depends(get_admin_user), db: AsyncIOMotorDatabase = Depends(get_db)):
-    users = await db.users.find({"role": "user"}).to_list(10000)
+    # Use projection to fetch only required fields
+    users = await db.users.find(
+        {"role": "user"},
+        {"_id": 0, "id": 1, "name": 1, "email": 1, "isPremium": 1, "subscriptionDate": 1, "lastActive": 1}
+    ).to_list(1000)
     
     return [AdminUser(
         id=u["id"],
