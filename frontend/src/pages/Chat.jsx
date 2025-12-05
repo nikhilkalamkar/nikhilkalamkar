@@ -30,6 +30,8 @@ const Chat = () => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [ads, setAds] = useState([]);
   const [closedAdIds, setClosedAdIds] = useState([]);
+  const [activeCall, setActiveCall] = useState(null);
+  const [incomingCall, setIncomingCall] = useState(null);
 
   useEffect(() => {
     if (!loading && !user) {
