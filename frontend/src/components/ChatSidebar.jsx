@@ -8,9 +8,13 @@ import { Search, MessageCircle, Home, Shield, Crown, RefreshCw, X, UserPlus } fr
 import AdBanner from './AdBanner';
 import axiosInstance from '../api/axios';
 
+import { useAuth } from '../context/AuthContext';
+import { Users } from 'lucide-react';
+
 const ChatSidebar = ({ chats, users, ads, onChatSelect, selectedChatId, onNavigateHome, onNavigateAdmin, onRefresh, onClose, onCloseAd, onSearchUsers, onShowFriendRequests }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [pendingRequestCount, setPendingRequestCount] = useState(0);
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchPendingRequestCount();
