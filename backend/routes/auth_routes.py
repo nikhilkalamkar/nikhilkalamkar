@@ -11,12 +11,9 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post("/register", response_model=dict)
 async def register(user_data: UserCreate, db: AsyncIOMotorDatabase = Depends(get_db)):
-    print(f"[DEBUG] Registration attempt for email: {user_data.email}")
     # Check if user exists by email
     existing_user = await db.users.find_one({"email": user_data.email})
-    print(f"[DEBUG] Existing user found: {existing_user is not None}")
     if existing_user:
-        print(f"[DEBUG] Existing user email: {existing_user.get('email')}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
