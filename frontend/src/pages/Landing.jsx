@@ -44,10 +44,25 @@ const Landing = () => {
             </h1>
           </div>
           <div className="flex gap-3">
-            <Button variant="ghost" onClick={() => navigate('/chat')}>Launch App</Button>
-            <Button onClick={() => setShowPremiumModal(true)} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
-              Go Premium
-            </Button>
+            {user ? (
+              <>
+                <span className="text-sm text-gray-600 flex items-center">
+                  Welcome, {user.name}
+                  {user.isPremium && <Crown className="h-4 w-4 ml-1 text-yellow-500" />}
+                </span>
+                <Button variant="ghost" onClick={() => navigate('/chat')}>Launch App</Button>
+                <Button variant="ghost" size="icon" onClick={logout}>
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" onClick={() => setShowAuthModal(true)}>Login</Button>
+                <Button onClick={() => setShowPremiumModal(true)} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                  Go Premium
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>
