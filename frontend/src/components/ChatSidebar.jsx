@@ -4,12 +4,10 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
-import { Search, MessageCircle, Home, Shield, Crown } from 'lucide-react';
-import { mockChats, mockUsers, mockGroups } from '../mock';
+import { Search, MessageCircle, Home, Shield, Crown, RefreshCw } from 'lucide-react';
 
-const ChatSidebar = ({ onChatSelect, selectedChatId, onNavigateHome, onNavigateAdmin }) => {
+const ChatSidebar = ({ chats, users, onChatSelect, selectedChatId, onNavigateHome, onNavigateAdmin, onRefresh }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [chats] = useState(mockChats);
 
   const getChatInfo = (chat) => {
     if (chat.type === 'direct') {
