@@ -269,15 +269,22 @@ const Chat = () => {
       // Poll for incoming calls
       const callInterval = setInterval(checkIncomingCalls, 3000);
       
-      // Listen for call initiation events
-      window.addEventListener('initiateCall', handleInitiateCall);
-      
       return () => {
         clearInterval(callInterval);
-        window.removeEventListener('initiateCall', handleInitiateCall);
       };
     }
   }, [user, loading]);
+
+  // Separate useEffect for call event listener
+  useEffect(() => {
+    if (user) {
+      window.addEventListener('initiateCall', handleInitiateCall);
+      
+      return () => {
+        window.removeEventListener('initiateCall', handleInitiateCall);
+      };
+    }
+  }, [user, handleInitiateCall]);
 
   if (!user && !loading) {
     return <AuthModal open={showAuthModal} onClose={() => navigate('/')} />;
