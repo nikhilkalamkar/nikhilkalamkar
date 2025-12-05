@@ -26,7 +26,6 @@ const Admin = () => {
     if (!loading && !user) {
       setShowAuthModal(true);
     } else if (user) {
-      // Admin check will be done by API, but we can show early feedback for non-admins
       fetchAdminData();
     }
   }, [user, loading, navigate]);
