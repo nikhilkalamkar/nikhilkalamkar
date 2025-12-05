@@ -41,6 +41,7 @@ async def get_all_users(current_user: dict = Depends(get_current_user), db: Asyn
         result.append(UserPublic(
             id=user["id"],
             name=user["name"],
+            mobile=user.get("mobile"),
             avatar=user.get("avatar"),
             status=status,
             isPremium=user.get("isPremium", False)
