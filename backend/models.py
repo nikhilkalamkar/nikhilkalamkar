@@ -218,3 +218,32 @@ class GroupResponse(BaseModel):
     name: str
     avatar: Optional[str] = None
     members: List[UserPublic]
+
+
+# Friend Request Models
+class FriendRequest(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    senderId: str
+    senderName: str
+    senderAvatar: Optional[str] = None
+    receiverId: str
+    receiverName: str
+    receiverAvatar: Optional[str] = None
+    status: str = "pending"  # pending, accepted, rejected
+    createdAt: datetime = Field(default_factory=datetime.utcnow)
+    respondedAt: Optional[datetime] = None
+
+class FriendRequestResponse(BaseModel):
+    id: str
+    senderId: str
+    senderName: str
+    senderAvatar: Optional[str] = None
+    receiverId: str
+    receiverName: str
+    receiverAvatar: Optional[str] = None
+    status: str
+    createdAt: datetime
+    respondedAt: Optional[datetime] = None
+
+class FriendRequestCreate(BaseModel):
+    receiverId: str
