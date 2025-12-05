@@ -203,6 +203,7 @@ const Chat = () => {
             onRefresh={fetchChats}
             onClose={() => setMobileSidebarOpen(false)}
             onCloseAd={(adId) => setClosedAdIds([...closedAdIds, adId])}
+            onSearchUsers={() => setShowUserSearch(true)}
           />
         </div>
         
