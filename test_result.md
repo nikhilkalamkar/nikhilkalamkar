@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the ishukart backend APIs comprehensively including authentication, user management, chat functionality, messaging, payments, and admin features"
+user_problem_statement: "Test the new friend request system I just implemented in the ishukart chat application comprehensively including sending requests, viewing requests, accepting/rejecting requests, and verifying chat access between friends"
 
 backend:
   - task: "Authentication APIs - Register/Login"
