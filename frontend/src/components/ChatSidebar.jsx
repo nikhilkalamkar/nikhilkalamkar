@@ -4,9 +4,9 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
-import { Search, MessageCircle, Home, Shield, Crown, RefreshCw } from 'lucide-react';
+import { Search, MessageCircle, Home, Shield, Crown, RefreshCw, X } from 'lucide-react';
 
-const ChatSidebar = ({ chats, users, onChatSelect, selectedChatId, onNavigateHome, onNavigateAdmin, onRefresh }) => {
+const ChatSidebar = ({ chats, users, onChatSelect, selectedChatId, onNavigateHome, onNavigateAdmin, onRefresh, onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const getChatInfo = (chat) => {
