@@ -149,11 +149,12 @@ const Admin = () => {
           </Card>
         </div>
 
-        {/* Tabs for Users and Payments */}
+        {/* Tabs for Users, Payments, and Ads */}
         <Tabs defaultValue="users" className="w-full">
-          <TabsList className="grid w-full md:w-[400px] grid-cols-2">
+          <TabsList className="grid w-full md:w-[600px] grid-cols-3">
             <TabsTrigger value="users" className="text-xs md:text-sm">Users</TabsTrigger>
             <TabsTrigger value="payments" className="text-xs md:text-sm">Payments</TabsTrigger>
+            <TabsTrigger value="ads" className="text-xs md:text-sm">Advertisements</TabsTrigger>
           </TabsList>
 
           {/* Users Tab */}
