@@ -181,7 +181,7 @@ const Landing = () => {
         <p className="text-xl text-gray-600 mb-8">Join thousands of users on ishukart today</p>
         <Button 
           size="lg" 
-          onClick={() => navigate('/chat')}
+          onClick={handleChatClick}
           className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-lg px-8 py-6"
         >
           Launch ishukart
