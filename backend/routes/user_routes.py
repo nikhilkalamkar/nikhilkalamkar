@@ -8,24 +8,35 @@ from datetime import datetime
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/me")
 async def get_current_user_info(current_user: dict = Depends(get_current_user), db: AsyncIOMotorDatabase = Depends(get_db)):
     user = await db.users.find_one({"id": current_user["id"]})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    return UserResponse(
-        id=user["id"],
-        name=user["name"],
-        email=user["email"],
-        mobile=user.get("mobile"),
-        avatar=user.get("avatar"),
-        isPremium=user.get("isPremium", False),
-        subscriptionDate=user.get("subscriptionDate"),
-        status=user.get("status", "offline"),
-        lastActive=user.get("lastActive"),
-        role=user.get("role", "user")
-    )
+    # Count friends
+    friendships = await db.friendships.find({
+        "$or": [
+            {"user1": current_user["id"]},
+            {"user2": current_user["id"]}
+        ]
+    }).to_list(10000)
+    
+    friend_count = len(friendships)
+    
+    return {
+        "id": user["id"],
+        "name": user["name"],
+        "email": user["email"],
+        "mobile": user.get("mobile"),
+        "avatar": user.get("avatar"),
+        "isPremium": user.get("isPremium", False),
+        "subscriptionDate": user.get("subscriptionDate"),
+        "status": user.get("status", "offline"),
+        "lastActive": user.get("lastActive"),
+        "role": user.get("role", "user"),
+        "friendCount": friend_count
+    }
 
 @router.get("/search", response_model=List[UserPublic])
 async def search_users(
