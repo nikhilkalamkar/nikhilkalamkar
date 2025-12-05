@@ -223,7 +223,14 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All features tested and working"
+    - "Friend Request System - Send Requests"
+    - "Friend Request System - View & Manage Requests"
+    - "Friend Request System - Chat Access Control"
+    - "Friend Request System - UI Integration"
+    - "Friend Request APIs - Send & Status Check"
+    - "Friend Request APIs - View Requests"
+    - "Friend Request APIs - Accept/Reject/Cancel"
+    - "Friendship Management APIs"
   stuck_tasks: []
   test_all: true
   test_priority: "high_first"
