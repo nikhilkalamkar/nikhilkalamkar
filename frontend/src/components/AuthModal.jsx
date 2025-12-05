@@ -103,6 +103,19 @@ const AuthModal = ({ open, onClose }) => {
                   required
                 />
               </div>
+              <div className="flex items-center justify-between mb-4">
+                <Button 
+                  type="button" 
+                  variant="link" 
+                  className="p-0 h-auto text-blue-600 text-sm"
+                  onClick={() => {
+                    onClose();
+                    setShowForgotPassword(true);
+                  }}
+                >
+                  Forgot Password?
+                </Button>
+              </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Logging in...</> : 'Login'}
               </Button>
