@@ -23,7 +23,8 @@ async def get_current_user_info(current_user: dict = Depends(get_current_user), 
         isPremium=user.get("isPremium", False),
         subscriptionDate=user.get("subscriptionDate"),
         status=user.get("status", "offline"),
-        lastActive=user.get("lastActive")
+        lastActive=user.get("lastActive"),
+        role=user.get("role", "user")
     )
 
 @router.get("", response_model=List[UserPublic])
