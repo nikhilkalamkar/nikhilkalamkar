@@ -34,6 +34,9 @@ const Chat = () => {
     if (user) {
       fetchChats();
       fetchUsers();
+      if (!user.isPremium) {
+        fetchAds();
+      }
     }
   }, [user]);
 
