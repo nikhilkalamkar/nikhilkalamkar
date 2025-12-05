@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 # Backend URL from frontend .env
-BACKEND_URL = "https://tele-ishukart.preview.emergentagent.com/api"
+BACKEND_URL = "https://telegram-clone-143.preview.emergentagent.com/api"
 
 class IshukartAPITester:
     def __init__(self):
