@@ -140,7 +140,8 @@ const ChatSidebar = ({ chats, users, ads, onChatSelect, selectedChatId, onNaviga
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </ScrollArea>
     </div>
