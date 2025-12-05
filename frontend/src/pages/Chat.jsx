@@ -92,6 +92,36 @@ const Chat = () => {
         return;
       }
       
+      // Check if browser supports getUserMedia
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        toast({
+          title: 'Not Supported',
+          description: 'Your browser does not support audio/video calls. Please use Chrome, Firefox, or Safari.',
+          variant: 'destructive',
+          duration: 8000
+        });
+        return;
+      }
+      
+      // Store pending call data and show permission guide
+      setPendingCallData({ userId, callType, userData });
+      setShowPermissionGuide(true);
+      
+    } catch (error) {
+      toast({
+        title: 'Call Failed',
+        description: error.response?.data?.detail || 'Could not initiate call',
+        variant: 'destructive'
+      });
+    }
+  }, [users, chats]);
+  
+  const proceedWithCall = useCallback(async () => {
+    if (!pendingCallData) return;
+    
+    const { userId, callType, userData } = pendingCallData;
+    
+    try {
       // Initiate call
       const response = await axiosInstance.post('/calls/initiate', {
         receiverId: userId,
@@ -106,14 +136,19 @@ const Chat = () => {
         callType: callType
       });
       
+      setShowPermissionGuide(false);
+      setPendingCallData(null);
+      
     } catch (error) {
       toast({
         title: 'Call Failed',
         description: error.response?.data?.detail || 'Could not initiate call',
         variant: 'destructive'
       });
+      setShowPermissionGuide(false);
+      setPendingCallData(null);
     }
-  }, [users, chats]);
+  }, [pendingCallData]);
   
   const handleAcceptCall = async (call) => {
     try {
