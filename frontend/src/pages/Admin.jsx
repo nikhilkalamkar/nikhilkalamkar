@@ -17,7 +17,9 @@ const Admin = () => {
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [payments, setPayments] = useState([]);
+  const [ads, setAds] = useState([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
 
   useEffect(() => {
     if (!loading && !user) {
