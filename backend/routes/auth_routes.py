@@ -77,20 +77,13 @@ async def login(user_data: UserLogin, db: AsyncIOMotorDatabase = Depends(get_db)
         ]
     })
     if not user:
-        print(f"[DEBUG] User not found for identifier: {user_data.identifier}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials"
         )
     
-    print(f"[DEBUG] User found: {user.get('email')}, Testing password...")
-    print(f"[DEBUG] Input password: {user_data.password}")
-    print(f"[DEBUG] Stored hash: {user['password'][:60]}...")
     # Verify password
-    password_valid = verify_password(user_data.password, user["password"])
-    print(f"[DEBUG] Password valid: {password_valid}")
-    
-    if not password_valid:
+    if not verify_password(user_data.password, user["password"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials"
