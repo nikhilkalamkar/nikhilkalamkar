@@ -43,6 +43,7 @@ api_router.include_router(admin_routes.router)
 api_router.include_router(advertiser_routes.router)
 api_router.include_router(ads_routes.router)
 api_router.include_router(friend_routes.router)
+api_router.include_router(call_routes.router)
 
 # Include the router in the main app
 app.include_router(api_router)
