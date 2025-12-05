@@ -149,14 +149,16 @@ const Chat = () => {
           mobileSidebarOpen ? 'absolute inset-0 z-50 bg-white' : 'hidden'
         } md:relative md:block md:z-auto`}>
           <ChatSidebar 
-            chats={chats}
+            chats={getChatsWithAds()}
             users={users}
+            ads={ads}
             onChatSelect={handleChatSelect} 
             selectedChatId={selectedChat?.id}
             onNavigateHome={() => navigate('/')}
             onNavigateAdmin={() => navigate('/admin')}
             onRefresh={fetchChats}
             onClose={() => setMobileSidebarOpen(false)}
+            onCloseAd={(adId) => setClosedAdIds([...closedAdIds, adId])}
           />
         </div>
         
