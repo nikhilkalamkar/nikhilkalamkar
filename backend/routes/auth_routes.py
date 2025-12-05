@@ -9,13 +9,22 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post("/register", response_model=dict)
 async def register(user_data: UserCreate, db: AsyncIOMotorDatabase = Depends(get_db)):
-    # Check if user exists
+    # Check if user exists by email
     existing_user = await db.users.find_one({"email": user_data.email})
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
+    
+    # Check if mobile number already exists
+    if user_data.mobile:
+        existing_mobile = await db.users.find_one({"mobile": user_data.mobile})
+        if existing_mobile:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Mobile number already registered"
+            )
     
     # Create user
     from models import User
@@ -24,6 +33,7 @@ async def register(user_data: UserCreate, db: AsyncIOMotorDatabase = Depends(get
         id=str(uuid.uuid4()),
         name=user_data.name,
         email=user_data.email,
+        mobile=user_data.mobile,
         password=hash_password(user_data.password),
         avatar=f"https://api.dicebear.com/7.x/avataaars/svg?seed={user_data.name}",
         isPremium=False,
