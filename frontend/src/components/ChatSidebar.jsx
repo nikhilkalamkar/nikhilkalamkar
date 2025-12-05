@@ -11,21 +11,15 @@ const ChatSidebar = ({ chats, users, onChatSelect, selectedChatId, onNavigateHom
 
   const getChatInfo = (chat) => {
     if (chat.type === 'direct') {
-      const user = mockUsers.find(u => u.id === chat.userId);
+      const user = users.find(u => u.id === chat.userId);
       return {
         ...chat,
-        name: user?.name,
-        avatar: user?.avatar,
-        isPremium: user?.isPremium
+        name: user?.name || chat.name,
+        avatar: user?.avatar || chat.avatar,
+        isPremium: user?.isPremium || false
       };
     } else {
-      const group = mockGroups.find(g => g.id === chat.id);
-      return {
-        ...chat,
-        name: group?.name,
-        avatar: group?.avatar,
-        members: group?.members
-      };
+      return chat;
     }
   };
 
