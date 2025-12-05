@@ -246,6 +246,15 @@ const UserSearch = ({ open, onClose, onUserSelect }) => {
             </div>
           ))}
         </div>
+
+        {/* User Profile Modal */}
+        <UserProfile
+          open={showProfile}
+          onClose={handleCloseProfile}
+          userId={selectedUserId}
+          onStartChat={handleChatWithFriend}
+        />
+        </div>
       </DialogContent>
     </Dialog>
   );
