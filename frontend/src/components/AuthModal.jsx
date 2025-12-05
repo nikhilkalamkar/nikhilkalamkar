@@ -51,9 +51,10 @@ const AuthModal = ({ open, onClose }) => {
         </DialogHeader>
 
         <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="login">Login</TabsTrigger>
             <TabsTrigger value="register">Register</TabsTrigger>
+            <TabsTrigger value="advertiser">Advertiser</TabsTrigger>
           </TabsList>
 
           <TabsContent value="login">
