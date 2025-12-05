@@ -66,9 +66,12 @@ const Chat = () => {
   const checkIncomingCalls = async () => {
     try {
       const response = await axiosInstance.get('/calls/incoming');
-      if (response.data && response.data.length > 0) {
-        const call = response.data[0];
-        setIncomingCall(call);
+      if (response.data && response.data.calls && response.data.calls.length > 0) {
+        const call = response.data.calls[0];
+        // Only show notification if not already showing one
+        if (!incomingCall || incomingCall.callId !== call.callId) {
+          setIncomingCall(call);
+        }
       }
     } catch (error) {
       console.error('Error checking incoming calls:', error);
