@@ -271,6 +271,14 @@ const Chat = () => {
         onClose={() => setShowUserSearch(false)}
         onUserSelect={handleUserSelect}
       />
+      <FriendRequests
+        open={showFriendRequests}
+        onClose={() => setShowFriendRequests(false)}
+        onRequestHandled={() => {
+          fetchChats();
+          fetchUsers();
+        }}
+      />
     </div>
   );
 };
