@@ -6,10 +6,12 @@ import ChatInfo from '../components/ChatInfo';
 import PremiumModal from '../components/PremiumModal';
 import AuthModal from '../components/AuthModal';
 import AdBanner from '../components/AdBanner';
+import UserSearch from '../components/UserSearch';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../api/axios';
 import { Menu } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { toast } from '../hooks/use-toast';
 
 const Chat = () => {
   const navigate = useNavigate();
@@ -18,6 +20,7 @@ const Chat = () => {
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [showChatInfo, setShowChatInfo] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showUserSearch, setShowUserSearch] = useState(false);
   const [chats, setChats] = useState([]);
   const [users, setUsers] = useState([]);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
