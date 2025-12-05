@@ -220,16 +220,17 @@ const Admin = () => {
                 <CardDescription>View all premium subscription payments</CardDescription>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>User</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Razorpay ID</TableHead>
-                    </TableRow>
-                  </TableHeader>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="min-w-[120px]">User</TableHead>
+                        <TableHead className="min-w-[100px]">Amount</TableHead>
+                        <TableHead className="min-w-[100px]">Date</TableHead>
+                        <TableHead className="min-w-[100px]">Status</TableHead>
+                        <TableHead className="min-w-[150px]">Razorpay ID</TableHead>
+                      </TableRow>
+                    </TableHeader>
                   <TableBody>
                     {payments.map((payment) => (
                       <TableRow key={payment.id}>
