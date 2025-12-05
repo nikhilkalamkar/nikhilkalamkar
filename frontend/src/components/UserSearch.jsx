@@ -2,16 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
-import { Search, User, Phone, Loader2, UserPlus, X, Check } from 'lucide-react';
+import { Search, User, Phone, Loader2, UserPlus, X, Check, Eye } from 'lucide-react';
 import { Badge } from './ui/badge';
 import axiosInstance from '../api/axios';
 import { toast } from '../hooks/use-toast';
+import UserProfile from './UserProfile';
 
 const UserSearch = ({ open, onClose, onUserSelect }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [friendshipStatuses, setFriendshipStatuses] = useState({});
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showProfile, setShowProfile] = useState(false);
 
   const handleSearch = async () => {
     if (!searchQuery || searchQuery.trim().length < 2) {
