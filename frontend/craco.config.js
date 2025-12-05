@@ -73,6 +73,15 @@ const webpackConfig = {
         };
       }
 
+      // Add process and Buffer polyfills using ProvidePlugin
+      const webpack = require('webpack');
+      webpackConfig.plugins.push(
+        new webpack.ProvidePlugin({
+          process: 'process/browser',
+          Buffer: ['buffer', 'Buffer']
+        })
+      );
+
       // Add health check plugin to webpack if enabled
       if (config.enableHealthCheck && healthPluginInstance) {
         webpackConfig.plugins.push(healthPluginInstance);
