@@ -7,6 +7,7 @@ import PremiumModal from '../components/PremiumModal';
 import AuthModal from '../components/AuthModal';
 import AdBanner from '../components/AdBanner';
 import UserSearch from '../components/UserSearch';
+import FriendRequests from '../components/FriendRequests';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../api/axios';
 import { Menu } from 'lucide-react';
@@ -21,6 +22,7 @@ const Chat = () => {
   const [showChatInfo, setShowChatInfo] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showUserSearch, setShowUserSearch] = useState(false);
+  const [showFriendRequests, setShowFriendRequests] = useState(false);
   const [chats, setChats] = useState([]);
   const [users, setUsers] = useState([]);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
