@@ -187,6 +187,29 @@ const Chat = () => {
     }
   };
 
+  useEffect(() => {
+    if (!loading && !user) {
+      setShowAuthModal(true);
+    } else if (user) {
+      fetchChats();
+      fetchUsers();
+      fetchAds();
+      checkIncomingCalls();
+      
+      // Poll for incoming calls
+      const callInterval = setInterval(checkIncomingCalls, 3000);
+      
+      // Listen for call initiation events
+      window.addEventListener('initiateCall', handleInitiateCall);
+      
+      return () => {
+        clearInterval(callInterval);
+        window.removeEventListener('callInterval);
+        window.removeEventListener('initiateCall', handleInitiateCall);
+      };
+    }
+  }, [user, loading]);
+
   if (!user && !loading) {
     return <AuthModal open={showAuthModal} onClose={() => navigate('/')} />;
   }
