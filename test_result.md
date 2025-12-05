@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the updated user profile features in ishukart chat application including friend count in user's own profile, user profile modal on search with eye icon, improved search with word matching, and profile modal actions"
+user_problem_statement: "Test the new audio and video call functionality in the ishukart application - verify call buttons are visible and functional in chat interface"
 
 backend:
   - task: "Friend Request APIs - Send & Status Check"
