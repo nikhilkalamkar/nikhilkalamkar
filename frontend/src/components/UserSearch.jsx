@@ -61,16 +61,80 @@ const UserSearch = ({ open, onClose, onUserSelect }) => {
     }
   };
 
-  const handleUserClick = (user) => {
+  const handleSendRequest = async (user) => {
+    try {
+      await axiosInstance.post('/friends/request', { receiverId: user.id });
+      
+      // Update status
+      setFriendshipStatuses({
+        ...friendshipStatuses,
+        [user.id]: 'request_sent'
+      });
+      
+      toast({
+        title: 'Request Sent',
+        description: `Friend request sent to ${user.name}`
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error.response?.data?.detail || 'Failed to send friend request',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handleChatWithFriend = (user) => {
     onUserSelect(user);
     setSearchQuery('');
     setSearchResults([]);
+    setFriendshipStatuses({});
     onClose();
   };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSearch();
+    }
+  };
+
+  const getActionButton = (user) => {
+    const status = friendshipStatuses[user.id];
+    
+    if (status === 'friends') {
+      return (
+        <Button
+          size="sm"
+          onClick={() => handleChatWithFriend(user)}
+          className="bg-blue-600 hover:bg-blue-700"
+        >
+          <Search className="h-4 w-4 mr-1" />
+          Chat
+        </Button>
+      );
+    } else if (status === 'request_sent') {
+      return (
+        <Badge variant="secondary" className="text-xs">
+          Request Sent
+        </Badge>
+      );
+    } else if (status === 'request_received') {
+      return (
+        <Badge variant="default" className="text-xs bg-green-600">
+          Accept Request
+        </Badge>
+      );
+    } else {
+      return (
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => handleSendRequest(user)}
+        >
+          <UserPlus className="h-4 w-4 mr-1" />
+          Add
+        </Button>
+      );
     }
   };
 
