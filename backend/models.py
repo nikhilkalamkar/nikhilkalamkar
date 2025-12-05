@@ -8,15 +8,17 @@ class UserCreate(BaseModel):
     name: str
     email: EmailStr
     password: str
+    mobile: Optional[str] = None
 
 class UserLogin(BaseModel):
-    email: EmailStr
+    identifier: str  # Can be email or mobile number
     password: str
 
 class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     email: EmailStr
+    mobile: Optional[str] = None
     password: str
     avatar: Optional[str] = None
     isPremium: bool = False
@@ -31,6 +33,7 @@ class UserResponse(BaseModel):
     id: str
     name: str
     email: EmailStr
+    mobile: Optional[str] = None
     avatar: Optional[str] = None
     isPremium: bool
     subscriptionDate: Optional[datetime] = None
@@ -40,6 +43,7 @@ class UserResponse(BaseModel):
 class UserPublic(BaseModel):
     id: str
     name: str
+    mobile: Optional[str] = None
     avatar: Optional[str] = None
     status: str
     isPremium: bool
