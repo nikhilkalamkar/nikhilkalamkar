@@ -56,6 +56,9 @@ const ChatSidebar = ({ chats, users, onChatSelect, selectedChatId, onNavigateHom
             <h2 className="text-xl font-bold text-white">ishukart</h2>
           </div>
           <div className="flex gap-1">
+            <Button variant="ghost" size="icon" onClick={onRefresh} className="text-white hover:bg-white/20">
+              <RefreshCw className="h-4 w-4" />
+            </Button>
             <Button variant="ghost" size="icon" onClick={onNavigateHome} className="text-white hover:bg-white/20">
               <Home className="h-4 w-4" />
             </Button>
