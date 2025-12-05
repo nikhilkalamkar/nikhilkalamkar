@@ -89,12 +89,22 @@ const Landing = () => {
                   {user.isPremium && <Crown className="h-4 w-4 ml-1 text-yellow-500" />}
                 </div>
                 <Button className="w-full" onClick={() => { navigate('/chat'); setMobileMenuOpen(false); }}>Launch App</Button>
+                {user.role === 'advertiser' && (
+                  <Button variant="outline" className="w-full" onClick={() => { navigate('/advertiser'); setMobileMenuOpen(false); }}>
+                    <TrendingUp className="mr-2 h-4 w-4" />
+                    Advertiser Dashboard
+                  </Button>
+                )}
                 <Button variant="outline" className="w-full" onClick={() => { logout(); setMobileMenuOpen(false); }}>Logout</Button>
               </>
             ) : (
               <>
                 <Button variant="outline" className="w-full" onClick={() => { setShowAuthModal(true); setMobileMenuOpen(false); }}>Login</Button>
                 <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600" onClick={() => { setShowPremiumModal(true); setMobileMenuOpen(false); }}>Go Premium</Button>
+                <Button variant="outline" className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 text-white hover:from-orange-600 hover:to-yellow-600" onClick={() => { setShowAuthModal(true); setMobileMenuOpen(false); }}>
+                  <TrendingUp className="mr-2 h-4 w-4" />
+                  Advertiser
+                </Button>
               </>
             )}
           </div>
