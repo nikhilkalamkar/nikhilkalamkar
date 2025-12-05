@@ -91,10 +91,13 @@ const Chat = () => {
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
         <ChatSidebar 
+          chats={chats}
+          users={users}
           onChatSelect={handleChatSelect} 
           selectedChatId={selectedChat?.id}
           onNavigateHome={() => navigate('/')}
           onNavigateAdmin={() => navigate('/admin')}
+          onRefresh={fetchChats}
         />
         
         {/* Main Chat Area */}
