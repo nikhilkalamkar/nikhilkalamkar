@@ -190,9 +190,9 @@ async def seed_data():
     
     print("\\n🎉 Database seeded successfully!")
     print("\\n👤 Test Users:")
-    print("   Admin: admin@ishukart.com / admin123")
-    print("   User: rahul@example.com / password123")
-    print("   User: priya@example.com / password123")
+    print("   Admin: admin@ishukart.com or +919876543210 / admin123")
+    print("   User: rahul@example.com or +919876543211 / password123")
+    print("   User: priya@example.com or +919876543212 / password123")
 
 if __name__ == "__main__":
     asyncio.run(seed_data())
