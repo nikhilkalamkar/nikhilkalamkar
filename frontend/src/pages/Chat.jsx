@@ -101,6 +101,47 @@ const Chat = () => {
     setShowPremiumModal(true);
   };
 
+  const handleUserSelect = async (selectedUser) => {
+    // Check if chat already exists with this user
+    const existingChat = chats.find(chat => 
+      chat.type === 'direct' && chat.userId === selectedUser.id
+    );
+
+    if (existingChat) {
+      // Chat already exists, select it
+      setSelectedChat(existingChat);
+      setMobileSidebarOpen(false);
+      toast({
+        title: 'Chat Opened',
+        description: `Opening chat with ${selectedUser.name}`
+      });
+    } else {
+      // Create new chat
+      try {
+        const response = await axiosInstance.post('/chats', {
+          type: 'direct',
+          participantIds: [selectedUser.id]
+        });
+        
+        const newChat = response.data;
+        setChats([newChat, ...chats]); // Add to top of chat list
+        setSelectedChat(newChat);
+        setMobileSidebarOpen(false);
+        
+        toast({
+          title: 'Chat Created',
+          description: `Started new chat with ${selectedUser.name}`
+        });
+      } catch (error) {
+        toast({
+          title: 'Error',
+          description: error.response?.data?.detail || 'Failed to create chat',
+          variant: 'destructive'
+        });
+      }
+    }
+  };
+
   const getChatDetails = () => {
     if (!selectedChat) return null;
     if (selectedChat.type === 'direct') {
