@@ -384,19 +384,19 @@ const Chat = () => {
       {/* Call Components */}
       {activeCall && (
         <CallInterface
-          call={activeCall}
-          onEndCall={() => setActiveCall(null)}
+          isOpen={true}
+          callData={activeCall}
+          onClose={() => setActiveCall(null)}
+          onCallEnd={() => setActiveCall(null)}
         />
       )}
       
       {incomingCall && (
         <IncomingCall
-          call={incomingCall}
-          onAccept={() => {
-            setActiveCall(incomingCall);
-            setIncomingCall(null);
-          }}
-          onDecline={() => setIncomingCall(null)}
+          isOpen={true}
+          callData={incomingCall}
+          onAccept={() => handleAcceptCall(incomingCall)}
+          onReject={() => handleRejectCall(incomingCall)}
         />
       )}
     </div>
