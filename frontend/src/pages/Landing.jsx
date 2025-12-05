@@ -83,7 +83,7 @@ const Landing = () => {
         <div className="flex gap-4 justify-center">
           <Button 
             size="lg" 
-            onClick={() => navigate('/chat')}
+            onClick={handleChatClick}
             className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all"
           >
             <MessageCircle className="mr-2 h-5 w-5" />
