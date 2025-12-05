@@ -87,14 +87,25 @@ const ChatSidebar = ({ chats, users, ads, onChatSelect, selectedChatId, onNaviga
       {/* Chats List */}
       <ScrollArea className="flex-1">
         <div className="p-2">
-          {filteredChats.map((chat) => (
-            <div
-              key={chat.id}
-              onClick={() => onChatSelect(chat)}
-              className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-all hover:bg-blue-50 ${
-                selectedChatId === chat.id ? 'bg-blue-100' : ''
-              }`}
-            >
+          {filteredChats.map((chat) => {
+            // Render ad banner
+            if (chat.isAd) {
+              return (
+                <div key={chat.id} className="mb-2">
+                  <AdBanner ad={chat} onClose={() => onCloseAd && onCloseAd(chat.id)} />
+                </div>
+              );
+            }
+            
+            // Render chat item
+            return (
+              <div
+                key={chat.id}
+                onClick={() => onChatSelect(chat)}
+                className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-all hover:bg-blue-50 ${
+                  selectedChatId === chat.id ? 'bg-blue-100' : ''
+                }`}
+              >
               <div className="relative">
                 <Avatar className="h-12 w-12">
                   <AvatarImage src={chat.avatar} alt={chat.name} />
