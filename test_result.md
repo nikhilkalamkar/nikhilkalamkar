@@ -181,9 +181,9 @@ test_plan:
 frontend:
   - task: "Call Buttons in Chat Header"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/components/ChatWindow.jsx"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -193,12 +193,15 @@ frontend:
         - working: false
           agent: "testing"
           comment: "❌ CRITICAL: Cannot test call buttons due to authentication system failure. Login functionality is broken - users cannot access chat page where call buttons are located. Tested multiple approaches (header login, Start Chatting button, direct navigation to /chat) but authentication modal persists and login does not complete successfully. Backend call APIs are properly implemented and included in server.py, but frontend authentication flow is blocking access to chat interface."
+        - working: true
+          agent: "testing"
+          comment: "✅ CALL BUTTONS WORKING CORRECTLY: Successfully tested both audio and video call buttons in chat header with Priya Sharma. Authentication system is now working properly - users can login with rahul@example.com/password123 and access chat interface. Both call buttons are visible, clickable, and properly dispatch call initiation events. When clicked, buttons correctly show 'Call Failed - Can only call friends' toast message, which is expected behavior since Rahul and Priya are not friends (friendship status verified via API). Call button functionality is working as designed - buttons are enabled for direct chats and properly validate friendship status before allowing calls."
 
   - task: "Call Interface Component"
     implemented: true
-    working: false
+    working: "NA"
     file: "/app/frontend/src/components/CallInterface.jsx"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -208,12 +211,15 @@ frontend:
         - working: false
           agent: "testing"
           comment: "❌ CANNOT TEST: Call interface component cannot be accessed due to authentication system preventing users from reaching chat page. Component implementation appears comprehensive with WebRTC integration, but functional testing is blocked by login issues."
+        - working: "NA"
+          agent: "testing"
+          comment: "⚠️ CANNOT FULLY TEST: Call interface component cannot be tested because calls require friendship between users. Rahul and Priya are not friends (verified via API), so call interface modal does not open when call buttons are clicked. Component code is well-implemented with WebRTC integration, call controls, and proper UI structure. To test this component, users would need to be friends first, or test data should include existing friendships."
 
   - task: "Incoming Call Notification"
     implemented: true
-    working: false
+    working: "NA"
     file: "/app/frontend/src/components/IncomingCall.jsx"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -223,12 +229,15 @@ frontend:
         - working: false
           agent: "testing"
           comment: "❌ CANNOT TEST: Incoming call notification cannot be tested due to authentication blocking access to chat functionality. Component code looks well-implemented with proper UI elements and animations."
+        - working: "NA"
+          agent: "testing"
+          comment: "⚠️ CANNOT TEST: Incoming call notification cannot be tested because calls require friendship between users. Since test users (Rahul and Priya) are not friends, no calls can be initiated to trigger incoming call notifications. Component implementation appears correct with proper UI elements, animations, and accept/reject functionality."
 
   - task: "Call Integration in Chat Page"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/pages/Chat.jsx"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -238,6 +247,9 @@ frontend:
         - working: false
           agent: "testing"
           comment: "❌ CANNOT TEST: Call integration in Chat page cannot be tested because users cannot successfully authenticate and access the chat page. The authentication modal appears but login submission does not redirect users to chat interface, preventing testing of call functionality."
+        - working: true
+          agent: "testing"
+          comment: "✅ CALL INTEGRATION WORKING: Call functionality is properly integrated into Chat page. Authentication system works correctly, users can access chat interface, and call initiation handlers are functioning. Custom event dispatching works properly - when call buttons are clicked, 'initiateCall' events are dispatched with correct userId and callType parameters. The handleInitiateCall function correctly processes these events and makes API calls to /api/calls/initiate. Friendship validation is working as expected - calls are blocked for non-friends with appropriate error messages. Integration between ChatWindow call buttons and Chat page event handlers is working correctly."
 
 metadata:
   created_by: "testing_agent"
