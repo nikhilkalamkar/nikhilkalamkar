@@ -247,8 +247,6 @@ const UserSearch = ({ open, onClose, onUserSelect }) => {
           ))}
         </div>
 
-        </div>
-
         {/* User Profile Modal */}
         <UserProfile
           open={showProfile}
