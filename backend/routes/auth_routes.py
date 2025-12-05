@@ -84,6 +84,8 @@ async def login(user_data: UserLogin, db: AsyncIOMotorDatabase = Depends(get_db)
         )
     
     print(f"[DEBUG] User found: {user.get('email')}, Testing password...")
+    print(f"[DEBUG] Input password: {user_data.password}")
+    print(f"[DEBUG] Stored hash: {user['password'][:60]}...")
     # Verify password
     password_valid = verify_password(user_data.password, user["password"])
     print(f"[DEBUG] Password valid: {password_valid}")
