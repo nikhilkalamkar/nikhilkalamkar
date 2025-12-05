@@ -26,9 +26,14 @@ const ForgotPasswordModal = ({ open, onClose }) => {
     try {
       const response = await axios.post(`${API}/auth/forgot-password`, { identifier });
       setResetToken(response.data.resetToken);
+      // For demo, auto-fill the OTP
+      if (response.data.otp) {
+        setOtp(response.data.otp);
+      }
       toast({
-        title: "Reset Code Sent",
-        description: `A 6-digit code has been sent. For demo: ${response.data.otp}`
+        title: "✅ Reset Code Generated",
+        description: `Your verification code: ${response.data.otp}`,
+        duration: 10000
       });
       setStep(2);
     } catch (error) {
