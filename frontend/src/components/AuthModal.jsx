@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { toast } from '../hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import axios from 'axios';
+import ForgotPasswordModal from './ForgotPasswordModal';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -18,6 +19,7 @@ const AuthModal = ({ open, onClose }) => {
   const [loginData, setLoginData] = useState({ identifier: '', password: '' });
   const [registerData, setRegisterData] = useState({ name: '', email: '', mobile: '', password: '' });
   const [advertiserData, setAdvertiserData] = useState({ businessName: '', email: '', mobile: '', password: '' });
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
