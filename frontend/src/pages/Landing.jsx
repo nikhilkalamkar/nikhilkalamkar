@@ -52,8 +52,21 @@ const Landing = () => {
                 <span className="text-sm text-gray-600 flex items-center">
                   Welcome, {user.name}
                   {user.isPremium && <Crown className="h-4 w-4 ml-1 text-yellow-500" />}
+                  {user.role === 'admin' && <Shield className="h-4 w-4 ml-1 text-red-500" />}
                 </span>
                 <Button variant="ghost" onClick={() => navigate('/chat')}>Launch App</Button>
+                {user.role === 'admin' && (
+                  <Button variant="ghost" onClick={() => navigate('/admin')}>
+                    <Shield className="h-4 w-4 mr-2" />
+                    Admin
+                  </Button>
+                )}
+                {user.role === 'advertiser' && (
+                  <Button variant="ghost" onClick={() => navigate('/advertiser')}>
+                    <TrendingUp className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </Button>
+                )}
                 <Button variant="ghost" size="icon" onClick={logout}>
                   <LogOut className="h-4 w-4" />
                 </Button>
