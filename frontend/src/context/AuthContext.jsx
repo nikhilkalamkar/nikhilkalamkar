@@ -37,7 +37,12 @@ export const AuthProvider = ({ children }) => {
       setToken(response.data.token);
       setUser(response.data.user);
       localStorage.setItem('token', response.data.token);
-      return { success: true };
+      
+      // Return success with user role for redirection
+      return { 
+        success: true, 
+        user: response.data.user 
+      };
     } catch (error) {
       return { success: false, error: error.response?.data?.detail || 'Login failed' };
     }
