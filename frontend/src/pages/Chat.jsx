@@ -444,6 +444,13 @@ const Chat = () => {
           onReject={() => handleRejectCall(incomingCall)}
         />
       )}
+      
+      {/* Permission Guide */}
+      <PermissionGuide
+        isOpen={showPermissionGuide}
+        onClose={proceedWithCall}
+        callType={pendingCallData?.callType || 'audio'}
+      />
     </div>
   );
 };
