@@ -204,7 +204,6 @@ const Chat = () => {
       
       return () => {
         clearInterval(callInterval);
-        window.removeEventListener('callInterval);
         window.removeEventListener('initiateCall', handleInitiateCall);
       };
     }
