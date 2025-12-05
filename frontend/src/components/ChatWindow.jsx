@@ -111,10 +111,28 @@ const ChatWindow = ({ chat, chatDetails, onUpgradeToPremium, onToggleInfo }) => 
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-blue-50">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="text-gray-600 hover:bg-blue-50"
+            onClick={() => chat.type === 'direct' && window.dispatchEvent(new CustomEvent('initiateCall', { 
+              detail: { userId: chat.userId, callType: 'audio' } 
+            }))}
+            disabled={chat.type !== 'direct'}
+            title="Audio Call"
+          >
             <Phone className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-blue-50">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="text-gray-600 hover:bg-blue-50"
+            onClick={() => chat.type === 'direct' && window.dispatchEvent(new CustomEvent('initiateCall', { 
+              detail: { userId: chat.userId, callType: 'video' } 
+            }))}
+            disabled={chat.type !== 'direct'}
+            title="Video Call"
+          >
             <Video className="h-5 w-5" />
           </Button>
           <Button variant="ghost" size="icon" onClick={onToggleInfo} className="text-gray-600 hover:bg-blue-50">
