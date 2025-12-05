@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 # Import routes
-from routes import auth_routes, user_routes, chat_routes, message_routes, payment_routes, admin_routes
+from routes import auth_routes, user_routes, chat_routes, message_routes, payment_routes, admin_routes, advertiser_routes, ads_routes
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -35,6 +35,8 @@ api_router.include_router(chat_routes.router)
 api_router.include_router(message_routes.router)
 api_router.include_router(payment_routes.router)
 api_router.include_router(admin_routes.router)
+api_router.include_router(advertiser_routes.router)
+api_router.include_router(ads_routes.router)
 
 # Include the router in the main app
 app.include_router(api_router)
@@ -42,7 +44,7 @@ app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )

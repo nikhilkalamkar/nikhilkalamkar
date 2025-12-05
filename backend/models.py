@@ -24,7 +24,7 @@ class User(BaseModel):
     isPremium: bool = False
     subscriptionDate: Optional[datetime] = None
     validUntil: Optional[datetime] = None
-    role: str = "user"
+    role: str = "user"  # user, admin, advertiser
     status: str = "offline"
     lastActive: datetime = Field(default_factory=datetime.utcnow)
     createdAt: datetime = Field(default_factory=datetime.utcnow)
@@ -39,6 +39,7 @@ class UserResponse(BaseModel):
     subscriptionDate: Optional[datetime] = None
     status: str = "offline"
     lastActive: Optional[datetime] = None
+    role: str = "user"
 
 class UserPublic(BaseModel):
     id: str
@@ -119,6 +120,64 @@ class Payment(BaseModel):
     status: str = "pending"
     date: datetime = Field(default_factory=datetime.utcnow)
 
+# Advertisement Models
+class AdvertiserCreate(BaseModel):
+    businessName: str
+    email: EmailStr
+    mobile: str
+    password: str
+
+class AdvertisementCreate(BaseModel):
+    title: str
+    description: str
+    imageUrl: str
+    targetUrl: str
+    budget: int  # Minimum 100 rupees
+
+class Advertisement(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    advertiserId: str
+    advertiserName: str
+    title: str
+    description: str
+    imageUrl: str
+    targetUrl: str
+    budget: int
+    spent: int = 0
+    impressions: int = 0
+    clicks: int = 0
+    status: str = "pending"  # pending, approved, rejected, active, paused, completed
+    moderationNote: Optional[str] = None
+    createdAt: datetime = Field(default_factory=datetime.utcnow)
+    startDate: Optional[datetime] = None
+    endDate: Optional[datetime] = None
+
+class AdvertisementResponse(BaseModel):
+    id: str
+    advertiserId: str
+    advertiserName: str
+    title: str
+    description: str
+    imageUrl: str
+    targetUrl: str
+    budget: int
+    spent: int
+    impressions: int
+    clicks: int
+    status: str
+    moderationNote: Optional[str] = None
+    createdAt: datetime
+
+class AdPaymentCreate(BaseModel):
+    advertisementId: str
+    amount: int
+
+class AdImpression(BaseModel):
+    adId: str
+
+class AdClick(BaseModel):
+    adId: str
+
 # Admin Models
 class AdminStats(BaseModel):
     totalUsers: int
@@ -127,6 +186,10 @@ class AdminStats(BaseModel):
     totalRevenue: int
     monthlyRevenue: int
     recentSignups: int
+    totalAdvertisers: int
+    activeAds: int
+    pendingAds: int
+    adRevenue: int
 
 class AdminUser(BaseModel):
     id: str

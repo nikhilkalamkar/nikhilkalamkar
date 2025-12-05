@@ -14,17 +14,18 @@ async def get_admin_stats(current_user: dict = Depends(get_admin_user), db: Asyn
     all_users = await db.users.find().to_list(10000)
     
     # Calculate stats
-    total_users = len(all_users)
-    premium_users = sum(1 for u in all_users if u.get("isPremium", False))
+    total_users = sum(1 for u in all_users if u.get("role") == "user")
+    premium_users = sum(1 for u in all_users if u.get("isPremium", False) and u.get("role") == "user")
+    total_advertisers = sum(1 for u in all_users if u.get("role") == "advertiser")
     
     # Active users (active in last 24 hours)
     now = datetime.utcnow()
     yesterday = now - timedelta(days=1)
-    active_users = sum(1 for u in all_users if u.get("lastActive", datetime.min) > yesterday)
+    active_users = sum(1 for u in all_users if u.get("lastActive", datetime.min) > yesterday and u.get("role") == "user")
     
     # Recent signups (last 30 days)
     thirty_days_ago = now - timedelta(days=30)
-    recent_signups = sum(1 for u in all_users if u.get("createdAt", datetime.min) > thirty_days_ago)
+    recent_signups = sum(1 for u in all_users if u.get("createdAt", datetime.min) > thirty_days_ago and u.get("role") == "user")
     
     # Get all payments
     all_payments = await db.payments.find({"status": "success"}).to_list(10000)
@@ -34,18 +35,28 @@ async def get_admin_stats(current_user: dict = Depends(get_admin_user), db: Asyn
     monthly_payments = [p for p in all_payments if p.get("date", datetime.min) > thirty_days_ago]
     monthly_revenue = sum(p.get("amount", 0) for p in monthly_payments)
     
+    # Advertisement stats
+    all_ads = await db.advertisements.find().to_list(10000)
+    active_ads = sum(1 for ad in all_ads if ad.get("status") == "active")
+    pending_ads = sum(1 for ad in all_ads if ad.get("status") == "pending")
+    ad_revenue = sum(ad.get("spent", 0) for ad in all_ads)
+    
     return AdminStats(
         totalUsers=total_users,
         premiumUsers=premium_users,
         activeUsers=active_users,
         totalRevenue=total_revenue,
         monthlyRevenue=monthly_revenue,
-        recentSignups=recent_signups
+        recentSignups=recent_signups,
+        totalAdvertisers=total_advertisers,
+        activeAds=active_ads,
+        pendingAds=pending_ads,
+        adRevenue=ad_revenue
     )
 
 @router.get("/users", response_model=List[AdminUser])
 async def get_admin_users(current_user: dict = Depends(get_admin_user), db: AsyncIOMotorDatabase = Depends(get_db)):
-    users = await db.users.find().to_list(10000)
+    users = await db.users.find({"role": "user"}).to_list(10000)
     
     return [AdminUser(
         id=u["id"],
