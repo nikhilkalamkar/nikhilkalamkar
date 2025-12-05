@@ -21,26 +21,56 @@ const ForgotPasswordModal = ({ open, onClose }) => {
 
   const handleRequestReset = async (e) => {
     e.preventDefault();
+    
+    // Basic validation
+    if (!identifier || identifier.trim() === '') {
+      toast({
+        title: "Error",
+        description: "Please enter your email or mobile number",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const response = await axios.post(`${API}/auth/forgot-password`, { identifier });
-      setResetToken(response.data.resetToken);
-      // For demo, auto-fill the OTP
-      if (response.data.otp) {
-        setOtp(response.data.otp);
+      const response = await axios.post(`${API}/auth/forgot-password`, { identifier: identifier.trim() });
+      
+      if (response.data && response.data.resetToken) {
+        setResetToken(response.data.resetToken);
+        // For demo, auto-fill the OTP
+        if (response.data.otp) {
+          setOtp(response.data.otp);
+        }
+        toast({
+          title: "✅ Reset Code Generated",
+          description: `Your verification code: ${response.data.otp}`,
+          duration: 10000
+        });
+        setStep(2);
       }
-      toast({
-        title: "✅ Reset Code Generated",
-        description: `Your verification code: ${response.data.otp}`,
-        duration: 10000
-      });
-      setStep(2);
     } catch (error) {
+      console.error('Forgot password error:', error);
+      let errorMessage = "Failed to send reset code";
+      
+      if (error.response) {
+        // Server responded with error
+        if (error.response.status === 404) {
+          errorMessage = "Account not found. Please check your email/mobile number or register first.";
+        } else {
+          errorMessage = error.response.data?.detail || error.response.data?.message || errorMessage;
+        }
+      } else if (error.request) {
+        // Request made but no response
+        errorMessage = "Cannot connect to server. Please check your internet connection.";
+      }
+      
       toast({
         title: "Error",
-        description: error.response?.data?.detail || "Failed to send reset code",
-        variant: "destructive"
+        description: errorMessage,
+        variant: "destructive",
+        duration: 5000
       });
     } finally {
       setIsLoading(false);
