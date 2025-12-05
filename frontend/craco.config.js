@@ -35,6 +35,16 @@ const webpackConfig = {
       '@': path.resolve(__dirname, 'src'),
     },
     configure: (webpackConfig) => {
+      
+      // Add process polyfill for browser
+      webpackConfig.resolve = {
+        ...webpackConfig.resolve,
+        fallback: {
+          ...webpackConfig.resolve?.fallback,
+          "process": require.resolve("process/browser"),
+          "buffer": require.resolve("buffer/")
+        }
+      };
 
       // Disable hot reload completely if environment variable is set
       if (config.disableHotReload) {
