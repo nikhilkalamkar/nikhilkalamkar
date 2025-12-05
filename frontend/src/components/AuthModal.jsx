@@ -59,13 +59,13 @@ const AuthModal = ({ open, onClose }) => {
           <TabsContent value="login">
             <form onSubmit={handleLogin} className="space-y-4 mt-4">
               <div>
-                <Label htmlFor="login-email">Email</Label>
+                <Label htmlFor="login-identifier">Email or Mobile Number</Label>
                 <Input
-                  id="login-email"
-                  type="email"
-                  placeholder="your@email.com"
-                  value={loginData.email}
-                  onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                  id="login-identifier"
+                  type="text"
+                  placeholder="email@example.com or +919876543211"
+                  value={loginData.identifier}
+                  onChange={(e) => setLoginData({ ...loginData, identifier: e.target.value })}
                   required
                 />
               </div>
@@ -84,7 +84,7 @@ const AuthModal = ({ open, onClose }) => {
                 {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Logging in...</> : 'Login'}
               </Button>
             </form>
-            <p className="text-xs text-gray-500 mt-4">Demo: rahul@example.com / password123</p>
+            <p className="text-xs text-gray-500 mt-4">Demo: +919876543211 / password123</p>
           </TabsContent>
 
           <TabsContent value="register">
