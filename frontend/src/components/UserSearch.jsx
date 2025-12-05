@@ -95,6 +95,20 @@ const UserSearch = ({ open, onClose, onUserSelect }) => {
     onClose();
   };
 
+  const handleViewProfile = (userId) => {
+    setSelectedUserId(userId);
+    setShowProfile(true);
+  };
+
+  const handleCloseProfile = () => {
+    setShowProfile(false);
+    setSelectedUserId(null);
+    // Refresh search results to update status
+    if (searchResults.length > 0) {
+      handleSearch();
+    }
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSearch();
@@ -104,41 +118,46 @@ const UserSearch = ({ open, onClose, onUserSelect }) => {
   const getActionButton = (user) => {
     const status = friendshipStatuses[user.id];
     
-    if (status === 'friends') {
-      return (
-        <Button
-          size="sm"
-          onClick={() => handleChatWithFriend(user)}
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          <Search className="h-4 w-4 mr-1" />
-          Chat
-        </Button>
-      );
-    } else if (status === 'request_sent') {
-      return (
-        <Badge variant="secondary" className="text-xs">
-          Request Sent
-        </Badge>
-      );
-    } else if (status === 'request_received') {
-      return (
-        <Badge variant="default" className="text-xs bg-green-600">
-          Accept Request
-        </Badge>
-      );
-    } else {
-      return (
+    return (
+      <div className="flex gap-2">
         <Button
           size="sm"
           variant="outline"
-          onClick={() => handleSendRequest(user)}
+          onClick={() => handleViewProfile(user.id)}
+          className="h-8"
         >
-          <UserPlus className="h-4 w-4 mr-1" />
-          Add
+          <Eye className="h-4 w-4" />
         </Button>
-      );
-    }
+        
+        {status === 'friends' ? (
+          <Button
+            size="sm"
+            onClick={() => handleChatWithFriend(user)}
+            className="bg-blue-600 hover:bg-blue-700 h-8"
+          >
+            Chat
+          </Button>
+        ) : status === 'request_sent' ? (
+          <Badge variant="secondary" className="text-xs flex items-center h-8 px-3">
+            Sent
+          </Badge>
+        ) : status === 'request_received' ? (
+          <Badge variant="default" className="text-xs bg-green-600 flex items-center h-8 px-3">
+            Accept
+          </Badge>
+        ) : (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => handleSendRequest(user)}
+            className="h-8"
+          >
+            <UserPlus className="h-4 w-4 mr-1" />
+            Add
+          </Button>
+        )}
+      </div>
+    );
   };
 
   return (
