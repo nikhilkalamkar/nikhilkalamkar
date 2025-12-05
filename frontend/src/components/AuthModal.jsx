@@ -17,7 +17,7 @@ const AuthModal = ({ open, onClose }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const result = await login(loginData.email, loginData.password);
+    const result = await login(loginData.identifier, loginData.password);
     setIsLoading(false);
     
     if (result.success) {
@@ -31,7 +31,7 @@ const AuthModal = ({ open, onClose }) => {
   const handleRegister = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const result = await register(registerData.name, registerData.email, registerData.password);
+    const result = await register(registerData.name, registerData.email, registerData.password, registerData.mobile);
     setIsLoading(false);
     
     if (result.success) {
