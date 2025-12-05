@@ -179,65 +179,65 @@ test_plan:
   test_priority: "high_first"
 
 frontend:
-  - task: "Friend Request System - Send Requests"
+  - task: "User Profile - Friend Count in Sidebar"
     implemented: true
-    working: true
-    file: "/app/frontend/src/components/UserSearch.jsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        - working: "NA"
-          agent: "main"
-          comment: "Friend request sending functionality implemented in UserSearch component. Users can search for others and send friend requests via 'Add' button. Button changes to 'Request Sent' badge after sending."
-        - working: true
-          agent: "testing"
-          comment: "✅ Friend request sending tested successfully: Search modal opens correctly, can search for users (tested 'Priya'), Add button visible for non-friends, clicking Add sends request with toast notification 'Friend request sent to Priya Sharma', button changes to 'Request Sent' badge immediately. Feature working perfectly."
-
-  - task: "Friend Request System - View & Manage Requests"
-    implemented: true
-    working: true
-    file: "/app/frontend/src/components/FriendRequests.jsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        - working: "NA"
-          agent: "main"
-          comment: "Friend requests modal implemented with Received and Sent tabs. Shows pending requests with user avatars, names, timestamps. Accept/reject buttons for received requests, cancel button for sent requests."
-        - working: true
-          agent: "testing"
-          comment: "✅ Friend requests modal tested successfully: Modal opens from sidebar button, shows 'Received' and 'Sent' tabs, displays pending requests with user avatars, names, and timestamps ('0m ago'), Accept button (green checkmark) and Reject button (X) present for received requests. UI is clean and functional."
-
-  - task: "Friend Request System - Chat Access Control"
-    implemented: true
-    working: true
-    file: "/app/frontend/src/pages/Chat.jsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        - working: "NA"
-          agent: "main"
-          comment: "Chat access control implemented. Users can only chat with friends. UserSearch shows different buttons based on friendship status: 'Add' for non-friends, 'Request Sent' badge if pending, 'Chat' button if friends."
-        - working: true
-          agent: "testing"
-          comment: "✅ Chat access control tested successfully: UserSearch correctly shows different buttons based on friendship status - 'Add' for non-friends, 'Request Sent' badge after sending request, 'Accept Request' badge when request received. System properly tracks friendship states and controls chat access."
-
-  - task: "Friend Request System - UI Integration"
-    implemented: true
-    working: true
+    working: "NA"
     file: "/app/frontend/src/components/ChatSidebar.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
           agent: "main"
-          comment: "Friend request button integrated in chat sidebar with red badge showing pending request count. Button opens friend requests modal. Real-time count updates implemented."
-        - working: true
-          agent: "testing"
-          comment: "✅ UI integration tested successfully: Friend request button visible in chat sidebar with UserPlus icon, red badge shows pending request count ('1'), clicking button opens Friend Requests modal correctly. Badge updates in real-time when requests are received. Clean integration with existing UI."
+          comment: "Friend count display implemented in user profile section of sidebar header. Shows user avatar/initial, name, and friend count with Users icon (e.g., '5 Friends'). Count should update dynamically after accepting/adding friends."
+
+  - task: "User Profile Modal - Eye Icon & View Button"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/UserSearch.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Eye icon button implemented in UserSearch component. Each search result shows 'View' button (eye icon) that opens detailed user profile modal with comprehensive user information."
+
+  - task: "User Profile Modal - Detailed Profile Display"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/UserProfile.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "User profile modal implemented showing large avatar, user name, status badge, premium badge (if applicable), friend count prominently displayed, contact info (email/mobile if friends), and action button (Add Friend/Request Sent/Chat)."
+
+  - task: "Improved Search - Word Matching"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/UserSearch.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Enhanced search functionality implemented to match ANY word in user names. Should find users by partial names like 'Hariom', 'Hariom Narke', or just 'Narke'. Shows 'No Results' message when no matches found."
+
+  - task: "Profile Modal Actions - Friend Request Flow"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/UserProfile.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Profile modal action buttons implemented. Add Friend button changes to 'Request Sent' after clicking, shows toast notification, and status persists when reopening profile. Different buttons shown based on friendship status."
 
 metadata:
   created_by: "testing_agent"
