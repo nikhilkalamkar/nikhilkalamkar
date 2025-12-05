@@ -58,6 +58,36 @@ const Chat = () => {
     }
   };
 
+  const fetchAds = async () => {
+    try {
+      const response = await axiosInstance.get('/ads/active');
+      setAds(response.data);
+    } catch (error) {
+      console.error('Error fetching ads:', error);
+    }
+  };
+
+  const getChatsWithAds = () => {
+    if (user?.isPremium || ads.length === 0) {
+      return chats;
+    }
+
+    // Insert ads after every 10 chats
+    const result = [];
+    let adIndex = 0;
+    
+    chats.forEach((chat, index) => {
+      result.push(chat);
+      // Add ad after every 10 chats
+      if ((index + 1) % 10 === 0 && ads[adIndex] && !closedAdIds.includes(ads[adIndex].id)) {
+        result.push({ ...ads[adIndex], isAd: true });
+        adIndex = (adIndex + 1) % ads.length;
+      }
+    });
+    
+    return result;
+  };
+
   const handleChatSelect = (chat) => {
     setSelectedChat(chat);
     setShowChatInfo(false);
