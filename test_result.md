@@ -235,7 +235,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All user profile features tested and working"
+    - "Call Buttons in Chat Header"
+    - "Call Interface Component"
+    - "Incoming Call Notification"
+    - "Call Integration in Chat Page"
   stuck_tasks: []
   test_all: true
   test_priority: "high_first"
