@@ -235,6 +235,12 @@ const AuthModal = ({ open, onClose }) => {
           </TabsContent>
         </Tabs>
       </DialogContent>
+      
+      {/* Forgot Password Modal */}
+      <ForgotPasswordModal 
+        open={showForgotPassword} 
+        onClose={() => setShowForgotPassword(false)} 
+      />
     </Dialog>
   );
 };
