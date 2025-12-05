@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 # Import routes
-from routes import auth_routes, user_routes, chat_routes, message_routes, payment_routes, admin_routes, advertiser_routes, ads_routes, friend_routes
+from routes import auth_routes, user_routes, chat_routes, message_routes, payment_routes, admin_routes, advertiser_routes, ads_routes, friend_routes, call_routes
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
