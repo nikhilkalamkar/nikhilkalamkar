@@ -123,11 +123,41 @@ const CallInterface = ({
 
     } catch (error) {
       console.error('Error initializing call:', error);
+      
+      let errorTitle = 'Call Failed';
+      let errorMessage = 'Could not access media devices';
+      
+      // Provide specific error messages based on error type
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        errorTitle = 'Permission Denied';
+        errorMessage = callData.callType === 'video' 
+          ? 'Please allow access to your camera and microphone in your browser settings to make video calls.'
+          : 'Please allow access to your microphone in your browser settings to make audio calls.';
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+        errorTitle = 'Device Not Found';
+        errorMessage = callData.callType === 'video'
+          ? 'No camera or microphone found. Please connect a camera and microphone to make video calls.'
+          : 'No microphone found. Please connect a microphone to make audio calls.';
+      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+        errorTitle = 'Device Busy';
+        errorMessage = 'Your camera or microphone is being used by another application. Please close other apps and try again.';
+      } else if (error.name === 'OverconstrainedError' || error.name === 'ConstraintNotSatisfiedError') {
+        errorTitle = 'Device Error';
+        errorMessage = 'Could not find a suitable camera or microphone. Please check your device settings.';
+      } else if (error.name === 'TypeError') {
+        errorTitle = 'Browser Not Supported';
+        errorMessage = 'Your browser does not support audio/video calls. Please use Chrome, Firefox, or Safari.';
+      } else {
+        errorMessage = error.message || errorMessage;
+      }
+      
       toast({
-        title: 'Call Failed',
-        description: error.message || 'Could not access media devices',
-        variant: 'destructive'
+        title: errorTitle,
+        description: errorMessage,
+        variant: 'destructive',
+        duration: 10000 // Show for 10 seconds
       });
+      
       handleEndCall();
     }
   };
