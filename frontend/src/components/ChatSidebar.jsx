@@ -7,7 +7,7 @@ import { Badge } from './ui/badge';
 import { Search, MessageCircle, Home, Shield, Crown, RefreshCw, X } from 'lucide-react';
 import AdBanner from './AdBanner';
 
-const ChatSidebar = ({ chats, users, ads, onChatSelect, selectedChatId, onNavigateHome, onNavigateAdmin, onRefresh, onClose, onCloseAd }) => {
+const ChatSidebar = ({ chats, users, ads, onChatSelect, selectedChatId, onNavigateHome, onNavigateAdmin, onRefresh, onClose, onCloseAd, onSearchUsers }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const getChatInfo = (chat) => {
