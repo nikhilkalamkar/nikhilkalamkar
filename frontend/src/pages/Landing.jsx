@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
-import { MessageCircle, Users, Shield, Zap, Star, Upload, Palette, Crown, LogOut, Menu, X } from 'lucide-react';
+import { MessageCircle, Users, Shield, Zap, Star, Upload, Palette, Crown, LogOut, Menu, X, TrendingUp, DollarSign } from 'lucide-react';
 import { mockPremiumFeatures } from '../mock';
 import PremiumModal from '../components/PremiumModal';
 import AuthModal from '../components/AuthModal';
