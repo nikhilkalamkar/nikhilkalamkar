@@ -105,8 +105,11 @@ const ChatSidebar = ({ chats, users, onChatSelect, selectedChatId, onNavigateHom
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start mb-1">
-                  <div className="flex items-center gap-1">
+                  <div className="flex flex-col">
                     <h3 className="font-semibold text-sm truncate">{chat.name}</h3>
+                    {chat.type === 'direct' && users.find(u => u.id === chat.userId)?.mobile && (
+                      <span className="text-xs text-gray-500">{users.find(u => u.id === chat.userId)?.mobile}</span>
+                    )}
                   </div>
                   <span className="text-xs text-gray-500 flex-shrink-0">
                     {formatTime(chat.lastMessageTime)}
