@@ -3,7 +3,9 @@ from models import UserCreate, UserLogin, UserResponse
 from auth import hash_password, verify_password, create_access_token, get_current_user
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from database import get_db
-from datetime import datetime
+from datetime import datetime, timedelta
+import random
+import uuid
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -59,7 +61,8 @@ async def register(user_data: UserCreate, db: AsyncIOMotorDatabase = Depends(get
             avatar=user.avatar,
             isPremium=user.isPremium,
             subscriptionDate=user.subscriptionDate,
-            status=user.status
+            status=user.status,
+            role=user.role
         ),
         "token": token
     }
@@ -108,7 +111,120 @@ async def login(user_data: UserLogin, db: AsyncIOMotorDatabase = Depends(get_db)
             avatar=user.get("avatar"),
             isPremium=user.get("isPremium", False),
             subscriptionDate=user.get("subscriptionDate"),
-            status="online"
+            status="online",
+            role=user.get("role", "user")
         ),
         "token": token
     }
+
+@router.post("/forgot-password")
+async def forgot_password(data: dict, db: AsyncIOMotorDatabase = Depends(get_db)):
+    identifier = data.get("identifier")
+    
+    # Find user
+    user = await db.users.find_one({
+        "$or": [
+            {"email": identifier},
+            {"mobile": identifier}
+        ]
+    })
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Generate 6-digit OTP
+    otp = str(random.randint(100000, 999999))
+    reset_token = str(uuid.uuid4())
+    
+    # Store reset token in database (expires in 10 minutes)
+    await db.password_resets.insert_one({
+        "userId": user["id"],
+        "identifier": identifier,
+        "otp": otp,
+        "resetToken": reset_token,
+        "createdAt": datetime.utcnow(),
+        "expiresAt": datetime.utcnow() + timedelta(minutes=10),
+        "used": False
+    })
+    
+    # In production, send OTP via email/SMS
+    # For demo, return OTP in response
+    return {
+        "message": "Reset code sent",
+        "resetToken": reset_token,
+        "otp": otp  # Remove this in production
+    }
+
+@router.post("/verify-otp")
+async def verify_otp(data: dict, db: AsyncIOMotorDatabase = Depends(get_db)):
+    identifier = data.get("identifier")
+    otp = data.get("otp")
+    reset_token = data.get("resetToken")
+    
+    # Find reset request
+    reset_request = await db.password_resets.find_one({
+        "identifier": identifier,
+        "otp": otp,
+        "resetToken": reset_token,
+        "used": False
+    })
+    
+    if not reset_request:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired code"
+        )
+    
+    # Check if expired
+    if reset_request["expiresAt"] < datetime.utcnow():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Code has expired"
+        )
+    
+    return {"message": "Code verified successfully"}
+
+@router.post("/reset-password")
+async def reset_password(data: dict, db: AsyncIOMotorDatabase = Depends(get_db)):
+    identifier = data.get("identifier")
+    otp = data.get("otp")
+    reset_token = data.get("resetToken")
+    new_password = data.get("newPassword")
+    
+    # Find reset request
+    reset_request = await db.password_resets.find_one({
+        "identifier": identifier,
+        "otp": otp,
+        "resetToken": reset_token,
+        "used": False
+    })
+    
+    if not reset_request:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired code"
+        )
+    
+    # Check if expired
+    if reset_request["expiresAt"] < datetime.utcnow():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Code has expired"
+        )
+    
+    # Update user password
+    await db.users.update_one(
+        {"id": reset_request["userId"]},
+        {"$set": {"password": hash_password(new_password)}}
+    )
+    
+    # Mark reset request as used
+    await db.password_resets.update_one(
+        {"_id": reset_request["_id"]},
+        {"$set": {"used": True}}
+    )
+    
+    return {"message": "Password reset successfully"}
