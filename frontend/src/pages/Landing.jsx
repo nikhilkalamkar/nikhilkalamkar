@@ -307,9 +307,121 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-gray-50 py-6 md:py-8">
-        <div className="container mx-auto px-4 text-center text-gray-600 text-sm md:text-base">
-          <p>© 2025 ishukart. All rights reserved.</p>
+      <footer className="border-t bg-gray-50 py-8 md:py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            {/* About Section */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <MessageCircle className="h-6 w-6 text-blue-600" />
+                <h3 className="font-bold text-lg">ishukart</h3>
+              </div>
+              <p className="text-sm text-gray-600">
+                Connect with everyone, anywhere, anytime. Experience seamless messaging with powerful features.
+              </p>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="font-semibold mb-4">Quick Links</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Button variant="link" className="p-0 h-auto text-gray-600 hover:text-blue-600" onClick={() => navigate('/chat')}>
+                    Start Chatting
+                  </Button>
+                </li>
+                <li>
+                  <Button variant="link" className="p-0 h-auto text-gray-600 hover:text-blue-600" onClick={() => setShowPremiumModal(true)}>
+                    Go Premium
+                  </Button>
+                </li>
+                <li>
+                  <Button variant="link" className="p-0 h-auto text-gray-600 hover:text-blue-600" onClick={() => setShowAuthModal(true)}>
+                    Advertiser Sign Up
+                  </Button>
+                </li>
+                <li>
+                  <Button variant="link" className="p-0 h-auto text-gray-600 hover:text-blue-600" onClick={() => navigate('/admin')}>
+                    Admin Dashboard
+                  </Button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <h4 className="font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Button variant="link" className="p-0 h-auto text-gray-600 hover:text-blue-600" onClick={() => navigate('/privacy')}>
+                    Privacy Policy
+                  </Button>
+                </li>
+                <li>
+                  <Button variant="link" className="p-0 h-auto text-gray-600 hover:text-blue-600" onClick={() => navigate('/refund')}>
+                    Refund Policy
+                  </Button>
+                </li>
+                <li>
+                  <Button variant="link" className="p-0 h-auto text-gray-600 hover:text-blue-600">
+                    Terms of Service
+                  </Button>
+                </li>
+                <li>
+                  <Button variant="link" className="p-0 h-auto text-gray-600 hover:text-blue-600">
+                    Cookie Policy
+                  </Button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Support */}
+            <div>
+              <h4 className="font-semibold mb-4">Support</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Button variant="link" className="p-0 h-auto text-gray-600 hover:text-blue-600" onClick={() => navigate('/contact')}>
+                    Contact Us
+                  </Button>
+                </li>
+                <li>
+                  <a href="mailto:support@ishukart.com" className="text-gray-600 hover:text-blue-600">
+                    support@ishukart.com
+                  </a>
+                </li>
+                <li>
+                  <a href="tel:+918001234567" className="text-gray-600 hover:text-blue-600">
+                    +91 800 123 4567
+                  </a>
+                </li>
+                <li className="text-gray-500">
+                  Mon-Fri: 9 AM - 6 PM IST
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="border-t pt-6">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <p className="text-sm text-gray-600">
+                © 2025 ishukart. All rights reserved.
+              </p>
+              <div className="flex gap-4 text-sm">
+                <Button variant="link" className="p-0 h-auto text-gray-600 hover:text-blue-600" onClick={() => navigate('/privacy')}>
+                  Privacy
+                </Button>
+                <span className="text-gray-400">•</span>
+                <Button variant="link" className="p-0 h-auto text-gray-600 hover:text-blue-600" onClick={() => navigate('/refund')}>
+                  Refunds
+                </Button>
+                <span className="text-gray-400">•</span>
+                <Button variant="link" className="p-0 h-auto text-gray-600 hover:text-blue-600" onClick={() => navigate('/contact')}>
+                  Contact
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </footer>
 
