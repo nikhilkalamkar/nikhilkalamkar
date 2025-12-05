@@ -43,6 +43,21 @@ const AuthModal = ({ open, onClose }) => {
     }
   };
 
+  const handleAdvertiserRegister = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const response = await axios.post(`${API}/advertiser/register`, advertiserData);
+      localStorage.setItem('token', response.data.token);
+      toast({ title: 'Success', description: 'Advertiser account created!' });
+      window.location.href = '/advertiser';
+    } catch (error) {
+      toast({ title: 'Error', description: error.response?.data?.detail || 'Registration failed', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
