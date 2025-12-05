@@ -164,16 +164,17 @@ const Admin = () => {
                 <CardDescription>Manage and view all registered users</CardDescription>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Subscription</TableHead>
-                      <TableHead>Last Active</TableHead>
-                    </TableRow>
-                  </TableHeader>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="min-w-[120px]">Name</TableHead>
+                        <TableHead className="min-w-[180px]">Email</TableHead>
+                        <TableHead className="min-w-[100px]">Status</TableHead>
+                        <TableHead className="min-w-[120px]">Subscription</TableHead>
+                        <TableHead className="min-w-[100px]">Last Active</TableHead>
+                      </TableRow>
+                    </TableHeader>
                   <TableBody>
                     {users.map((user) => (
                       <TableRow key={user.id}>
