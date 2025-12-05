@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
@@ -15,6 +15,17 @@ const Landing = () => {
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Auto-redirect based on user role
+  useEffect(() => {
+    if (user) {
+      if (user.role === 'advertiser') {
+        navigate('/advertiser');
+      } else if (user.role === 'admin') {
+        navigate('/admin');
+      }
+    }
+  }, [user, navigate]);
 
   const handleChatClick = () => {
     if (!user) {
