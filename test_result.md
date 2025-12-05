@@ -247,7 +247,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All friend request system features tested and working"
+    - "User Profile - Friend Count in Sidebar"
+    - "User Profile Modal - Eye Icon & View Button"
+    - "User Profile Modal - Detailed Profile Display"
+    - "Improved Search - Word Matching"
+    - "Profile Modal Actions - Friend Request Flow"
   stuck_tasks: []
   test_all: true
   test_priority: "high_first"
