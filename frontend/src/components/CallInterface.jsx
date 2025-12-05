@@ -45,6 +45,17 @@ const CallInterface = ({
 
   const initializeCall = async () => {
     try {
+      // Check if mediaDevices is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        toast({
+          title: 'Not Supported',
+          description: 'Your browser does not support audio/video calls. Please use a modern browser like Chrome, Firefox, or Safari.',
+          variant: 'destructive'
+        });
+        handleEndCall();
+        return;
+      }
+
       // Get media stream
       const constraints = {
         audio: true,
