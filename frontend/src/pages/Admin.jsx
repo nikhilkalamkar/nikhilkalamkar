@@ -301,6 +301,112 @@ const Admin = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          {/* Advertisements Tab */}
+          <TabsContent value="ads">
+            <Card>
+              <CardHeader>
+                <CardTitle>Pending Advertisements</CardTitle>
+                <CardDescription>Review and moderate advertisement submissions</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {ads.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>No pending advertisements</p>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {ads.map((ad) => (
+                      <Card key={ad.id} className="border-2">
+                        <CardContent className="pt-6">
+                          <div className="flex flex-col md:flex-row gap-4">
+                            {/* Ad Preview */}
+                            <div className="flex-shrink-0">
+                              {ad.imageUrl && (
+                                <div className="w-full md:w-48 h-48 rounded-lg overflow-hidden border-2">
+                                  <img 
+                                    src={ad.imageUrl} 
+                                    alt={ad.title}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      e.target.src = 'https://via.placeholder.com/300x300?text=Ad+Image';
+                                    }}
+                                  />
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Ad Details */}
+                            <div className="flex-1 space-y-3">
+                              <div>
+                                <h3 className="text-xl font-bold mb-1">{ad.title}</h3>
+                                <p className="text-sm text-gray-600 mb-2">{ad.description}</p>
+                              </div>
+
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                                <div>
+                                  <span className="text-gray-500">Advertiser:</span>
+                                  <p className="font-medium">{ad.advertiserName}</p>
+                                </div>
+                                <div>
+                                  <span className="text-gray-500">Budget:</span>
+                                  <p className="font-medium">₹{ad.budget}</p>
+                                </div>
+                                <div>
+                                  <span className="text-gray-500">Target URL:</span>
+                                  <a href={ad.targetUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">
+                                    {ad.targetUrl.length > 30 ? ad.targetUrl.substring(0, 30) + '...' : ad.targetUrl}
+                                  </a>
+                                </div>
+                                <div>
+                                  <span className="text-gray-500">Submitted:</span>
+                                  <p className="font-medium">{new Date(ad.createdAt).toLocaleDateString()}</p>
+                                </div>
+                              </div>
+
+                              {/* Content Guidelines Warning */}
+                              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm">
+                                <p className="font-semibold text-yellow-900 mb-1">⚠️ Content Review Required</p>
+                                <p className="text-yellow-800">Check for: nudity, violence, misleading claims, inappropriate content</p>
+                              </div>
+
+                              {/* Action Buttons */}
+                              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                                <Button
+                                  onClick={() => handleApproveAd(ad.id)}
+                                  className="bg-green-600 hover:bg-green-700 flex-1"
+                                >
+                                  <CheckCircle className="mr-2 h-4 w-4" />
+                                  Approve & Activate
+                                </Button>
+                                
+                                <div className="flex-1">
+                                  <div className="flex gap-2">
+                                    <Input
+                                      placeholder="Rejection reason (required)"
+                                      value={rejectReason}
+                                      onChange={(e) => setRejectReason(e.target.value)}
+                                      className="flex-1"
+                                    />
+                                    <Button
+                                      onClick={() => handleRejectAd(ad.id, rejectReason)}
+                                      variant="destructive"
+                                    >
+                                      Reject
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
     </div>
