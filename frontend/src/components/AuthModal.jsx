@@ -55,11 +55,17 @@ const AuthModal = ({ open, onClose }) => {
     try {
       const response = await axios.post(`${API}/advertiser/register`, advertiserData);
       localStorage.setItem('token', response.data.token);
-      toast({ title: 'Success', description: 'Advertiser account created!' });
-      window.location.href = '/advertiser';
+      toast({ 
+        title: 'Success', 
+        description: 'Advertiser account created! Redirecting to dashboard...',
+        duration: 3000
+      });
+      // Wait a moment then redirect
+      setTimeout(() => {
+        window.location.href = '/advertiser';
+      }, 1000);
     } catch (error) {
       toast({ title: 'Error', description: error.response?.data?.detail || 'Registration failed', variant: 'destructive' });
-    } finally {
       setIsLoading(false);
     }
   };
