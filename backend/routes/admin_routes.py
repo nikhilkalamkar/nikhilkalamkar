@@ -10,36 +10,88 @@ router = APIRouter(prefix="/admin", tags=["Admin"])
 
 @router.get("/stats", response_model=AdminStats)
 async def get_admin_stats(current_user: dict = Depends(get_admin_user), db: AsyncIOMotorDatabase = Depends(get_db)):
-    # Get all users
-    all_users = await db.users.find().to_list(10000)
-    
-    # Calculate stats
-    total_users = sum(1 for u in all_users if u.get("role") == "user")
-    premium_users = sum(1 for u in all_users if u.get("isPremium", False) and u.get("role") == "user")
-    total_advertisers = sum(1 for u in all_users if u.get("role") == "advertiser")
-    
-    # Active users (active in last 24 hours)
     now = datetime.utcnow()
     yesterday = now - timedelta(days=1)
-    active_users = sum(1 for u in all_users if u.get("lastActive", datetime.min) > yesterday and u.get("role") == "user")
-    
-    # Recent signups (last 30 days)
     thirty_days_ago = now - timedelta(days=30)
-    recent_signups = sum(1 for u in all_users if u.get("createdAt", datetime.min) > thirty_days_ago and u.get("role") == "user")
     
-    # Get all payments
-    all_payments = await db.payments.find({"status": "success"}).to_list(10000)
-    total_revenue = sum(p.get("amount", 0) for p in all_payments)
+    # Use aggregation for user stats - more efficient
+    user_stats = await db.users.aggregate([
+        {
+            "$facet": {
+                "totalUsers": [
+                    {"$match": {"role": "user"}},
+                    {"$count": "count"}
+                ],
+                "premiumUsers": [
+                    {"$match": {"role": "user", "isPremium": True}},
+                    {"$count": "count"}
+                ],
+                "totalAdvertisers": [
+                    {"$match": {"role": "advertiser"}},
+                    {"$count": "count"}
+                ],
+                "activeUsers": [
+                    {"$match": {"role": "user", "lastActive": {"$gt": yesterday}}},
+                    {"$count": "count"}
+                ],
+                "recentSignups": [
+                    {"$match": {"role": "user", "createdAt": {"$gt": thirty_days_ago}}},
+                    {"$count": "count"}
+                ]
+            }
+        }
+    ]).to_list(1)
     
-    # Monthly revenue (last 30 days)
-    monthly_payments = [p for p in all_payments if p.get("date", datetime.min) > thirty_days_ago]
-    monthly_revenue = sum(p.get("amount", 0) for p in monthly_payments)
+    stats = user_stats[0] if user_stats else {}
+    total_users = stats.get("totalUsers", [{}])[0].get("count", 0)
+    premium_users = stats.get("premiumUsers", [{}])[0].get("count", 0)
+    total_advertisers = stats.get("totalAdvertisers", [{}])[0].get("count", 0)
+    active_users = stats.get("activeUsers", [{}])[0].get("count", 0)
+    recent_signups = stats.get("recentSignups", [{}])[0].get("count", 0)
     
-    # Advertisement stats
-    all_ads = await db.advertisements.find().to_list(10000)
-    active_ads = sum(1 for ad in all_ads if ad.get("status") == "active")
-    pending_ads = sum(1 for ad in all_ads if ad.get("status") == "pending")
-    ad_revenue = sum(ad.get("spent", 0) for ad in all_ads)
+    # Payment stats with aggregation
+    payment_stats = await db.payments.aggregate([
+        {"$match": {"status": "success"}},
+        {
+            "$facet": {
+                "total": [
+                    {"$group": {"_id": None, "revenue": {"$sum": "$amount"}}}
+                ],
+                "monthly": [
+                    {"$match": {"date": {"$gt": thirty_days_ago}}},
+                    {"$group": {"_id": None, "revenue": {"$sum": "$amount"}}}
+                ]
+            }
+        }
+    ]).to_list(1)
+    
+    payment_data = payment_stats[0] if payment_stats else {}
+    total_revenue = payment_data.get("total", [{}])[0].get("revenue", 0)
+    monthly_revenue = payment_data.get("monthly", [{}])[0].get("revenue", 0)
+    
+    # Advertisement stats with aggregation
+    ad_stats = await db.advertisements.aggregate([
+        {
+            "$facet": {
+                "activeAds": [
+                    {"$match": {"status": "active"}},
+                    {"$count": "count"}
+                ],
+                "pendingAds": [
+                    {"$match": {"status": "pending"}},
+                    {"$count": "count"}
+                ],
+                "adRevenue": [
+                    {"$group": {"_id": None, "revenue": {"$sum": "$spent"}}}
+                ]
+            }
+        }
+    ]).to_list(1)
+    
+    ad_data = ad_stats[0] if ad_stats else {}
+    active_ads = ad_data.get("activeAds", [{}])[0].get("count", 0)
+    pending_ads = ad_data.get("pendingAds", [{}])[0].get("count", 0)
+    ad_revenue = ad_data.get("adRevenue", [{}])[0].get("revenue", 0)
     
     return AdminStats(
         totalUsers=total_users,
