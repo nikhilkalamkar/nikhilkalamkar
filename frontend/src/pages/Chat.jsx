@@ -310,6 +310,25 @@ const Chat = () => {
           fetchUsers();
         }}
       />
+      
+      {/* Call Components */}
+      {activeCall && (
+        <CallInterface
+          call={activeCall}
+          onEndCall={() => setActiveCall(null)}
+        />
+      )}
+      
+      {incomingCall && (
+        <IncomingCall
+          call={incomingCall}
+          onAccept={() => {
+            setActiveCall(incomingCall);
+            setIncomingCall(null);
+          }}
+          onDecline={() => setIncomingCall(null)}
+        />
+      )}
     </div>
   );
 };
