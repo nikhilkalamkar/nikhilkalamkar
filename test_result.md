@@ -105,89 +105,53 @@
 user_problem_statement: "Test the new friend request system I just implemented in the ishukart chat application comprehensively including sending requests, viewing requests, accepting/rejecting requests, and verifying chat access between friends"
 
 backend:
-  - task: "Authentication APIs - Register/Login"
+  - task: "Friend Request APIs - Send & Status Check"
     implemented: true
-    working: true
-    file: "/app/backend/routes/auth_routes.py"
+    working: "NA"
+    file: "/app/backend/routes/friend_routes.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: true
-          agent: "testing"
-          comment: "All authentication endpoints working correctly. User registration creates new users with proper validation. Login works for all seeded users (admin@ishukart.com, rahul@example.com, priya@example.com). JWT tokens generated and validated properly."
+        - working: "NA"
+          agent: "main"
+          comment: "Friend request APIs implemented: POST /api/friends/request to send requests, GET /api/friends/status/{user_id} to check friendship status. Includes validation for existing friendships and duplicate requests."
 
-  - task: "User Management APIs"
+  - task: "Friend Request APIs - View Requests"
     implemented: true
-    working: true
-    file: "/app/backend/routes/user_routes.py"
+    working: "NA"
+    file: "/app/backend/routes/friend_routes.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: true
-          agent: "testing"
-          comment: "User APIs working correctly. GET /api/users/me returns current user info with proper authentication. GET /api/users returns list of all users (excluding current user) with proper status calculation."
+        - working: "NA"
+          agent: "main"
+          comment: "Friend request viewing APIs implemented: GET /api/friends/requests/received for incoming requests, GET /api/friends/requests/sent for outgoing requests. Returns request details with sender/receiver info."
 
-  - task: "Chat Management APIs"
+  - task: "Friend Request APIs - Accept/Reject/Cancel"
     implemented: true
-    working: true
-    file: "/app/backend/routes/chat_routes.py"
+    working: "NA"
+    file: "/app/backend/routes/friend_routes.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: true
-          agent: "testing"
-          comment: "Chat APIs working correctly. GET /api/chats returns user's chats with proper participant filtering. POST /api/chats creates new direct chats successfully. GET /api/chats/{chat_id}/messages retrieves messages with proper authorization checks."
+        - working: "NA"
+          agent: "main"
+          comment: "Friend request action APIs implemented: PUT /api/friends/request/{id}/accept to accept requests and create friendships, PUT /api/friends/request/{id}/reject to reject requests, DELETE /api/friends/request/{id} to cancel sent requests."
 
-  - task: "Message APIs"
+  - task: "Friendship Management APIs"
     implemented: true
-    working: true
-    file: "/app/backend/routes/message_routes.py"
+    working: "NA"
+    file: "/app/backend/routes/friend_routes.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: true
-          agent: "testing"
-          comment: "Message API working correctly. POST /api/messages sends messages successfully with proper chat validation and updates chat's last message timestamp. Proper authorization ensures users can only send messages to chats they participate in."
-
-  - task: "Payment APIs"
-    implemented: true
-    working: true
-    file: "/app/backend/routes/payment_routes.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        - working: true
-          agent: "testing"
-          comment: "Payment APIs working correctly. POST /api/payment/create-order creates mock payment orders with proper structure. POST /api/payment/verify processes payment verification and updates user premium status correctly. **Note: Payment integration is mocked for testing**"
-
-  - task: "Admin APIs"
-    implemented: true
-    working: true
-    file: "/app/backend/routes/admin_routes.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        - working: true
-          agent: "testing"
-          comment: "Admin APIs working correctly. GET /api/admin/stats returns comprehensive dashboard statistics (total users, premium users, active users, revenue data). GET /api/admin/users returns all users with admin details. GET /api/admin/payments returns payment history. Proper admin authorization enforced."
-
-  - task: "Authentication & Authorization Security"
-    implemented: true
-    working: true
-    file: "/app/backend/auth.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        - working: true
-          agent: "testing"
-          comment: "Security working correctly. Unauthorized requests to protected endpoints properly rejected with 401 status. Admin-only endpoints properly reject regular users with 403 status. JWT token validation working correctly."
+        - working: "NA"
+          agent: "main"
+          comment: "Friendship management APIs implemented: GET /api/friends/list to get all friends, friendship status checking integrated with user search and chat creation. Database collections for friend_requests and friendships created."
 
 metadata:
   created_by: "testing_agent"
