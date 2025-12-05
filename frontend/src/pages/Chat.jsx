@@ -72,13 +72,83 @@ const Chat = () => {
     }
   };
 
-  const handleInitiateCall = (event) => {
-    const { userId, type } = event.detail;
-    setActiveCall({
-      userId,
-      type,
-      status: 'outgoing'
-    });
+  const handleInitiateCall = async (event) => {
+    const { userId, callType } = event.detail;
+    
+    try {
+      // Find user details
+      const userData = users.find(u => u.id === userId) || 
+                       chats.find(c => c.type === 'direct' && c.userId === userId);
+      
+      if (!userData) {
+        toast({
+          title: 'Error',
+          description: 'User not found',
+          variant: 'destructive'
+        });
+        return;
+      }
+      
+      // Initiate call
+      const response = await axiosInstance.post('/calls/initiate', {
+        receiverId: userId,
+        callType: callType
+      });
+      
+      setActiveCall({
+        callId: response.data.callId,
+        isInitiator: true,
+        peerId: userId,
+        peerName: response.data.receiverName || userData.name,
+        callType: callType
+      });
+      
+    } catch (error) {
+      toast({
+        title: 'Call Failed',
+        description: error.response?.data?.detail || 'Could not initiate call',
+        variant: 'destructive'
+      });
+    }
+  };
+  
+  const handleAcceptCall = async (call) => {
+    try {
+      await axiosInstance.post('/calls/respond', {
+        callId: call.callId,
+        action: 'accept'
+      });
+      
+      setActiveCall({
+        callId: call.callId,
+        isInitiator: false,
+        peerId: call.callerId,
+        peerName: call.callerName,
+        callType: call.callType
+      });
+      
+      setIncomingCall(null);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Could not accept call',
+        variant: 'destructive'
+      });
+    }
+  };
+  
+  const handleRejectCall = async (call) => {
+    try {
+      await axiosInstance.post('/calls/respond', {
+        callId: call.callId,
+        action: 'reject'
+      });
+      
+      setIncomingCall(null);
+    } catch (error) {
+      console.error('Error rejecting call:', error);
+      setIncomingCall(null);
+    }
   };
 
   const getChatsWithAds = () => {
