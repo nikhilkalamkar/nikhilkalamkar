@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ChatSidebar from '../components/ChatSidebar';
 import ChatWindow from '../components/ChatWindow';
 import ChatInfo from '../components/ChatInfo';
 import PremiumModal from '../components/PremiumModal';
-import { mockUsers, mockGroups } from '../mock';
+import AuthModal from '../components/AuthModal';
+import { useAuth } from '../context/AuthContext';
+import axiosInstance from '../api/axios';
 
 const Chat = () => {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
   const [selectedChat, setSelectedChat] = useState(null);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [showChatInfo, setShowChatInfo] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [chats, setChats] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      setShowAuthModal(true);
+    }
+  }, [user, loading]);
+
+  useEffect(() => {
+    if (user) {
+      fetchChats();
+      fetchUsers();
+    }
+  }, [user]);
 
   const handleChatSelect = (chat) => {
     setSelectedChat(chat);
