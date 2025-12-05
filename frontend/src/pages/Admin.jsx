@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -6,13 +6,68 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { Badge } from '../components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
 import { Users, Crown, TrendingUp, DollarSign, ArrowLeft, Calendar, CheckCircle } from 'lucide-react';
-import { mockAdminStats, mockAdminUsers, mockPaymentHistory } from '../mock';
+import { useAuth } from '../context/AuthContext';
+import axiosInstance from '../api/axios';
+import AuthModal from '../components/AuthModal';
+import { toast } from '../hooks/use-toast';
 
 const Admin = () => {
   const navigate = useNavigate();
-  const [stats] = useState(mockAdminStats);
-  const [users] = useState(mockAdminUsers);
-  const [payments] = useState(mockPaymentHistory);
+  const { user, loading } = useAuth();
+  const [stats, setStats] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [payments, setPayments] = useState([]);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      setShowAuthModal(true);
+    } else if (user && user.email !== 'admin@ishukart.com') {
+      toast({
+        title: "Access Denied",
+        description: "Admin access required",
+        variant: "destructive"
+      });
+      navigate('/');
+    } else if (user) {
+      fetchAdminData();
+    }
+  }, [user, loading, navigate]);
+
+  const fetchAdminData = async () => {
+    try {
+      const [statsRes, usersRes, paymentsRes] = await Promise.all([
+        axiosInstance.get('/admin/stats'),
+        axiosInstance.get('/admin/users'),
+        axiosInstance.get('/admin/payments')
+      ]);
+      setStats(statsRes.data);
+      setUsers(usersRes.data);
+      setPayments(paymentsRes.data);
+    } catch (error) {
+      console.error('Error fetching admin data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load admin data",
+        variant: "destructive"
+      });
+    }
+  };
+
+  if (!user && !loading) {
+    return <AuthModal open={showAuthModal} onClose={() => navigate('/')} />;
+  }
+
+  if (loading || !stats) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading admin dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   const formatDate = (date) => {
     if (!date) return 'N/A';
