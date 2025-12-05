@@ -69,7 +69,7 @@ class ChatResponse(BaseModel):
     id: str
     type: str
     userId: Optional[str] = None
-    name: str
+    name: Optional[str] = None
     avatar: Optional[str] = None
     lastMessage: Optional[str] = None
     lastMessageTime: Optional[datetime] = None
