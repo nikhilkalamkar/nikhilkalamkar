@@ -131,6 +131,7 @@ const ChatWindow = ({ chat, chatDetails, onUpgradeToPremium, onToggleInfo }) => 
         <div className="space-y-4">
           {messages.map((msg) => {
             const isMe = msg.senderId === 'me';
+            const isMe = msg.senderId === user?.id;
             return (
               <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[70%] ${isMe ? 'order-2' : 'order-1'}`}>
