@@ -11,8 +11,8 @@ import { Loader2 } from 'lucide-react';
 const AuthModal = ({ open, onClose }) => {
   const { login, register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [loginData, setLoginData] = useState({ email: '', password: '' });
-  const [registerData, setRegisterData] = useState({ name: '', email: '', password: '' });
+  const [loginData, setLoginData] = useState({ identifier: '', password: '' });
+  const [registerData, setRegisterData] = useState({ name: '', email: '', mobile: '', password: '' });
 
   const handleLogin = async (e) => {
     e.preventDefault();
