@@ -10,6 +10,7 @@ import UserSearch from '../components/UserSearch';
 import FriendRequests from '../components/FriendRequests';
 import CallInterface from '../components/CallInterface';
 import IncomingCall from '../components/IncomingCall';
+import PermissionGuide from '../components/PermissionGuide';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../api/axios';
 import { Menu } from 'lucide-react';
