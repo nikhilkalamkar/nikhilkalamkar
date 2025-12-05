@@ -160,6 +160,64 @@ const AuthModal = ({ open, onClose }) => {
               </Button>
             </form>
           </TabsContent>
+
+          <TabsContent value="advertiser">
+            <form onSubmit={handleAdvertiserRegister} className="space-y-4 mt-4">
+              <div>
+                <Label htmlFor="advertiser-business">Business Name</Label>
+                <Input
+                  id="advertiser-business"
+                  type="text"
+                  placeholder="Your Business Name"
+                  value={advertiserData.businessName}
+                  onChange={(e) => setAdvertiserData({ ...advertiserData, businessName: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="advertiser-mobile">Mobile Number</Label>
+                <Input
+                  id="advertiser-mobile"
+                  type="tel"
+                  placeholder="+919876543210"
+                  value={advertiserData.mobile}
+                  onChange={(e) => setAdvertiserData({ ...advertiserData, mobile: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="advertiser-email">Email</Label>
+                <Input
+                  id="advertiser-email"
+                  type="email"
+                  placeholder="business@example.com"
+                  value={advertiserData.email}
+                  onChange={(e) => setAdvertiserData({ ...advertiserData, email: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="advertiser-password">Password</Label>
+                <Input
+                  id="advertiser-password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={advertiserData.password}
+                  onChange={(e) => setAdvertiserData({ ...advertiserData, password: e.target.value })}
+                  required
+                  minLength={6}
+                />
+              </div>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-xs text-blue-800">
+                  <strong>Advertiser Benefits:</strong> Promote your business with banner ads. Minimum budget ₹100. Cost ₹20 per impression. All ads are moderated for content quality.
+                </p>
+              </div>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating...</> : 'Create Advertiser Account'}
+              </Button>
+            </form>
+          </TabsContent>
         </Tabs>
       </DialogContent>
     </Dialog>
