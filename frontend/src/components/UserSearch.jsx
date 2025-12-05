@@ -180,8 +180,7 @@ const UserSearch = ({ open, onClose, onUserSelect }) => {
           {searchResults.map((user) => (
             <div
               key={user.id}
-              onClick={() => handleUserClick(user)}
-              className="flex items-center gap-3 p-3 rounded-lg border hover:bg-gray-50 cursor-pointer transition-colors"
+              className="flex items-center gap-3 p-3 rounded-lg border hover:bg-gray-50 transition-colors"
             >
               {/* Avatar */}
               <div className="relative">
