@@ -82,6 +82,27 @@ const Chat = () => {
     }
   };
 
+  const checkIncomingCalls = async () => {
+    try {
+      const response = await axiosInstance.get('/calls/incoming');
+      if (response.data && response.data.length > 0) {
+        const call = response.data[0];
+        setIncomingCall(call);
+      }
+    } catch (error) {
+      console.error('Error checking incoming calls:', error);
+    }
+  };
+
+  const handleInitiateCall = (event) => {
+    const { userId, type } = event.detail;
+    setActiveCall({
+      userId,
+      type,
+      status: 'outgoing'
+    });
+  };
+
   const getChatsWithAds = () => {
     if (user?.isPremium || ads.length === 0) {
       return chats;
