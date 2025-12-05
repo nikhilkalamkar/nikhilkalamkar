@@ -181,51 +181,63 @@ test_plan:
 frontend:
   - task: "Call Buttons in Chat Header"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/components/ChatWindow.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Audio and video call buttons implemented in chat header (lines 114-137). Phone icon for audio calls, Video icon for video calls. Buttons are only enabled for direct chats, disabled for group chats. Click events dispatch custom events to initiate calls."
+        - working: false
+          agent: "testing"
+          comment: "❌ CRITICAL: Cannot test call buttons due to authentication system failure. Login functionality is broken - users cannot access chat page where call buttons are located. Tested multiple approaches (header login, Start Chatting button, direct navigation to /chat) but authentication modal persists and login does not complete successfully. Backend call APIs are properly implemented and included in server.py, but frontend authentication flow is blocking access to chat interface."
 
   - task: "Call Interface Component"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/components/CallInterface.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Call interface component implemented with WebRTC using simple-peer library. Features call controls (mute, video toggle, speaker, end call), local/remote video display, status indicators, and peer-to-peer connection management."
+        - working: false
+          agent: "testing"
+          comment: "❌ CANNOT TEST: Call interface component cannot be accessed due to authentication system preventing users from reaching chat page. Component implementation appears comprehensive with WebRTC integration, but functional testing is blocked by login issues."
 
   - task: "Incoming Call Notification"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/components/IncomingCall.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Incoming call notification component implemented with caller avatar, name display, call type indicator (audio/video), accept/reject buttons, and ringing animation effects."
+        - working: false
+          agent: "testing"
+          comment: "❌ CANNOT TEST: Incoming call notification cannot be tested due to authentication blocking access to chat functionality. Component code looks well-implemented with proper UI elements and animations."
 
   - task: "Call Integration in Chat Page"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/pages/Chat.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Call functionality integrated into main Chat page with state management for active calls and incoming calls. Includes call initiation handlers, accept/reject logic, and polling for incoming calls every 3 seconds."
+        - working: false
+          agent: "testing"
+          comment: "❌ CANNOT TEST: Call integration in Chat page cannot be tested because users cannot successfully authenticate and access the chat page. The authentication modal appears but login submission does not redirect users to chat interface, preventing testing of call functionality."
 
 metadata:
   created_by: "testing_agent"
