@@ -33,6 +33,8 @@ const Chat = () => {
   const [closedAdIds, setClosedAdIds] = useState([]);
   const [activeCall, setActiveCall] = useState(null);
   const [incomingCall, setIncomingCall] = useState(null);
+  const [showPermissionGuide, setShowPermissionGuide] = useState(false);
+  const [pendingCallData, setPendingCallData] = useState(null);
 
   const fetchChats = async () => {
     try {
