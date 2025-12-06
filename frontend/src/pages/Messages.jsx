@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { messages as mockMessages } from '../mock/mockData';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -9,19 +8,23 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../hooks/use-toast';
 import NewMessageModal from '../components/Messages/NewMessageModal';
 import CallModal from '../components/Messages/CallModal';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Messages = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser } = useAuth();
   const { toast } = useToast();
-  const [conversations, setConversations] = useState(mockMessages);
+  const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messageText, setMessageText] = useState('');
   const [showNewMessageModal, setShowNewMessageModal] = useState(false);
   const [showCallModal, setShowCallModal] = useState(false);
   const [callType, setCallType] = useState(null); // 'video' or 'audio'
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [loading, setLoading] = useState(true);
   const fileInputRef = React.useRef(null);
 
   // Handle opening chat from profile page
