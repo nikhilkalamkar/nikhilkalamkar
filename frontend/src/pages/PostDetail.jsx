@@ -82,6 +82,16 @@ const PostDetail = () => {
       allComments.push(newComment);
       localStorage.setItem('ishukart_comments', JSON.stringify(allComments));
       
+      // Create notification for post owner (if not commenting on own post)
+      if (post && post.user && post.user.id !== currentUser?.user_id && post.user.id !== currentUser?.id) {
+        addNotification('comment', {
+          username: currentUser?.username || 'Someone',
+          avatar: currentUser?.avatar || '',
+          postId: postId,
+          text: commentText
+        });
+      }
+      
       toast({
         title: 'Comment posted',
         description: 'Your comment has been added',
