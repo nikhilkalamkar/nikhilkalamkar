@@ -281,7 +281,8 @@ const Messages = () => {
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
               )}
             </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 
