@@ -20,6 +20,12 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
   const { currentUser } = useAuth();
   const { toast } = useToast();
 
+  // Debug log
+  React.useEffect(() => {
+    console.log('[CreatePostModal] Modal mounted and visible');
+    return () => console.log('[CreatePostModal] Modal unmounted');
+  }, []);
+
   const handleImageSelect = (e) => {
     const files = Array.from(e.target.files);
     if (files.length + selectedImages.length > 10) {
