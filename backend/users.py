@@ -54,9 +54,20 @@ async def search_users(
             {"_id": 0}
         ).limit(20).to_list(20)
         
-        # Format user data
+        # Format user data and filter blocked users
         formatted_users = []
         for user in users:
+            user_id = user["user_id"]
+            
+            # Skip if current user blocked this user
+            if user_id in my_blocked_users:
+                continue
+            
+            # Skip if this user blocked current user
+            user_blocked_list = user.get("blocked_users", [])
+            if current_user_id in user_blocked_list:
+                continue
+            
             formatted_users.append({
                 "id": user["user_id"],
                 "username": user["username"],
