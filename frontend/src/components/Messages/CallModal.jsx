@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Video, Phone, Mic, MicOff, VideoOff } from 'lucide-react';
+import { X, Video, Phone, Mic, MicOff, VideoOff, Volume2, VolumeX, Maximize2, PhoneOff } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
@@ -8,6 +8,8 @@ const CallModal = ({ type, user, onClose }) => {
   const [duration, setDuration] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
+  const [isSpeakerOn, setIsSpeakerOn] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     // Simulate call flow
