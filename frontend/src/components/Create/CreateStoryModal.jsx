@@ -145,7 +145,6 @@ const CreateStoryModal = ({ onClose, onStoryCreated }) => {
                   }}
                   type="file"
                   accept="image/*"
-                  capture="environment"
                   onChange={handleMediaSelect}
                   className="hidden"
                 />
