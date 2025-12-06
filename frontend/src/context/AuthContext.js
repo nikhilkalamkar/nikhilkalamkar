@@ -17,13 +17,24 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in (mock for now)
-    const storedUser = localStorage.getItem('ishukart_user');
-    if (storedUser) {
-      setCurrentUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
-    }
-    setLoading(false);
+    // Check if user is logged in
+    const checkAuthStatus = async () => {
+      const storedUser = localStorage.getItem('ishukart_user');
+      if (storedUser) {
+        try {
+          const user = JSON.parse(storedUser);
+          console.log('[AuthContext] Found stored user:', user);
+          setCurrentUser(user);
+          setIsAuthenticated(true);
+        } catch (error) {
+          console.error('[AuthContext] Error parsing stored user:', error);
+          localStorage.removeItem('ishukart_user');
+        }
+      }
+      setLoading(false);
+    };
+    
+    checkAuthStatus();
   }, []);
 
   const login = async (email, password) => {
