@@ -450,7 +450,14 @@ const Messages = () => {
                       <AvatarFallback>{conversation.user.username[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold truncate">{conversation.user.username}</p>
+                      <div className="flex items-center gap-1.5">
+                        <p className="font-semibold truncate">{conversation.user.username}</p>
+                        {isManuallySet && (
+                          <span className="text-xs px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                            📌
+                          </span>
+                        )}
+                      </div>
                       <p className="text-sm text-gray-500 truncate">
                         {conversation.lastMessage} • {formatTime(conversation.lastMessageTime)}
                       </p>
