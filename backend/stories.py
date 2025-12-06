@@ -120,3 +120,60 @@ async def get_story_media(filename: str):
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="Media not found")
     return FileResponse(file_path)
+
+@router.get("/all")
+async def get_all_stories(request: Request):
+    """Get all active stories (not expired)"""
+    try:
+        # Get current user
+        session_token = await get_session_token(request, None)
+        if not session_token:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        session = await db.user_sessions.find_one({"session_token": session_token})
+        if not session:
+            raise HTTPException(status_code=401, detail="Invalid session")
+        
+        current_user_id = session["user_id"]
+        
+        # Get all stories that haven't expired
+        current_time = datetime.now(timezone.utc)
+        stories_cursor = db.stories.find({
+            "expires_at": {"$gt": current_time}
+        })
+        
+        stories = await stories_cursor.to_list(length=100)
+        
+        # Format stories with user info
+        formatted_stories = []
+        for story in stories:
+            # Get user info
+            user = await db.users.find_one({"user_id": story["user_id"]}, {"_id": 0})
+            if not user:
+                continue
+            
+            formatted_story = {
+                "id": story.get("story_id", story.get("_id")),
+                "user": {
+                    "id": user["user_id"],
+                    "username": user["username"],
+                    "fullName": user.get("fullName", ""),
+                    "avatar": user.get("avatar", ""),
+                    "isVerified": user.get("isVerified", False)
+                },
+                "items": story.get("items", []),
+                "hasUnviewed": story.get("hasUnviewed", True)
+            }
+            
+            # Put current user's story first
+            if story["user_id"] == current_user_id:
+                formatted_stories.insert(0, formatted_story)
+            else:
+                formatted_stories.append(formatted_story)
+        
+        return {"stories": formatted_stories}
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
