@@ -1,14 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { notifications as mockNotifications } from '../mock/mockData';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Heart, MessageCircle, UserPlus, Trash2 } from 'lucide-react';
+import { markAllAsRead, clearAllNotifications } from '../utils/notifications';
 
 const Notifications = () => {
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState(mockNotifications);
+  const [notifications, setNotifications] = useState([]);
   const [activeTab, setActiveTab] = useState('all');
+
+  useEffect(() => {
+    loadNotifications();
+  }, []);
+
+  const loadNotifications = () => {
+    const localNotifications = JSON.parse(localStorage.getItem('ishukart_notifications') || '[]');
+    const allNotifications = [...localNotifications, ...mockNotifications];
+    setNotifications(allNotifications);
+    
+    // Mark all as read
+    markAllAsRead();
+  };
 
   const formatTimeAgo = (date) => {
     const now = new Date();
