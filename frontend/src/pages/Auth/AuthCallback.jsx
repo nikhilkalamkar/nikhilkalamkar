@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const AuthCallback = () => {
   const navigate = useNavigate();
+  const { refreshAuth } = useAuth();
   const [status, setStatus] = useState('Processing authentication...');
   const [error, setError] = useState(null);
 
