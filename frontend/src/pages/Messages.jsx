@@ -63,7 +63,8 @@ const Messages = () => {
       const newConversations = response.data.conversations || [];
       
       // Only update if there are actual changes
-      if (JSON.stringify(newConversations) !== JSON.stringify(conversations)) {
+      if (JSON.stringify(newConversations) !== JSON.stringify(conversationsRef.current)) {
+        conversationsRef.current = newConversations;
         setConversations(newConversations);
       }
     } catch (error) {
