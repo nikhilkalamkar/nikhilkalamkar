@@ -325,18 +325,44 @@ const Messages = () => {
             <Button 
               variant="ghost" 
               size="sm" 
-              className={`flex-1 ${activeTab === 'primary' ? 'bg-gray-100 dark:bg-gray-800 font-semibold' : ''}`}
+              className={`flex-1 relative ${activeTab === 'primary' ? 'bg-gray-100 dark:bg-gray-800 font-semibold' : ''}`}
               onClick={() => setActiveTab('primary')}
             >
               Primary
+              {conversations.filter(conv => {
+                const lastMessageTime = new Date(conv.lastMessageTime);
+                const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                return conv.unreadCount > 0 || lastMessageTime > dayAgo;
+              }).length > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 bg-blue-500 text-white text-xs rounded-full">
+                  {conversations.filter(conv => {
+                    const lastMessageTime = new Date(conv.lastMessageTime);
+                    const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                    return conv.unreadCount > 0 || lastMessageTime > dayAgo;
+                  }).length}
+                </span>
+              )}
             </Button>
             <Button 
               variant="ghost" 
               size="sm" 
-              className={`flex-1 ${activeTab === 'general' ? 'bg-gray-100 dark:bg-gray-800 font-semibold' : ''}`}
+              className={`flex-1 relative ${activeTab === 'general' ? 'bg-gray-100 dark:bg-gray-800 font-semibold' : ''}`}
               onClick={() => setActiveTab('general')}
             >
               General
+              {conversations.filter(conv => {
+                const lastMessageTime = new Date(conv.lastMessageTime);
+                const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                return conv.unreadCount === 0 && lastMessageTime <= dayAgo;
+              }).length > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 bg-gray-500 text-white text-xs rounded-full">
+                  {conversations.filter(conv => {
+                    const lastMessageTime = new Date(conv.lastMessageTime);
+                    const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                    return conv.unreadCount === 0 && lastMessageTime <= dayAgo;
+                  }).length}
+                </span>
+              )}
             </Button>
           </div>
         </div>
