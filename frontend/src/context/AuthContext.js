@@ -78,13 +78,19 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
   };
 
+  const refreshAuth = () => {
+    console.log('[AuthContext] Manual refresh triggered');
+    return checkAuthStatus();
+  };
+
   const value = {
     currentUser,
     isAuthenticated,
     loading,
     login,
     signup,
-    logout
+    logout,
+    refreshAuth
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
