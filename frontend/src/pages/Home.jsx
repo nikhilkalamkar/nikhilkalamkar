@@ -32,9 +32,17 @@ const Home = () => {
 
   const handleFollow = (userId) => {
     setSuggestions(prev =>
-      prev.map(user =>
-        user.id === userId ? { ...user, isFollowing: !user.isFollowing } : user
-      )
+      prev.map(user => {
+        if (user.id === userId) {
+          const newFollowState = !user.isFollowing;
+          toast({
+            title: newFollowState ? 'Following' : 'Unfollowed',
+            description: newFollowState ? `You are now following ${user.username}` : `Unfollowed ${user.username}`,
+          });
+          return { ...user, isFollowing: newFollowState };
+        }
+        return user;
+      })
     );
   };
 
