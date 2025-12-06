@@ -263,7 +263,7 @@ const Profile = () => {
                 <Button 
                   variant="secondary" 
                   size="sm"
-                  onClick={() => navigate('/messages', { state: { openChatWith: profile } })}
+                  onClick={handleMessage}
                 >
                   Message
                 </Button>
