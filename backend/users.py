@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 from auth import get_session_token
+from pydantic import BaseModel
 
 # Load environment variables
 ROOT_DIR = Path(__file__).parent
