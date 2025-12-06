@@ -303,6 +303,18 @@ const Messages = () => {
     }
   }, [selectedConversation?.messages?.length]);
 
+  // Close reaction picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (showReactionPicker && !e.target.closest('.reaction-picker-container')) {
+        setShowReactionPicker(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [showReactionPicker]);
+
   const formatTime = (date) => {
     const messageDate = new Date(date);
     const now = new Date();
