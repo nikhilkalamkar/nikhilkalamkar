@@ -216,7 +216,7 @@ const StoryViewer = () => {
       </div>
 
       {/* Next story area */}
-      {(currentItemIndex < currentStory.items.length - 1 || currentStoryIndex < userStories.length - 1) && (
+      {currentStory && (currentItemIndex < currentStory.items.length - 1 || currentStoryIndex < allStories.length - 1) && (
         <button
           onClick={handleNext}
           className="absolute right-4 z-40 text-white hover:opacity-70"
