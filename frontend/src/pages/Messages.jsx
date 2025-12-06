@@ -376,7 +376,7 @@ const Messages = () => {
   };
 
   // Handle double tap to like message
-  const handleMessageDoubleTap = (messageId) => {
+  const handleMessageDoubleTap = async (messageId) => {
     const now = Date.now();
     const lastTap = lastTapRef.current[messageId] || 0;
     const timeDiff = now - lastTap;
@@ -396,6 +396,15 @@ const Messages = () => {
       setTimeout(() => {
         setShowHeartAnimation(null);
       }, 1000);
+
+      // Send like to backend
+      try {
+        await axios.post(`${BACKEND_URL}/api/messages/like/${messageId}`, {}, {
+          withCredentials: true
+        });
+      } catch (error) {
+        console.error('Error liking message:', error);
+      }
 
       // Reset tap time
       lastTapRef.current[messageId] = 0;
