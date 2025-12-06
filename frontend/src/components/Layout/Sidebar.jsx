@@ -123,17 +123,25 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* Create Post Modal - will be implemented */}
+      {/* Create Modals */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center" onClick={() => setShowCreateModal(false)}>
-          <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold mb-4">Create New Post</h2>
-            <p className="text-gray-600 dark:text-gray-400">Post creation feature coming soon!</p>
-            <Button onClick={() => setShowCreateModal(false)} className="mt-4 w-full">
-              Close
-            </Button>
-          </div>
-        </div>
+        <CreatePostModal
+          onClose={() => setShowCreateModal(false)}
+          onPostCreated={() => {
+            setShowCreateModal(false);
+            navigate('/');
+          }}
+        />
+      )}
+
+      {showCreateStoryModal && (
+        <CreateStoryModal
+          onClose={() => setShowCreateStoryModal(false)}
+          onStoryCreated={() => {
+            setShowCreateStoryModal(false);
+            navigate('/');
+          }}
+        />
       )}
     </>
   );
