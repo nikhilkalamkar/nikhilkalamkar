@@ -189,10 +189,12 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
           )}
 
           <input
+            id="post-image-input"
             ref={fileInputRef}
             type="file"
             multiple
-            accept="image/*"
+            accept="image/*,video/*"
+            capture="environment"
             onChange={handleImageSelect}
             className="hidden"
           />
