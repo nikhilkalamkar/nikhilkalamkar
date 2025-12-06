@@ -190,21 +190,27 @@ const StoryViewer = () => {
 
         {/* Story content */}
         <div className="relative w-full h-full rounded-lg overflow-hidden">
-          {currentItem && currentItem.type === 'image' ? (
-            <img
-              src={currentItem.url}
-              alt="Story"
-              className="w-full h-full object-cover"
-              onClick={() => setIsPaused(!isPaused)}
-            />
+          {currentItem ? (
+            currentItem.type === 'image' ? (
+              <img
+                src={currentItem.url}
+                alt="Story"
+                className="w-full h-full object-cover"
+                onClick={() => setIsPaused(!isPaused)}
+              />
+            ) : (
+              <video
+                src={currentItem.url}
+                className="w-full h-full object-cover"
+                autoPlay
+                muted={isPaused}
+                onClick={() => setIsPaused(!isPaused)}
+              />
+            )
           ) : (
-            <video
-              src={currentItem.url}
-              className="w-full h-full object-cover"
-              autoPlay
-              muted={isPaused}
-              onClick={() => setIsPaused(!isPaused)}
-            />
+            <div className="w-full h-full flex items-center justify-center bg-gray-900">
+              <p className="text-white">Loading story...</p>
+            </div>
           )}
         </div>
       </div>
