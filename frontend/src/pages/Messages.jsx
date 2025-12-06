@@ -425,29 +425,80 @@ const Messages = () => {
               </p>
             </div>
           ) : (
-            filteredConversations.map((conversation) => (
-              <div
-                key={conversation.id}
-                className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors ${
-                  selectedConversation?.id === conversation.id ? 'bg-gray-100 dark:bg-gray-900' : ''
-                }`}
-                onClick={() => handleSelectConversation(conversation)}
-              >
-              <Avatar className="w-14 h-14">
-                <AvatarImage src={conversation.user.avatar} />
-                <AvatarFallback>{conversation.user.username[0].toUpperCase()}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold truncate">{conversation.user.username}</p>
-                <p className="text-sm text-gray-500 truncate">
-                  {conversation.lastMessage} • {formatTime(conversation.lastMessageTime)}
-                </p>
-              </div>
-              {conversation.unreadCount > 0 && (
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              )}
-            </div>
-            ))
+            filteredConversations.map((conversation) => {
+              // Determine current category
+              const currentCategory = conversationCategories[conversation.id] || 
+                (() => {
+                  const lastMessageTime = new Date(conversation.lastMessageTime);
+                  const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                  return (conversation.unreadCount > 0 || lastMessageTime > dayAgo) ? 'primary' : 'general';
+                })();
+              
+              return (
+                <div
+                  key={conversation.id}
+                  className={`flex items-center gap-3 p-4 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors group relative ${
+                    selectedConversation?.id === conversation.id ? 'bg-gray-100 dark:bg-gray-900' : ''
+                  }`}
+                >
+                  <div 
+                    className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
+                    onClick={() => handleSelectConversation(conversation)}
+                  >
+                    <Avatar className="w-14 h-14">
+                      <AvatarImage src={conversation.user.avatar} />
+                      <AvatarFallback>{conversation.user.username[0].toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold truncate">{conversation.user.username}</p>
+                      <p className="text-sm text-gray-500 truncate">
+                        {conversation.lastMessage} • {formatTime(conversation.lastMessageTime)}
+                      </p>
+                    </div>
+                    {conversation.unreadCount > 0 && (
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    )}
+                  </div>
+                  
+                  {/* Move conversation dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {currentCategory === 'general' ? (
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            moveConversation(conversation.id, 'primary');
+                          }}
+                        >
+                          <Inbox className="w-4 h-4 mr-2" />
+                          Move to Primary
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            moveConversation(conversation.id, 'general');
+                          }}
+                        >
+                          <FolderInput className="w-4 h-4 mr-2" />
+                          Move to General
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              );
+            })
           )}
         </div>
       </div>
