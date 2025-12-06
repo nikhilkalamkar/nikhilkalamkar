@@ -151,6 +151,17 @@ const Home = () => {
           <p>© 2025 ISHUKART</p>
         </div>
       </div>
+
+      {/* Create Story Modal */}
+      {showCreateStoryModal && (
+        <CreateStoryModal
+          onClose={() => setShowCreateStoryModal(false)}
+          onStoryCreated={() => {
+            setShowCreateStoryModal(false);
+            window.location.reload();
+          }}
+        />
+      )}
     </div>
   );
 };
