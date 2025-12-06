@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../hooks/use-toast';
 import BoostPostModal from '../Post/BoostPostModal';
 
 const Post = ({ post, onLike, onSave, onComment }) => {
@@ -14,6 +15,7 @@ const Post = ({ post, onLike, onSave, onComment }) => {
   const [showBoostModal, setShowBoostModal] = useState(false);
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const { toast } = useToast();
 
   const handleLike = () => {
     const newLiked = !liked;
