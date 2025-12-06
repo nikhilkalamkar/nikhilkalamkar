@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { messages as mockMessages } from '../mock/mockData';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
@@ -11,12 +11,23 @@ import NewMessageModal from '../components/Messages/NewMessageModal';
 
 const Messages = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentUser } = useAuth();
   const { toast } = useToast();
   const [conversations, setConversations] = useState(mockMessages);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messageText, setMessageText] = useState('');
   const [showNewMessageModal, setShowNewMessageModal] = useState(false);
+
+  // Handle opening chat from profile page
+  useEffect(() => {
+    if (location.state?.openChatWith) {
+      const user = location.state.openChatWith;
+      handleNewConversation(user);
+      // Clear the state
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state]);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
