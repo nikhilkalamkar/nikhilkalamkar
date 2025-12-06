@@ -2,9 +2,15 @@ from fastapi import APIRouter, HTTPException, Response, Request, Header
 from pydantic import BaseModel
 from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime, timezone, timedelta
+from dotenv import load_dotenv
+from pathlib import Path
 import os
 import httpx
 import uuid
+
+# Load environment variables
+ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / '.env')
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
