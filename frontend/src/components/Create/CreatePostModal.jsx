@@ -65,12 +65,22 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
     setLoading(true);
 
     try {
-      // For now, create a mock post since backend needs proper auth
-      // This will be replaced with actual API call when auth is set up
+      // Convert images to base64 for persistent storage
+      const imagePromises = selectedImages.map(img => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(img.file);
+        });
+      });
+
+      const base64Images = await Promise.all(imagePromises);
+
+      // Create post with base64 images
       const mockPost = {
         id: `post_${Date.now()}`,
         user: currentUser,
-        images: selectedImages.map(img => img.preview),
+        images: base64Images,
         caption: caption,
         location: location || null,
         likes: 0,
@@ -80,7 +90,7 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
         createdAt: new Date().toISOString()
       };
 
-      // Store in localStorage for now
+      // Store in localStorage
       const existingPosts = JSON.parse(localStorage.getItem('ishukart_posts') || '[]');
       existingPosts.unshift(mockPost);
       localStorage.setItem('ishukart_posts', JSON.stringify(existingPosts));
@@ -90,7 +100,8 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
         description: 'Your post has been published successfully',
       });
 
-      // Clean up previews but keep data URLs for mock
+      // Clean up blob URLs
+      selectedImages.forEach(img => URL.revokeObjectURL(img.preview));
       
       if (onPostCreated) {
         onPostCreated(mockPost);
