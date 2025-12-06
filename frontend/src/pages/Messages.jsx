@@ -666,6 +666,8 @@ const Messages = () => {
                   const isOwnMessage = message.senderId === (currentUser?.user_id || currentUser?.id);
                   const isLiked = likedMessages[message.id];
                   const showHeart = showHeartAnimation === message.id;
+                  const reactions = messageReactions[message.id] || {};
+                  const hasReactions = Object.keys(reactions).some(emoji => reactions[emoji].length > 0);
                   
                   return (
                     <div
@@ -674,7 +676,7 @@ const Messages = () => {
                         isOwnMessage ? 'justify-end' : 'justify-start'
                       }`}
                     >
-                      <div className="relative">
+                      <div className="relative group">
                         {/* Message Bubble Container */}
                         <div className={`flex items-end gap-1 ${isOwnMessage ? 'flex-row-reverse' : 'flex-row'}`}>
                           {/* Message Content */}
@@ -711,6 +713,68 @@ const Messages = () => {
                                   className="w-16 h-16 text-red-500 fill-red-500 animate-ping"
                                   style={{ animationDuration: '0.5s', animationIterationCount: '2' }}
                                 />
+                              </div>
+                            )}
+
+                            {/* Reaction button - shows on hover */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowReactionPicker(showReactionPicker === message.id ? null : message.id);
+                              }}
+                              className={`absolute ${isOwnMessage ? '-left-8' : '-right-8'} top-1/2 -translate-y-1/2 w-6 h-6 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110`}
+                            >
+                              <Smile className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                            </button>
+
+                            {/* Reaction Picker */}
+                            {showReactionPicker === message.id && (
+                              <div 
+                                className={`absolute ${isOwnMessage ? 'right-0' : 'left-0'} top-full mt-2 bg-white dark:bg-gray-800 rounded-full shadow-xl border border-gray-200 dark:border-gray-700 p-2 flex gap-1 z-20 animate-in fade-in slide-in-from-top-2`}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {quickReactions.map((emoji) => (
+                                  <button
+                                    key={emoji}
+                                    onClick={() => addReaction(message.id, emoji)}
+                                    className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all hover:scale-125 active:scale-110"
+                                  >
+                                    <span className="text-xl">{emoji}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Display reactions */}
+                            {hasReactions && (
+                              <div className={`absolute -bottom-2 ${isOwnMessage ? 'right-0' : 'left-0'} flex gap-1 flex-wrap max-w-xs`}>
+                                {Object.entries(reactions).map(([emoji, users]) => {
+                                  if (users.length === 0) return null;
+                                  const currentUserId = currentUser?.user_id || currentUser?.id;
+                                  const userReacted = users.includes(currentUserId);
+                                  
+                                  return (
+                                    <button
+                                      key={emoji}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        addReaction(message.id, emoji);
+                                      }}
+                                      className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs transition-all hover:scale-110 ${
+                                        userReacted 
+                                          ? 'bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-500' 
+                                          : 'bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600'
+                                      }`}
+                                    >
+                                      <span>{emoji}</span>
+                                      {users.length > 1 && (
+                                        <span className="text-gray-600 dark:text-gray-400 font-medium">
+                                          {users.length}
+                                        </span>
+                                      )}
+                                    </button>
+                                  );
+                                })}
                               </div>
                             )}
                           </div>
