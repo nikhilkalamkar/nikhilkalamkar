@@ -45,9 +45,9 @@ const Home = () => {
       // If post doesn't exist in backend (404), just update local state
       // This handles posts created in localStorage that aren't in DB yet
       if (error.response?.status === 404) {
-        // Update UI anyway for localStorage posts
-        setPosts(prevPosts => 
-          prevPosts.map(post => {
+        // Update UI and localStorage for localStorage posts
+        setPosts(prevPosts => {
+          const updatedPosts = prevPosts.map(post => {
             if (post.id === postId) {
               const currentLikes = post.likes || 0;
               return {
@@ -57,8 +57,25 @@ const Home = () => {
               };
             }
             return post;
-          })
-        );
+          });
+          
+          // Save updated posts to localStorage
+          const localPosts = JSON.parse(localStorage.getItem('ishukart_posts') || '[]');
+          const updatedLocalPosts = localPosts.map(post => {
+            if (post.id === postId) {
+              const currentLikes = post.likes || 0;
+              return {
+                ...post,
+                isLiked: isLiked,
+                likes: isLiked ? currentLikes + 1 : Math.max(0, currentLikes - 1)
+              };
+            }
+            return post;
+          });
+          localStorage.setItem('ishukart_posts', JSON.stringify(updatedLocalPosts));
+          
+          return updatedPosts;
+        });
       } else {
         // Only show error for non-404 errors
         toast({
