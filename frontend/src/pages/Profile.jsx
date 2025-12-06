@@ -44,6 +44,12 @@ const Profile = () => {
               withCredentials: true
             });
             userProfile = response.data.user;
+            
+            // Check if blocked
+            const blockCheck = await axios.get(`${BACKEND_URL}/api/block/check/${userProfile.id}`, {
+              withCredentials: true
+            });
+            setIsBlocked(blockCheck.data.is_blocked);
           } catch (apiError) {
             console.log('API failed, using mock data:', apiError);
             // Fallback to mock data
