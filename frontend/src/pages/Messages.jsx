@@ -26,6 +26,7 @@ const Messages = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [loading, setLoading] = useState(true);
   const fileInputRef = React.useRef(null);
+  const messagesEndRef = React.useRef(null);
 
   // Fetch conversations
   useEffect(() => {
