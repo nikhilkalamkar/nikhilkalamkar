@@ -132,46 +132,45 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
           {/* Image/Video Upload Buttons - Like Story Modal */}
           {selectedImages.length === 0 ? (
             <div className="space-y-4 mb-4">
-              <button
-                type="button"
-                onClick={() => imageInputRef.current?.click()}
-                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center cursor-pointer hover:border-purple-400 active:border-purple-500 transition-colors active:scale-[0.98]"
-              >
-                <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <ImageIcon className="w-8 h-8 text-white" />
+              {/* Photo Upload */}
+              <div className="relative">
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  style={{ fontSize: '0px' }}
+                />
+                <div className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center hover:border-purple-400 active:border-purple-500 transition-colors active:bg-purple-50 dark:active:bg-purple-900/10">
+                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <ImageIcon className="w-8 h-8 text-white" />
+                  </div>
+                  <p className="text-lg font-semibold mb-1">📸 Add Photo</p>
+                  <p className="text-sm text-gray-500">Tap anywhere here to select photos</p>
                 </div>
-                <p className="text-lg font-semibold mb-1">Add Photo</p>
-                <p className="text-sm text-gray-500">Tap to share photos to your feed</p>
-              </button>
+              </div>
 
-              <button
-                type="button"
-                onClick={() => videoInputRef.current?.click()}
-                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center cursor-pointer hover:border-purple-400 active:border-purple-500 transition-colors active:scale-[0.98]"
-              >
-                <div className="bg-gradient-to-r from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Video className="w-8 h-8 text-white" />
+              {/* Video Upload */}
+              <div className="relative">
+                <input
+                  ref={videoInputRef}
+                  type="file"
+                  multiple
+                  accept="video/*"
+                  onChange={handleImageSelect}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  style={{ fontSize: '0px' }}
+                />
+                <div className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center hover:border-purple-400 active:border-purple-500 transition-colors active:bg-blue-50 dark:active:bg-blue-900/10">
+                  <div className="bg-gradient-to-r from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Video className="w-8 h-8 text-white" />
+                  </div>
+                  <p className="text-lg font-semibold mb-1">🎥 Add Video</p>
+                  <p className="text-sm text-gray-500">Tap anywhere here to select videos</p>
                 </div>
-                <p className="text-lg font-semibold mb-1">Add Video</p>
-                <p className="text-sm text-gray-500">Tap to share videos to your feed</p>
-              </button>
-
-              <input
-                ref={imageInputRef}
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleImageSelect}
-                className="hidden"
-              />
-              <input
-                ref={videoInputRef}
-                type="file"
-                multiple
-                accept="video/*"
-                onChange={handleImageSelect}
-                className="hidden"
-              />
+              </div>
             </div>
           ) : null}
 
