@@ -42,6 +42,27 @@ const Post = ({ post, onLike, onSave, onComment }) => {
     setShowShareModal(true);
   };
 
+  const handleDeletePost = () => {
+    if (window.confirm('Are you sure you want to delete this post?')) {
+      // Remove from localStorage
+      const posts = JSON.parse(localStorage.getItem('ishukart_posts') || '[]');
+      const updatedPosts = posts.filter(p => p.id !== post.id);
+      localStorage.setItem('ishukart_posts', JSON.stringify(updatedPosts));
+      
+      toast({
+        title: 'Post deleted',
+        description: 'Your post has been deleted successfully',
+      });
+      
+      // Refresh the page to show updated feed
+      window.location.reload();
+    }
+  };
+
+  const isOwnPost = post.user?.username === currentUser?.username || 
+                    post.user?.id === currentUser?.id || 
+                    post.user?.user_id === currentUser?.user_id;
+
   const handlePrevImage = () => {
     setCurrentImageIndex(prev => (prev > 0 ? prev - 1 : post.images.length - 1));
   };
