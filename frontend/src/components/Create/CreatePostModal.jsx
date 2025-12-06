@@ -151,11 +151,11 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
           {selectedImages.length === 0 ? (
             <label
               htmlFor="post-image-input"
-              className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-12 text-center cursor-pointer hover:border-purple-400 transition-colors active:scale-95 block"
+              className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 sm:p-12 text-center cursor-pointer hover:border-purple-400 active:border-purple-500 transition-colors active:scale-98 block touch-none"
             >
-              <ImageIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-              <p className="text-lg font-semibold mb-2">Select photos</p>
-              <p className="text-sm text-gray-500">Tap to choose from gallery</p>
+              <ImageIcon className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 text-gray-400" />
+              <p className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">📸 Select photos or videos</p>
+              <p className="text-xs sm:text-sm text-gray-500">Tap here to upload from your device</p>
             </label>
           ) : (
             <div>
