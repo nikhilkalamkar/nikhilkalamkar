@@ -135,7 +135,7 @@ const Settings = () => {
           <a href="#" className="hover:underline">Privacy</a>
           <a href="#" className="hover:underline">Terms</a>
         </div>
-        <p>© 2025 INSTAGRAM CLONE</p>
+        <p>© 2025 ISHUKART</p>
       </div>
     </div>
   );
