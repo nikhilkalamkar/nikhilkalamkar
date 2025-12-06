@@ -12,6 +12,10 @@ import Profile from "./pages/Profile";
 import Explore from "./pages/Explore";
 import Messages from "./pages/Messages";
 import Search from "./pages/Search";
+import Reels from "./pages/Reels";
+import Notifications from "./pages/Notifications";
+import Saved from "./pages/Saved";
+import Settings from "./pages/Settings";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
