@@ -164,7 +164,28 @@ const Post = ({ post, onLike, onSave, onComment }) => {
         <div className="text-xs text-gray-400 mt-1 uppercase">
           {formatTimeAgo(post.createdAt)} ago
         </div>
+
+        {/* Boost Button - Only for post owner */}
+        {currentUser?.username === post.user.username && (
+          <Button
+            onClick={() => setShowBoostModal(true)}
+            variant="outline"
+            size="sm"
+            className="mt-3 w-full gap-2 border-purple-300 text-purple-600 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-400 dark:hover:bg-purple-900/10"
+          >
+            <TrendingUp className="w-4 h-4" />
+            Boost this post
+          </Button>
+        )}
       </div>
+
+      {/* Boost Modal */}
+      {showBoostModal && (
+        <BoostPostModal
+          post={post}
+          onClose={() => setShowBoostModal(false)}
+        />
+      )}
     </div>
   );
 };
