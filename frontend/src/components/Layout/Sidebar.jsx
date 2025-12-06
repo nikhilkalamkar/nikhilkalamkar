@@ -15,6 +15,7 @@ import {
 import CreatePostModal from '../Create/CreatePostModal';
 import CreateStoryModal from '../Create/CreateStoryModal';
 import GoLiveModal from '../Live/GoLiveModal';
+import CreateOptionsModal from '../Create/CreateOptionsModal';
 
 const Sidebar = () => {
   const location = useLocation();
