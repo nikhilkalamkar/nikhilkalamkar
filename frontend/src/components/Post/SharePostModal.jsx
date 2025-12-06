@@ -339,17 +339,35 @@ const SharePostModal = ({ post, onClose }) => {
             </div>
           </button>
 
-          {/* Download Image */}
+          {/* Save to Device - Mobile optimized */}
+          <button
+            onClick={handleSaveToDevice}
+            className="w-full flex items-center gap-3 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors border-2 border-purple-200 dark:border-purple-800"
+          >
+            <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+              <Download className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex-1 text-left">
+              <p className="font-medium">Save to Gallery 📱</p>
+              <p className="text-xs text-gray-500">
+                {/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) 
+                  ? 'Save image to your phone gallery' 
+                  : 'Download image to your computer'}
+              </p>
+            </div>
+          </button>
+
+          {/* Direct Download (Backup) */}
           <button
             onClick={handleDownloadImage}
             className="w-full flex items-center gap-3 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
           >
-            <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
               <Download className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1 text-left">
-              <p className="font-medium">Download Image</p>
-              <p className="text-xs text-gray-500">Save to your device</p>
+              <p className="font-medium">Open Image</p>
+              <p className="text-xs text-gray-500">View full size image</p>
             </div>
           </button>
         </div>
