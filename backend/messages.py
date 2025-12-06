@@ -205,7 +205,9 @@ async def get_conversation_messages(
                 "text": msg["text"],
                 "image": msg.get("image"),
                 "createdAt": msg["created_at"].isoformat() if isinstance(msg["created_at"], datetime) else msg["created_at"],
-                "read": msg.get("read", False)
+                "read": msg.get("read", False),
+                "likes": msg.get("likes", []),
+                "reactions": msg.get("reactions", {})
             })
         
         return {
