@@ -20,6 +20,7 @@ import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import PostDetail from "./pages/PostDetail";
 import StoryViewer from "./pages/StoryViewer";
+import AuthCallback from "./pages/Auth/AuthCallback";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
