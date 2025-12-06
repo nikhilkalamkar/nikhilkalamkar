@@ -183,43 +183,105 @@ const CallModal = ({ type, user, onClose }) => {
 
       {/* Call Controls */}
       {callStatus !== 'ended' && (
-        <div className="p-6 bg-black/40 backdrop-blur-sm">
-          <div className="flex items-center justify-center gap-4">
-            {/* Mute Button */}
-            <Button
-              variant="outline"
-              size="icon"
-              className={`w-14 h-14 rounded-full ${isMuted ? 'bg-red-500 text-white border-red-500' : 'bg-white/20 text-white border-white/30'}`}
-              onClick={() => setIsMuted(!isMuted)}
-            >
-              {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
-            </Button>
+        <div className="p-8 bg-gradient-to-t from-black/80 via-black/60 to-transparent backdrop-blur-md">
+          <div className="max-w-md mx-auto">
+            {/* Control Labels */}
+            <div className="flex items-center justify-center gap-6 mb-4">
+              {callStatus === 'active' && (
+                <>
+                  <div className="text-center">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className={`w-16 h-16 rounded-full transition-all duration-300 ${
+                        isMuted 
+                          ? 'bg-red-500 text-white border-red-500 hover:bg-red-600' 
+                          : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+                      }`}
+                      onClick={() => setIsMuted(!isMuted)}
+                    >
+                      {isMuted ? <MicOff className="w-7 h-7" /> : <Mic className="w-7 h-7" />}
+                    </Button>
+                    <p className="text-white/70 text-xs mt-2">{isMuted ? 'Unmute' : 'Mute'}</p>
+                  </div>
 
-            {/* Video Toggle (for video calls) */}
-            {type === 'video' && (
-              <Button
-                variant="outline"
-                size="icon"
-                className={`w-14 h-14 rounded-full ${isVideoOff ? 'bg-red-500 text-white border-red-500' : 'bg-white/20 text-white border-white/30'}`}
-                onClick={() => setIsVideoOff(!isVideoOff)}
-              >
-                {isVideoOff ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
-              </Button>
+                  {/* Speaker Toggle (for audio calls) */}
+                  {type === 'audio' && (
+                    <div className="text-center">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className={`w-16 h-16 rounded-full transition-all duration-300 ${
+                          isSpeakerOn 
+                            ? 'bg-white/10 text-white border-white/20 hover:bg-white/20' 
+                            : 'bg-red-500 text-white border-red-500 hover:bg-red-600'
+                        }`}
+                        onClick={() => setIsSpeakerOn(!isSpeakerOn)}
+                      >
+                        {isSpeakerOn ? <Volume2 className="w-7 h-7" /> : <VolumeX className="w-7 h-7" />}
+                      </Button>
+                      <p className="text-white/70 text-xs mt-2">{isSpeakerOn ? 'Speaker' : 'Muted'}</p>
+                    </div>
+                  )}
+
+                  {/* Video Toggle (for video calls) */}
+                  {type === 'video' && (
+                    <div className="text-center">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className={`w-16 h-16 rounded-full transition-all duration-300 ${
+                          isVideoOff 
+                            ? 'bg-red-500 text-white border-red-500 hover:bg-red-600' 
+                            : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+                        }`}
+                        onClick={() => setIsVideoOff(!isVideoOff)}
+                      >
+                        {isVideoOff ? <VideoOff className="w-7 h-7" /> : <Video className="w-7 h-7" />}
+                      </Button>
+                      <p className="text-white/70 text-xs mt-2">{isVideoOff ? 'Turn On' : 'Turn Off'}</p>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* End Call Button - Centered and prominent */}
+            <div className="flex items-center justify-center mt-6">
+              <div className="text-center">
+                <Button
+                  size="icon"
+                  className="w-20 h-20 rounded-full bg-red-500 hover:bg-red-600 shadow-2xl shadow-red-500/50 hover:scale-105 transition-all duration-300"
+                  onClick={handleEndCall}
+                >
+                  <PhoneOff className="w-8 h-8 rotate-135" />
+                </Button>
+                <p className="text-white/70 text-xs mt-3">End Call</p>
+              </div>
+            </div>
+
+            {/* Connection Quality Indicator */}
+            {callStatus === 'active' && (
+              <div className="flex items-center justify-center gap-2 mt-6">
+                <div className="flex gap-1">
+                  <div className="w-1 h-3 bg-green-500 rounded-full"></div>
+                  <div className="w-1 h-4 bg-green-500 rounded-full"></div>
+                  <div className="w-1 h-5 bg-green-500 rounded-full"></div>
+                  <div className="w-1 h-6 bg-green-500 rounded-full"></div>
+                </div>
+                <p className="text-green-400 text-xs font-medium">Excellent Connection</p>
+              </div>
             )}
 
-            {/* End Call Button */}
-            <Button
-              size="icon"
-              className="w-16 h-16 rounded-full bg-red-500 hover:bg-red-600"
-              onClick={handleEndCall}
-            >
-              {type === 'video' ? <Video className="w-7 h-7" /> : <Phone className="w-7 h-7" />}
-            </Button>
+            {/* Call Type Indicator */}
+            <p className="text-center text-white/50 text-xs mt-4">
+              {type === 'video' ? '📹 Video Call' : '📞 Voice Call'} • HD Quality
+            </p>
+            
+            <p className="text-center text-white/40 text-xs mt-2">
+              Note: Demo interface. Real calling requires WebRTC integration.
+            </p>
           </div>
-
-          <p className="text-center text-white/60 text-sm mt-4">
-            Note: This is a demo call interface. Real calling requires WebRTC integration.
-          </p>
         </div>
       )}
     </div>
