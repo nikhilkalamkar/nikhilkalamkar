@@ -173,10 +173,32 @@ const Messages = () => {
               <span className="font-semibold">{selectedConversation.user.username}</span>
             </div>
             <div className="flex gap-4">
-              <Button variant="ghost" size="icon">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => {
+                  setCallType('audio');
+                  setShowCallModal(true);
+                  toast({
+                    title: 'Starting audio call...',
+                    description: `Calling ${selectedConversation.user.username}`,
+                  });
+                }}
+              >
                 <Phone className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => {
+                  setCallType('video');
+                  setShowCallModal(true);
+                  toast({
+                    title: 'Starting video call...',
+                    description: `Calling ${selectedConversation.user.username}`,
+                  });
+                }}
+              >
                 <Video className="w-5 h-5" />
               </Button>
               <Button variant="ghost" size="icon">
