@@ -12,6 +12,7 @@ import NewMessageModal from '../components/Messages/NewMessageModal';
 const Messages = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const { toast } = useToast();
   const [conversations, setConversations] = useState(mockMessages);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messageText, setMessageText] = useState('');
