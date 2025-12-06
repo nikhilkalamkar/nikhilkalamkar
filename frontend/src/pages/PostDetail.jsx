@@ -188,28 +188,42 @@ const PostDetail = () => {
 
             {/* Comments List */}
             <div className="space-y-4">
-              {comments.map((comment) => (
-                <div key={comment.id} className="flex gap-3">
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage src={comment.user.avatar} />
-                    <AvatarFallback>{comment.user.username[0].toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div>
-                      <span className="font-semibold mr-2">{comment.user.username}</span>
-                      <span className="whitespace-pre-wrap">{comment.text}</span>
+              {comments.map((comment) => {
+                const isCommentLiked = likedComments[comment.id];
+                return (
+                  <div key={comment.id} className="flex gap-3">
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage src={comment.user.avatar} />
+                      <AvatarFallback>{comment.user.username[0].toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <div>
+                        <span className="font-semibold mr-2">{comment.user.username}</span>
+                        <span className="whitespace-pre-wrap">{comment.text}</span>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                        <span>{formatTimeAgo(comment.createdAt)}</span>
+                        <button 
+                          className={`hover:text-gray-700 dark:hover:text-gray-300 font-semibold ${
+                            isCommentLiked ? 'text-red-500' : ''
+                          }`}
+                        >
+                          {comment.likes} {comment.likes === 1 ? 'like' : 'likes'}
+                        </button>
+                        <button className="hover:text-gray-700 dark:hover:text-gray-300 font-semibold">Reply</button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
-                      <span>{formatTimeAgo(comment.createdAt)}</span>
-                      <button className="hover:text-gray-700 dark:hover:text-gray-300">{comment.likes} likes</button>
-                      <button className="hover:text-gray-700 dark:hover:text-gray-300">Reply</button>
-                    </div>
+                    <button 
+                      onClick={() => handleCommentLike(comment.id)}
+                      className={`transition-all duration-200 hover:scale-110 ${
+                        isCommentLiked ? 'text-red-500' : 'text-gray-400 hover:text-red-400'
+                      }`}
+                    >
+                      <Heart className={`w-4 h-4 ${isCommentLiked ? 'fill-red-500' : ''}`} />
+                    </button>
                   </div>
-                  <button className="text-gray-400 hover:text-gray-600">
-                    <Heart className="w-3 h-3" />
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
