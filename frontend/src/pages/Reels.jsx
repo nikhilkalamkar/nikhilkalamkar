@@ -1,19 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal, Volume2, VolumeX } from 'lucide-react';
+import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal, Volume2, VolumeX, Music } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { posts as mockPosts } from '../mock/mockData';
+import { useToast } from '../hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Reels = () => {
   const [currentReelIndex, setCurrentReelIndex] = useState(0);
   const [muted, setMuted] = useState(true);
+  const [likedReels, setLikedReels] = useState({});
+  const [savedReels, setSavedReels] = useState({});
   const containerRef = useRef(null);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Convert posts to reels (mock data)
   const reels = mockPosts.map((post, index) => ({
     ...post,
     videoUrl: post.images[0], // Using images as placeholder for videos
-    views: Math.floor(Math.random() * 100000) + 10000
+    views: Math.floor(Math.random() * 100000) + 10000,
+    audioName: 'Original Audio'
   }));
 
   const currentReel = reels[currentReelIndex];
