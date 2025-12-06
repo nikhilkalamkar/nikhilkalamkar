@@ -67,6 +67,83 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
     setSelectedImages(newImages);
   };
 
+  const handleDetectLocation = async () => {
+    setDetectingLocation(true);
+    
+    if (!navigator.geolocation) {
+      toast({
+        title: 'Location not supported',
+        description: 'Your browser does not support geolocation',
+        variant: 'destructive'
+      });
+      setDetectingLocation(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          
+          // Use reverse geocoding to get location name
+          // Using OpenStreetMap Nominatim (free, no API key needed)
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          );
+          
+          if (response.ok) {
+            const data = await response.json();
+            const locationName = data.address.city || 
+                                data.address.town || 
+                                data.address.village || 
+                                data.address.county || 
+                                data.address.state || 
+                                'Current Location';
+            
+            setLocation(locationName);
+            toast({
+              title: '📍 Location detected',
+              description: `Set to: ${locationName}`,
+            });
+          } else {
+            setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+            toast({
+              title: '📍 Location detected',
+              description: 'Using coordinates',
+            });
+          }
+        } catch (error) {
+          console.error('Geocoding error:', error);
+          toast({
+            title: 'Location detected',
+            description: 'Using GPS coordinates',
+          });
+        } finally {
+          setDetectingLocation(false);
+        }
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        let errorMsg = 'Could not detect location';
+        
+        if (error.code === 1) {
+          errorMsg = 'Location permission denied. Please enable location access.';
+        } else if (error.code === 2) {
+          errorMsg = 'Location unavailable';
+        } else if (error.code === 3) {
+          errorMsg = 'Location request timeout';
+        }
+        
+        toast({
+          title: 'Location error',
+          description: errorMsg,
+          variant: 'destructive'
+        });
+        setDetectingLocation(false);
+      }
+    );
+  };
+
   const handleCreatePost = async () => {
     if (selectedImages.length === 0) {
       toast({
