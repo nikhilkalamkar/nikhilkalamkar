@@ -194,7 +194,6 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
             type="file"
             multiple
             accept="image/*,video/*"
-            capture="environment"
             onChange={handleImageSelect}
             className="hidden"
           />
