@@ -138,14 +138,17 @@ const EditProfile = () => {
         console.log('Backend update skipped:', apiError.message);
       }
 
+      // Refresh auth context to load updated user data
+      refreshAuth();
+
       toast({
         title: 'Profile updated! ✨',
         description: 'Your profile has been updated successfully',
       });
 
-      // Refresh page to show updated data
+      // Navigate to updated profile
       setTimeout(() => {
-        window.location.href = `/profile/${formData.username}`;
+        navigate(`/profile/${formData.username}`);
       }, 1000);
     } catch (error) {
       console.error('Error updating profile:', error);
