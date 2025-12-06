@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { X, ChevronLeft, ChevronRight, Pause, Play, MoreHorizontal } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
-import { stories as mockStories } from '../mock/mockData';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const StoryViewer = () => {
   const { username } = useParams();
@@ -11,9 +13,28 @@ const StoryViewer = () => {
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [allStories, setAllStories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch stories
+  useEffect(() => {
+    const fetchStories = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/stories/all`, {
+          withCredentials: true
+        });
+        setAllStories(response.data.stories);
+      } catch (error) {
+        console.error('Error fetching stories:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStories();
+  }, []);
 
   // Find stories for the user
-  const userStories = mockStories.filter(s => s.user.username === username);
+  const userStories = allStories.filter(s => s.user.username === username);
   const currentStory = userStories[currentStoryIndex];
   const currentItem = currentStory?.items[currentItemIndex];
 
