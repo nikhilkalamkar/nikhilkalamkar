@@ -54,6 +54,11 @@ const Home = () => {
 
   useEffect(() => {
     fetchStories();
+    
+    // Load posts from localStorage and merge with mock posts
+    const userPosts = JSON.parse(localStorage.getItem('ishukart_posts') || '[]');
+    const allPosts = [...userPosts, ...mockPosts];
+    setPosts(allPosts);
   }, []);
 
   const handleFollow = (userId) => {
