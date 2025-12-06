@@ -200,14 +200,14 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-800 flex gap-3">
-          <Button variant="outline" onClick={onClose} className="flex-1">
+        <div className="p-3 sm:p-4 border-t border-gray-200 dark:border-gray-800 flex gap-2 sm:gap-3 bg-white dark:bg-gray-900">
+          <Button variant="outline" onClick={onClose} className="flex-1 h-11">
             Cancel
           </Button>
           <Button
             onClick={handleCreatePost}
             disabled={loading || selectedImages.length === 0}
-            className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            className="flex-1 h-11 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 font-semibold"
           >
             {loading ? (
               <>
@@ -215,7 +215,7 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
                 Posting...
               </>
             ) : (
-              'Share'
+              '✨ Share Post'
             )}
           </Button>
         </div>
