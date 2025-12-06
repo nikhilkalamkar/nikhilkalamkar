@@ -74,6 +74,20 @@ const Home = () => {
     const userPosts = JSON.parse(localStorage.getItem('ishukart_posts') || '[]');
     const allPosts = [...userPosts, ...mockPosts];
     setPosts(allPosts);
+    
+    // Load active live streams
+    const loadLiveStreams = () => {
+      const activeLives = JSON.parse(localStorage.getItem('ishukart_live_streams') || '[]');
+      const currentLives = activeLives.filter(live => live.isActive);
+      setLiveStreams(currentLives);
+    };
+    
+    loadLiveStreams();
+    
+    // Refresh live streams every 30 seconds
+    const liveInterval = setInterval(loadLiveStreams, 30000);
+    
+    return () => clearInterval(liveInterval);
   }, []);
 
   const handleFollow = (userId) => {
