@@ -7,6 +7,7 @@ import { Input } from '../components/ui/input';
 import { posts as mockPosts, comments as mockComments } from '../mock/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../hooks/use-toast';
+import { addNotification } from '../utils/notifications';
 
 const PostDetail = () => {
   const { postId } = useParams();
