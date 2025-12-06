@@ -23,6 +23,7 @@ import StoryViewer from "./pages/StoryViewer";
 import AuthCallback from "./pages/Auth/AuthCallback";
 import OAuthDebug from "./pages/Auth/OAuthDebug";
 import EditProfile from "./pages/EditProfile";
+import LiveStream from "./pages/LiveStream";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
