@@ -21,6 +21,8 @@ const Messages = () => {
   const [showNewMessageModal, setShowNewMessageModal] = useState(false);
   const [showCallModal, setShowCallModal] = useState(false);
   const [callType, setCallType] = useState(null); // 'video' or 'audio'
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const fileInputRef = React.useRef(null);
 
   // Handle opening chat from profile page
   useEffect(() => {
