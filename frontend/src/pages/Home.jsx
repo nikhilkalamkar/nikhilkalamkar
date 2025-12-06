@@ -34,11 +34,20 @@ const Home = () => {
       
       // Update local state with response
       setPosts(prevPosts => 
-        prevPosts.map(post => 
-          post.id === postId 
-            ? { ...post, likes: response.data.likes, isLiked: response.data.is_liked }
-            : post
-        )
+        prevPosts.map(post => {
+          if (post.id === postId) {
+            // Create notification if liking (not unliking)
+            if (response.data.action === 'liked' && post.user.id !== currentUser?.user_id && post.user.id !== currentUser?.id) {
+              addNotification('like', {
+                username: currentUser?.username || 'Someone',
+                avatar: currentUser?.avatar || '',
+                postId: postId
+              });
+            }
+            return { ...post, likes: response.data.likes, isLiked: response.data.is_liked };
+          }
+          return post;
+        })
       );
     } catch (error) {
       console.log('Backend like failed, using local storage for post:', postId, error.response?.status);
