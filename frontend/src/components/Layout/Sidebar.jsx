@@ -22,6 +22,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const [showCreateOptions, setShowCreateOptions] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCreateStoryModal, setShowCreateStoryModal] = useState(false);
   const [showGoLiveModal, setShowGoLiveModal] = useState(false);
