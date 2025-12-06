@@ -49,7 +49,7 @@ const Signup = () => {
             Sign up to see photos and videos from your friends.
           </p>
 
-          <Button className="w-full bg-blue-500 hover:bg-blue-600 mb-4">
+          <Button className="w-full bg-blue-500 hover:bg-blue-600 mb-4" onClick={() => window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(window.location.origin + '/auth/callback')}`}>
             Log in with Google
           </Button>
 
