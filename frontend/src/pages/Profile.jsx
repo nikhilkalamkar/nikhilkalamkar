@@ -264,11 +264,30 @@ const Profile = () => {
                   variant="secondary" 
                   size="sm"
                   onClick={handleMessage}
+                  disabled={isBlocked}
                 >
                   Message
                 </Button>
-                <Button variant="ghost" size="icon">
-                  <UserPlus className="w-5 h-5" />
+                <Button 
+                  variant={isBlocked ? "default" : "ghost"}
+                  size="sm"
+                  onClick={handleBlock}
+                  disabled={blockLoading}
+                  className={isBlocked ? 'bg-red-500 hover:bg-red-600 text-white' : ''}
+                >
+                  {blockLoading ? (
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  ) : isBlocked ? (
+                    <>
+                      <UserCheck className="w-4 h-4 mr-1" />
+                      Unblock
+                    </>
+                  ) : (
+                    <>
+                      <Ban className="w-4 h-4 mr-1" />
+                      Block
+                    </>
+                  )}
                 </Button>
               </>
             )}
