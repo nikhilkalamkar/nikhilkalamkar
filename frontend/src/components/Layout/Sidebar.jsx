@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Search, Compass, Video, MessageCircle, Heart, PlusSquare, User, Menu, Moon, Sun, LogOut, Settings, Bookmark } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -16,6 +16,7 @@ import CreatePostModal from '../Create/CreatePostModal';
 import CreateStoryModal from '../Create/CreateStoryModal';
 import GoLiveModal from '../Live/GoLiveModal';
 import CreateOptionsModal from '../Create/CreateOptionsModal';
+import { getUnreadCount } from '../../utils/notifications';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -26,6 +27,21 @@ const Sidebar = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCreateStoryModal, setShowCreateStoryModal] = useState(false);
   const [showGoLiveModal, setShowGoLiveModal] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    // Update unread count
+    const updateCount = () => {
+      setUnreadCount(getUnreadCount());
+    };
+    
+    updateCount();
+    
+    // Check every 5 seconds
+    const interval = setInterval(updateCount, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   const menuItems = [
     { icon: Home, label: 'Home', path: '/' },
