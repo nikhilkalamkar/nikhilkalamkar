@@ -371,37 +371,40 @@ const Messages = () => {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4">
             {selectedConversation.messages && selectedConversation.messages.length > 0 ? (
-              selectedConversation.messages.map((message) => {
-                const isOwnMessage = message.senderId === (currentUser?.user_id || currentUser?.id);
-                return (
-                  <div
-                    key={message.id}
-                    className={`flex mb-3 ${
-                      isOwnMessage ? 'justify-end' : 'justify-start'
-                    }`}
-                  >
-                    {message.image ? (
-                      <div className="max-w-xs">
-                        <img 
-                          src={message.image} 
-                          alt="Shared" 
-                          className="rounded-2xl max-w-full h-auto"
-                        />
-                      </div>
-                    ) : (
-                      <div
-                        className={`max-w-xs px-4 py-2 rounded-3xl ${
-                          isOwnMessage
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
-                        }`}
-                      >
-                        {message.text}
-                      </div>
-                    )}
-                  </div>
-                );
-              })
+              <>
+                {selectedConversation.messages.map((message) => {
+                  const isOwnMessage = message.senderId === (currentUser?.user_id || currentUser?.id);
+                  return (
+                    <div
+                      key={message.id}
+                      className={`flex mb-3 ${
+                        isOwnMessage ? 'justify-end' : 'justify-start'
+                      }`}
+                    >
+                      {message.image ? (
+                        <div className="max-w-xs">
+                          <img 
+                            src={message.image} 
+                            alt="Shared" 
+                            className="rounded-2xl max-w-full h-auto"
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          className={`max-w-xs px-4 py-2 rounded-3xl ${
+                            isOwnMessage
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
+                          }`}
+                        >
+                          {message.text}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+                <div ref={messagesEndRef} />
+              </>
             ) : (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center text-gray-500">
