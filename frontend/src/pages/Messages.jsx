@@ -38,10 +38,13 @@ const Messages = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('primary'); // 'primary' or 'general'
   const [conversationCategories, setConversationCategories] = useState({});
+  const [likedMessages, setLikedMessages] = useState({});
+  const [showHeartAnimation, setShowHeartAnimation] = useState(null);
   const fileInputRef = React.useRef(null);
   const messagesEndRef = React.useRef(null);
   const conversationsRef = React.useRef([]);
   const lastMessageCountRef = React.useRef(0);
+  const lastTapRef = React.useRef({});
 
   // Load conversation categories from localStorage
   useEffect(() => {
