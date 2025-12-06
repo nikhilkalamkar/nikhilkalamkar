@@ -632,52 +632,62 @@ const Messages = () => {
                   return (
                     <div
                       key={message.id}
-                      className={`flex mb-3 ${
+                      className={`flex mb-4 ${
                         isOwnMessage ? 'justify-end' : 'justify-start'
                       }`}
                     >
-                      <div className="relative group">
-                        {message.image ? (
-                          <div 
-                            className="max-w-xs cursor-pointer select-none"
-                            onClick={() => handleMessageDoubleTap(message.id)}
-                          >
-                            <img 
-                              src={message.image} 
-                              alt="Shared" 
-                              className="rounded-2xl max-w-full h-auto"
-                              draggable="false"
-                            />
+                      <div className="relative">
+                        {/* Message Bubble Container */}
+                        <div className={`flex items-end gap-1 ${isOwnMessage ? 'flex-row-reverse' : 'flex-row'}`}>
+                          {/* Message Content */}
+                          <div className="relative">
+                            {message.image ? (
+                              <div 
+                                className="max-w-xs cursor-pointer select-none"
+                                onClick={() => handleMessageDoubleTap(message.id)}
+                              >
+                                <img 
+                                  src={message.image} 
+                                  alt="Shared" 
+                                  className="rounded-2xl max-w-full h-auto"
+                                  draggable="false"
+                                />
+                              </div>
+                            ) : (
+                              <div
+                                className={`max-w-xs px-4 py-2 rounded-3xl cursor-pointer select-none transition-all ${
+                                  isOwnMessage
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
+                                } ${showHeart ? 'scale-95' : 'hover:scale-105'}`}
+                                onClick={() => handleMessageDoubleTap(message.id)}
+                              >
+                                {message.text}
+                              </div>
+                            )}
+                            
+                            {/* Heart animation on double tap */}
+                            {showHeart && (
+                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                <Heart 
+                                  className="w-16 h-16 text-red-500 fill-red-500 animate-ping"
+                                  style={{ animationDuration: '0.5s', animationIterationCount: '2' }}
+                                />
+                              </div>
+                            )}
                           </div>
-                        ) : (
-                          <div
-                            className={`max-w-xs px-4 py-2 rounded-3xl cursor-pointer select-none transition-all ${
-                              isOwnMessage
-                                ? 'bg-blue-500 text-white'
-                                : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
-                            } ${showHeart ? 'scale-95' : 'hover:scale-105'}`}
-                            onClick={() => handleMessageDoubleTap(message.id)}
-                          >
-                            {message.text}
-                          </div>
-                        )}
-                        
-                        {/* Heart animation on double tap */}
-                        {showHeart && (
-                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <Heart 
-                              className="w-16 h-16 text-red-500 fill-red-500 animate-ping"
-                              style={{ animationDuration: '0.5s', animationIterationCount: '2' }}
-                            />
-                          </div>
-                        )}
-                        
-                        {/* Small heart indicator if liked */}
-                        {isLiked && !showHeart && (
-                          <div className={`absolute -bottom-1 ${isOwnMessage ? '-left-2' : '-right-2'} opacity-0 group-hover:opacity-100 transition-opacity`}>
-                            <Heart className="w-3 h-3 text-red-500 fill-red-500" />
-                          </div>
-                        )}
+                          
+                          {/* Permanent heart indicator if liked - Shows on OPPOSITE side */}
+                          {isLiked && (
+                            <div 
+                              className={`flex items-center justify-center w-5 h-5 bg-white dark:bg-gray-800 rounded-full shadow-md border border-gray-200 dark:border-gray-700 transition-all hover:scale-110 ${
+                                isOwnMessage ? 'order-first' : 'order-last'
+                              }`}
+                            >
+                              <Heart className="w-3 h-3 text-red-500 fill-red-500 animate-pulse" />
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
