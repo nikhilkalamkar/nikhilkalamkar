@@ -23,6 +23,7 @@ const Sidebar = () => {
   const { theme, toggleTheme } = useTheme();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCreateStoryModal, setShowCreateStoryModal] = useState(false);
+  const [showGoLiveModal, setShowGoLiveModal] = useState(false);
 
   const menuItems = [
     { icon: Home, label: 'Home', path: '/' },
