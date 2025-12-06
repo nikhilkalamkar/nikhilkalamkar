@@ -87,13 +87,29 @@ const Home = () => {
     }
   };
 
+  const fetchPosts = async () => {
+    try {
+      // Try to get posts from backend
+      const response = await axios.get(`${BACKEND_URL}/api/posts/all`, {
+        withCredentials: true
+      });
+      
+      // Merge backend posts with localStorage posts
+      const localPosts = JSON.parse(localStorage.getItem('ishukart_posts') || '[]');
+      const allPosts = [...response.data.posts, ...localPosts, ...mockPosts];
+      setPosts(allPosts);
+    } catch (apiError) {
+      console.log('API failed for posts, using localStorage and mock:', apiError);
+      // Fallback to localStorage + mock data
+      const localPosts = JSON.parse(localStorage.getItem('ishukart_posts') || '[]');
+      const allPosts = [...localPosts, ...mockPosts];
+      setPosts(allPosts);
+    }
+  };
+
   useEffect(() => {
     fetchStories();
-    
-    // Load posts from localStorage and merge with mock posts
-    const userPosts = JSON.parse(localStorage.getItem('ishukart_posts') || '[]');
-    const allPosts = [...userPosts, ...mockPosts];
-    setPosts(allPosts);
+    fetchPosts();
     
     // Load active live streams
     const loadLiveStreams = () => {
