@@ -60,15 +60,20 @@ const AuthCallback = () => {
         localStorage.setItem('ishukart_user', JSON.stringify(userData));
         console.log('[AuthCallback] User data stored in localStorage');
         
-        // Set flag to skip delay in ProtectedRoute
-        sessionStorage.setItem('just_authenticated', 'true');
-
+        // Force a small delay to ensure localStorage write completes
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Manually refresh auth context to pick up the new user
+        console.log('[AuthCallback] Refreshing auth context...');
+        const authRefreshed = refreshAuth();
+        console.log('[AuthCallback] Auth refreshed:', authRefreshed);
+        
         setStatus('Login successful! Redirecting...');
         
-        // Redirect to home
-        setTimeout(() => {
-          navigate('/', { replace: true, state: { user: userData } });
-        }, 500);
+        // Navigate to home with replace to prevent back button issues
+        await new Promise(resolve => setTimeout(resolve, 300));
+        console.log('[AuthCallback] Navigating to home...');
+        navigate('/', { replace: true });
       } catch (error) {
         console.error('[AuthCallback] Auth error:', error);
         console.error('[AuthCallback] Error details:', error.response?.data);
