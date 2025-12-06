@@ -97,19 +97,20 @@ const Reels = () => {
           {/* User Info */}
           <div className="absolute bottom-20 left-4 right-20 text-white">
             <div className="flex items-center gap-3 mb-3">
-              <Avatar className="w-8 h-8 border-2 border-white">
+              <Avatar className="w-8 h-8 border-2 border-white cursor-pointer" onClick={() => navigate(`/profile/${reel.user.username}`)}>
                 <AvatarImage src={reel.user.avatar} />
                 <AvatarFallback>{reel.user.username[0].toUpperCase()}</AvatarFallback>
               </Avatar>
-              <span className="font-semibold">{reel.user.username}</span>
+              <span className="font-semibold cursor-pointer" onClick={() => navigate(`/profile/${reel.user.username}`)}>{reel.user.username}</span>
               <Button size="sm" variant="outline" className="h-6 px-3 text-xs border-white text-white hover:bg-white hover:text-black">
                 Follow
               </Button>
             </div>
             <p className="text-sm mb-2">{reel.caption}</p>
-            {reel.location && (
-              <p className="text-xs text-gray-300">📍 {reel.location}</p>
-            )}
+            <div className="flex items-center gap-2 text-xs">
+              <Music className="w-3 h-3" />
+              <span>{reel.audioName}</span>
+            </div>
           </div>
 
           {/* Actions - Right Side */}
