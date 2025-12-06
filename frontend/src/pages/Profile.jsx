@@ -34,7 +34,14 @@ const Profile = () => {
   const isOwnProfile = username === currentUser?.username;
 
   const handleFollow = () => {
-    setIsFollowing(!isFollowing);
+    const newFollowState = !isFollowing;
+    setIsFollowing(newFollowState);
+    
+    // Update profile follower count
+    setProfile(prev => ({
+      ...prev,
+      followersCount: newFollowState ? prev.followersCount + 1 : prev.followersCount - 1
+    }));
   };
 
   if (!profile) {
