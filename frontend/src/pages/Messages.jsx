@@ -30,6 +30,7 @@ const Messages = () => {
   const [callType, setCallType] = useState(null); // 'video' or 'audio'
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('primary'); // 'primary' or 'general'
   const fileInputRef = React.useRef(null);
   const messagesEndRef = React.useRef(null);
   const conversationsRef = React.useRef([]);
