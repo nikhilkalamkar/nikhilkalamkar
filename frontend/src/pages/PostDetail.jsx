@@ -76,6 +76,35 @@ const PostDetail = () => {
     }
   };
 
+  const handleCommentLike = (commentId) => {
+    const isLiked = likedComments[commentId];
+    
+    // Update liked state
+    setLikedComments(prev => ({
+      ...prev,
+      [commentId]: !isLiked
+    }));
+    
+    // Update comment likes count
+    setComments(prev => prev.map(comment => {
+      if (comment.id === commentId) {
+        return {
+          ...comment,
+          likes: isLiked ? comment.likes - 1 : comment.likes + 1
+        };
+      }
+      return comment;
+    }));
+    
+    // Show feedback
+    if (!isLiked) {
+      toast({
+        title: '❤️ Liked',
+        description: 'You liked this comment',
+      });
+    }
+  };
+
   const formatTimeAgo = (date) => {
     const now = new Date();
     const postDate = new Date(date);
