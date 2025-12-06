@@ -27,6 +27,11 @@ const Messages = () => {
   const [loading, setLoading] = useState(true);
   const fileInputRef = React.useRef(null);
 
+  // Fetch conversations
+  useEffect(() => {
+    fetchConversations();
+  }, []);
+
   // Handle opening chat from profile page
   useEffect(() => {
     if (location.state?.openChatWith) {
@@ -36,6 +41,33 @@ const Messages = () => {
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location.state]);
+
+  const fetchConversations = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${BACKEND_URL}/api/messages/conversations`, {
+        withCredentials: true
+      });
+      setConversations(response.data.conversations || []);
+    } catch (error) {
+      console.error('Error fetching conversations:', error);
+      setConversations([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchConversationMessages = async (partnerId) => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/messages/conversation/${partnerId}`, {
+        withCredentials: true
+      });
+      return response.data.conversation;
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      return null;
+    }
+  };
 
   const handleSendMessage = (e) => {
     e.preventDefault();
