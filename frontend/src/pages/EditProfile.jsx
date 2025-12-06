@@ -12,7 +12,7 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const EditProfile = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, refreshAuth } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const fileInputRef = useRef(null);
