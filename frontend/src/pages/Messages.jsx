@@ -275,6 +275,17 @@ const Messages = () => {
           onSelectUser={handleNewConversation}
         />
       )}
+
+      {showCallModal && selectedConversation && (
+        <CallModal
+          type={callType}
+          user={selectedConversation.user}
+          onClose={() => {
+            setShowCallModal(false);
+            setCallType(null);
+          }}
+        />
+      )}
     </div>
   );
 };
