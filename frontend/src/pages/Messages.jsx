@@ -278,8 +278,32 @@ const Messages = () => {
 
           {/* Message Input */}
           <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200 dark:border-gray-800">
+            {/* Emoji Picker */}
+            {showEmojiPicker && (
+              <div className="mb-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="flex flex-wrap gap-2">
+                  {commonEmojis.map((emoji, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => handleEmojiClick(emoji)}
+                      className="text-2xl hover:scale-125 transition-transform active:scale-110 p-1"
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             <div className="flex items-center gap-3">
-              <Button type="button" variant="ghost" size="icon">
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="icon"
+                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                className="flex-shrink-0"
+              >
                 <Smile className="w-6 h-6" />
               </Button>
               <Input
@@ -289,15 +313,34 @@ const Messages = () => {
                 className="flex-1"
               />
               {messageText.trim() ? (
-                <Button type="submit" variant="ghost" className="text-blue-500 font-semibold">
+                <Button type="submit" variant="ghost" className="text-blue-500 font-semibold flex-shrink-0">
                   Send
                 </Button>
               ) : (
                 <>
-                  <Button type="button" variant="ghost" size="icon">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*,video/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex-shrink-0"
+                  >
                     <ImageIcon className="w-6 h-6" />
                   </Button>
-                  <Button type="button" variant="ghost" size="icon">
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => handleEmojiClick('❤️')}
+                    className="flex-shrink-0"
+                  >
                     <Heart className="w-6 h-6" />
                   </Button>
                 </>
