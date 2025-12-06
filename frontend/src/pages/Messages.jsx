@@ -246,35 +246,31 @@ const Messages = () => {
     const refreshMessages = async () => {
       const conv = await fetchConversationMessages(selectedConversation.user.id);
       if (conv) {
-        // Only update if there are new messages
-        const currentMessageCount = selectedConversation.messages?.length || 0;
         const newMessageCount = conv.messages?.length || 0;
         
-        if (newMessageCount > currentMessageCount) {
+        // Only update if message count changed
+        if (newMessageCount !== lastMessageCountRef.current) {
+          lastMessageCountRef.current = newMessageCount;
           setSelectedConversation(conv);
-        } else if (newMessageCount === currentMessageCount) {
-          // Update silently without triggering re-render if count is same
-          const hasChanges = JSON.stringify(conv.messages) !== JSON.stringify(selectedConversation.messages);
-          if (hasChanges) {
-            setSelectedConversation(conv);
-          }
         }
       }
     };
     
-    // Refresh messages every 3 seconds (reduced frequency)
-    const messageRefreshInterval = setInterval(refreshMessages, 3000);
+    // Set initial count
+    lastMessageCountRef.current = selectedConversation.messages?.length || 0;
+    
+    // Refresh messages every 4 seconds (reduced frequency)
+    const messageRefreshInterval = setInterval(refreshMessages, 4000);
     
     return () => clearInterval(messageRefreshInterval);
   }, [selectedConversation?.user?.id]);
 
-  // Scroll to bottom only when new messages arrive
+  // Scroll to bottom only when message count increases
   useEffect(() => {
-    if (messagesEndRef.current && selectedConversation?.messages?.length > 0) {
-      // Use setTimeout to ensure DOM is updated
-      setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+    const messageCount = selectedConversation?.messages?.length || 0;
+    if (messagesEndRef.current && messageCount > 0) {
+      // Smooth scroll to bottom
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
   }, [selectedConversation?.messages?.length]);
 
