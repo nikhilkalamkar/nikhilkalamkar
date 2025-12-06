@@ -338,6 +338,36 @@ const Messages = () => {
     });
   };
 
+  // Handle double tap to like message
+  const handleMessageDoubleTap = (messageId) => {
+    const now = Date.now();
+    const lastTap = lastTapRef.current[messageId] || 0;
+    const timeDiff = now - lastTap;
+
+    // Double tap detected (within 300ms)
+    if (timeDiff < 300 && timeDiff > 0) {
+      // Like the message
+      setLikedMessages(prev => ({
+        ...prev,
+        [messageId]: true
+      }));
+
+      // Show heart animation
+      setShowHeartAnimation(messageId);
+      
+      // Hide animation after 1 second
+      setTimeout(() => {
+        setShowHeartAnimation(null);
+      }, 1000);
+
+      // Reset tap time
+      lastTapRef.current[messageId] = 0;
+    } else {
+      // Record this tap
+      lastTapRef.current[messageId] = now;
+    }
+  };
+
   // Get current category for a conversation (manual takes priority)
   const getConversationCategory = (conv) => {
     // If user has manually categorized, ALWAYS use that
