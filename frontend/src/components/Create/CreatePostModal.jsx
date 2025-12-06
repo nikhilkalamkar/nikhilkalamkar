@@ -132,31 +132,32 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
           {/* Image/Video Upload Buttons - Like Story Modal */}
           {selectedImages.length === 0 ? (
             <div className="space-y-4 mb-4">
-              <label
-                htmlFor="post-image-input"
-                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center cursor-pointer hover:border-purple-400 transition-colors active:scale-[0.98] block"
+              <button
+                type="button"
+                onClick={() => imageInputRef.current?.click()}
+                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center cursor-pointer hover:border-purple-400 active:border-purple-500 transition-colors active:scale-[0.98]"
               >
                 <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
                   <ImageIcon className="w-8 h-8 text-white" />
                 </div>
                 <p className="text-lg font-semibold mb-1">Add Photo</p>
-                <p className="text-sm text-gray-500">Share a photo to your feed</p>
-              </label>
+                <p className="text-sm text-gray-500">Tap to share photos to your feed</p>
+              </button>
 
-              <label
-                htmlFor="post-video-input"
-                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center cursor-pointer hover:border-purple-400 transition-colors active:scale-[0.98] block"
+              <button
+                type="button"
+                onClick={() => videoInputRef.current?.click()}
+                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center cursor-pointer hover:border-purple-400 active:border-purple-500 transition-colors active:scale-[0.98]"
               >
                 <div className="bg-gradient-to-r from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Video className="w-8 h-8 text-white" />
                 </div>
                 <p className="text-lg font-semibold mb-1">Add Video</p>
-                <p className="text-sm text-gray-500">Share a video to your feed</p>
-              </label>
+                <p className="text-sm text-gray-500">Tap to share videos to your feed</p>
+              </button>
 
               <input
-                id="post-image-input"
-                ref={fileInputRef}
+                ref={imageInputRef}
                 type="file"
                 multiple
                 accept="image/*"
@@ -164,7 +165,7 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
                 className="hidden"
               />
               <input
-                id="post-video-input"
+                ref={videoInputRef}
                 type="file"
                 multiple
                 accept="video/*"
