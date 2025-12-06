@@ -224,16 +224,6 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
               </Button>
             </div>
           )}
-
-          <input
-            id="post-image-input"
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept="image/*,video/*"
-            onChange={handleImageSelect}
-            className="hidden"
-          />
         </div>
 
         {/* Footer */}
