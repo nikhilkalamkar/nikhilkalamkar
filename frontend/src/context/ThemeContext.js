@@ -22,7 +22,7 @@ export const ThemeProvider = ({ children }) => {
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-    localStorage.setItem('instagram_theme', newTheme);
+    localStorage.setItem('ishukart_theme', newTheme);
     document.documentElement.classList.toggle('dark', newTheme === 'dark');
   };
 
