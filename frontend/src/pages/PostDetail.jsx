@@ -71,8 +71,16 @@ const PostDetail = () => {
         likes: 0,
         createdAt: new Date().toISOString()
       };
+      
+      // Update state
       setComments([...comments, newComment]);
       setCommentText('');
+      
+      // Save to localStorage for persistence
+      const allComments = JSON.parse(localStorage.getItem('ishukart_comments') || '[]');
+      allComments.push(newComment);
+      localStorage.setItem('ishukart_comments', JSON.stringify(allComments));
+      
       toast({
         title: 'Comment posted',
         description: 'Your comment has been added',
