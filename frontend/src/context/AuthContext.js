@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('instagram_user');
+    localStorage.removeItem('ishukart_user');
     setCurrentUser(null);
     setIsAuthenticated(false);
   };
