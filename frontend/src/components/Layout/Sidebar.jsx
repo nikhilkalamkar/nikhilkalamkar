@@ -14,6 +14,7 @@ import {
 } from '../ui/dropdown-menu';
 import CreatePostModal from '../Create/CreatePostModal';
 import CreateStoryModal from '../Create/CreateStoryModal';
+import GoLiveModal from '../Live/GoLiveModal';
 
 const Sidebar = () => {
   const location = useLocation();
