@@ -8,6 +8,7 @@ import { Send, Info, Phone, Video, Smile, Image as ImageIcon, Heart } from 'luci
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../hooks/use-toast';
 import NewMessageModal from '../components/Messages/NewMessageModal';
+import CallModal from '../components/Messages/CallModal';
 
 const Messages = () => {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ const Messages = () => {
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messageText, setMessageText] = useState('');
   const [showNewMessageModal, setShowNewMessageModal] = useState(false);
+  const [showCallModal, setShowCallModal] = useState(false);
+  const [callType, setCallType] = useState(null); // 'video' or 'audio'
 
   // Handle opening chat from profile page
   useEffect(() => {
