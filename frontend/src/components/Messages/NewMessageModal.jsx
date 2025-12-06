@@ -1,17 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Search } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { users as mockUsers } from '../../mock/mockData';
+import { useAuth } from '../../context/AuthContext';
 
 const NewMessageModal = ({ onClose, onSelectUser }) => {
+  const { currentUser } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
 
-  const filteredUsers = mockUsers.filter(user =>
+  useEffect(() => {
+    // Combine mock users with current logged-in user
+    const users = [...mockUsers];
+    
+    // Add current user if not already in list
+    if (currentUser && !users.find(u => u.username === currentUser.username)) {
+      users.push({
+        id: currentUser.id || currentUser.user_id,
+        username: currentUser.username,
+        fullName: currentUser.fullName || currentUser.username,
+        avatar: currentUser.avatar,
+        isVerified: currentUser.isVerified || false
+      });
+    }
+    
+    setAllUsers(users);
+  }, [currentUser]);
+
+  const filteredUsers = allUsers.filter(user =>
     user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.fullName.toLowerCase().includes(searchQuery.toLowerCase())
+    (user.fullName && user.fullName.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const handleSelectUser = (user) => {
