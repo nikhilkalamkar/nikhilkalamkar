@@ -318,7 +318,20 @@ const Messages = () => {
     
     toast({
       title: toCategory === 'primary' ? '📌 Moved to Primary' : '📁 Moved to General',
-      description: `Conversation moved to ${toCategory === 'primary' ? 'Primary' : 'General'} tab`,
+      description: `Conversation will stay in ${toCategory === 'primary' ? 'Primary' : 'General'} until you move it`,
+    });
+  };
+
+  // Reset conversation to auto-categorization
+  const resetConversationCategory = (conversationId) => {
+    const newCategories = { ...conversationCategories };
+    delete newCategories[conversationId];
+    setConversationCategories(newCategories);
+    localStorage.setItem('ishukart_conversation_categories', JSON.stringify(newCategories));
+    
+    toast({
+      title: '🔄 Reset to Auto',
+      description: 'Conversation will now follow automatic categorization',
     });
   };
 
