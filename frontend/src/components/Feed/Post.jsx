@@ -32,42 +32,8 @@ const Post = ({ post, onLike, onSave, onComment }) => {
     onSave?.(post.id, newSaved);
   };
 
-  const handleShare = async () => {
-    const postUrl = `${window.location.origin}/post/${post.id}`;
-    
-    // Try Web Share API first (mobile devices)
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `${post.user.username}'s post`,
-          text: post.caption,
-          url: postUrl
-        });
-        toast({
-          title: 'Shared successfully!',
-          description: 'Post shared via your device',
-        });
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          console.error('Error sharing:', error);
-        }
-      }
-    } else {
-      // Fallback to clipboard copy
-      try {
-        await navigator.clipboard.writeText(postUrl);
-        toast({
-          title: 'Link copied! 📋',
-          description: 'Post link copied to clipboard',
-        });
-      } catch (error) {
-        console.error('Error copying:', error);
-        toast({
-          title: 'Share',
-          description: postUrl,
-        });
-      }
-    }
+  const handleShare = () => {
+    setShowShareModal(true);
   };
 
   const handlePrevImage = () => {
