@@ -50,18 +50,30 @@ const Messages = () => {
     }
   }, [location.state]);
 
-  const fetchConversations = async () => {
+  const fetchConversations = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) {
+        setLoading(true);
+      }
       const response = await axios.get(`${BACKEND_URL}/api/messages/conversations`, {
         withCredentials: true
       });
-      setConversations(response.data.conversations || []);
+      
+      const newConversations = response.data.conversations || [];
+      
+      // Only update if there are actual changes
+      if (JSON.stringify(newConversations) !== JSON.stringify(conversations)) {
+        setConversations(newConversations);
+      }
     } catch (error) {
       console.error('Error fetching conversations:', error);
-      setConversations([]);
+      if (!silent) {
+        setConversations([]);
+      }
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   };
 
