@@ -128,12 +128,35 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
             </div>
           </div>
 
+          {/* Image Upload Area - MUST BE FIRST on mobile */}
+          {selectedImages.length === 0 ? (
+            <div className="mb-4">
+              <label
+                htmlFor="post-image-input"
+                className="border-2 border-dashed border-purple-300 dark:border-purple-700 bg-purple-50 dark:bg-purple-900/10 rounded-lg p-8 sm:p-12 text-center cursor-pointer hover:border-purple-500 active:border-purple-600 active:bg-purple-100 dark:active:bg-purple-900/20 transition-all active:scale-[0.98] block"
+              >
+                <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <ImageIcon className="w-8 h-8 text-white" />
+                </div>
+                <p className="text-lg font-bold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  📸 Tap to Upload
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  Select photos or videos from your device
+                </p>
+                <p className="text-xs text-gray-500 mt-2">
+                  (Up to 10 images/videos)
+                </p>
+              </label>
+            </div>
+          ) : null}
+
           {/* Caption */}
           <Textarea
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
             placeholder="Write a caption..."
-            className="min-h-[100px] mb-4 resize-none"
+            className="min-h-[80px] mb-4 resize-none"
           />
 
           {/* Location */}
@@ -147,16 +170,8 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
             />
           </div>
 
-          {/* Image Upload Area */}
-          {selectedImages.length === 0 ? (
-            <label
-              htmlFor="post-image-input"
-              className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 sm:p-12 text-center cursor-pointer hover:border-purple-400 active:border-purple-500 transition-colors active:scale-98 block touch-none"
-            >
-              <ImageIcon className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 text-gray-400" />
-              <p className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">📸 Select photos or videos</p>
-              <p className="text-xs sm:text-sm text-gray-500">Tap here to upload from your device</p>
-            </label>
+          {/* Selected Images Preview */}
+          {selectedImages.length > 0 ? (
           ) : (
             <div>
               <div className="grid grid-cols-3 gap-2 mb-4">
