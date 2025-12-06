@@ -72,6 +72,7 @@ function App() {
                 <Route path="notifications" element={<Notifications />} />
                 <Route path="saved" element={<Saved />} />
                 <Route path="settings" element={<Settings />} />
+                <Route path="accounts/edit" element={<EditProfile />} />
                 <Route path="post/:postId" element={<PostDetail />} />
                 <Route path="stories/:username" element={<StoryViewer />} />
               </Route>
