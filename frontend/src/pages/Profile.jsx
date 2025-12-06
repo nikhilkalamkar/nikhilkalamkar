@@ -19,20 +19,41 @@ const Profile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
+    // Load follow data from localStorage
+    const followData = JSON.parse(localStorage.getItem('ishukart_follow_data') || '{}');
+    const currentUserId = currentUser?.username || currentUser?.id;
+    
     // Find user profile
+    let userProfile;
     if (username === currentUser?.username) {
       // Always get latest data from localStorage for current user
       const storedUser = localStorage.getItem('ishukart_user');
       if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        setProfile(parsedUser);
+        userProfile = JSON.parse(storedUser);
       } else {
-        setProfile(currentUser);
+        userProfile = currentUser;
       }
     } else {
-      const user = mockUsers.find(u => u.username === username);
-      setProfile(user);
-      setIsFollowing(user?.isFollowing || false);
+      userProfile = mockUsers.find(u => u.username === username);
+    }
+    
+    if (userProfile) {
+      // Update follower/following counts from localStorage
+      const userId = userProfile.username || userProfile.id;
+      const followersCount = (followData.followers && followData.followers[userId]) ? followData.followers[userId].length : (userProfile.followersCount || 0);
+      const followingCount = (followData.following && followData.following[userId]) ? followData.following[userId].length : (userProfile.followingCount || 0);
+      
+      setProfile({
+        ...userProfile,
+        followersCount,
+        followingCount
+      });
+      
+      // Check if current user is following this profile
+      const isCurrentlyFollowing = followData.following && 
+                                   followData.following[currentUserId] && 
+                                   followData.following[currentUserId].includes(userId);
+      setIsFollowing(isCurrentlyFollowing || false);
     }
 
     // Get user's posts (including localStorage posts)
