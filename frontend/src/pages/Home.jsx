@@ -24,9 +24,29 @@ const Home = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLike = (postId, isLiked) => {
-    // Update post like state - will be replaced with API call
-    console.log('Like post:', postId, isLiked);
+  const handleLike = async (postId, isLiked) => {
+    try {
+      // Call backend API to like/unlike post
+      const response = await axios.post(`${BACKEND_URL}/api/posts/${postId}/like`, {}, {
+        withCredentials: true
+      });
+      
+      // Update local state with response
+      setPosts(prevPosts => 
+        prevPosts.map(post => 
+          post.id === postId 
+            ? { ...post, likes: response.data.likes, isLiked: response.data.is_liked }
+            : post
+        )
+      );
+    } catch (error) {
+      console.error('Error liking post:', error);
+      toast({
+        title: 'Error',
+        description: 'Could not update like status',
+        variant: 'destructive'
+      });
+    }
   };
 
   const handleSave = (postId, isSaved) => {
