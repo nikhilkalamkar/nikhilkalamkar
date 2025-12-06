@@ -16,6 +16,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [stories, setStories] = useState([]);
+  const [liveStreams, setLiveStreams] = useState([]);
   const [suggestions, setSuggestions] = useState(mockUsers.slice(0, 5));
   const [showCreateStoryModal, setShowCreateStoryModal] = useState(false);
   const [loadingStories, setLoadingStories] = useState(true);
