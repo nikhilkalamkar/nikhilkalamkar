@@ -16,6 +16,8 @@ import Reels from "./pages/Reels";
 import Notifications from "./pages/Notifications";
 import Saved from "./pages/Saved";
 import Settings from "./pages/Settings";
+import AdminLogin from "./pages/Admin/AdminLogin";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
