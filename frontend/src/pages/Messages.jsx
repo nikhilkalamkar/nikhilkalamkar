@@ -27,6 +27,7 @@ const Messages = () => {
   const [loading, setLoading] = useState(true);
   const fileInputRef = React.useRef(null);
   const messagesEndRef = React.useRef(null);
+  const conversationsRef = React.useRef([]);
 
   // Fetch conversations
   useEffect(() => {
