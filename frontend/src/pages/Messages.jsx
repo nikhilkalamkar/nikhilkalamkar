@@ -322,25 +322,29 @@ const Messages = () => {
     });
   };
 
-  // Filter conversations based on active tab
-  const filteredConversations = conversations.filter(conv => {
-    // Check if user has manually categorized this conversation
-    if (conversationCategories[conv.id]) {
-      return conversationCategories[conv.id] === activeTab;
+  // Get current category for a conversation (manual takes priority)
+  const getConversationCategory = (conv) => {
+    // If user has manually categorized, ALWAYS use that
+    if (conversationCategories[conv.id] !== undefined) {
+      return conversationCategories[conv.id];
     }
     
-    // Default auto-categorization
-    if (activeTab === 'primary') {
-      // Primary: conversations with unread messages or recent activity (last 24 hours)
-      const lastMessageTime = new Date(conv.lastMessageTime);
-      const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      return conv.unreadCount > 0 || lastMessageTime > dayAgo;
-    } else {
-      // General: all other conversations
-      const lastMessageTime = new Date(conv.lastMessageTime);
-      const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      return conv.unreadCount === 0 && lastMessageTime <= dayAgo;
+    // Otherwise, auto-categorize based on activity
+    const lastMessageTime = new Date(conv.lastMessageTime);
+    const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    
+    // Auto: Primary for unread or recent (last 24h)
+    if (conv.unreadCount > 0 || lastMessageTime > dayAgo) {
+      return 'primary';
     }
+    
+    // Auto: General for everything else
+    return 'general';
+  };
+
+  // Filter conversations based on active tab
+  const filteredConversations = conversations.filter(conv => {
+    return getConversationCategory(conv) === activeTab;
   });
 
   return (
