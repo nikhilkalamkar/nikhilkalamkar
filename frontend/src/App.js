@@ -26,7 +26,18 @@ import EditProfile from "./pages/EditProfile";
 import LiveStream from "./pages/LiveStream";
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, refreshAuth } = useAuth();
+
+  // Double check localStorage as fallback in case of race condition
+  React.useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      const storedUser = localStorage.getItem('ishukart_user');
+      if (storedUser) {
+        console.log('[ProtectedRoute] Found user in localStorage, refreshing auth');
+        refreshAuth();
+      }
+    }
+  }, [loading, isAuthenticated, refreshAuth]);
 
   if (loading) {
     return (
@@ -36,7 +47,11 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  // Final check: if user exists in localStorage, consider authenticated
+  const storedUser = localStorage.getItem('ishukart_user');
+  const shouldAllow = isAuthenticated || storedUser;
+
+  return shouldAllow ? children : <Navigate to="/login" />;
 };
 
 function App() {
