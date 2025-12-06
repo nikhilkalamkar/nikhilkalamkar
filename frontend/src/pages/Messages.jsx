@@ -322,8 +322,22 @@ const Messages = () => {
           </div>
           
           <div className="flex gap-2 text-sm">
-            <Button variant="ghost" size="sm" className="flex-1">Primary</Button>
-            <Button variant="ghost" size="sm" className="flex-1">General</Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className={`flex-1 ${activeTab === 'primary' ? 'bg-gray-100 dark:bg-gray-800 font-semibold' : ''}`}
+              onClick={() => setActiveTab('primary')}
+            >
+              Primary
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className={`flex-1 ${activeTab === 'general' ? 'bg-gray-100 dark:bg-gray-800 font-semibold' : ''}`}
+              onClick={() => setActiveTab('general')}
+            >
+              General
+            </Button>
           </div>
         </div>
 
