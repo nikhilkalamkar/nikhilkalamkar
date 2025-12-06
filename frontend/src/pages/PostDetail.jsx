@@ -98,7 +98,7 @@ const PostDetail = () => {
     }));
     
     // Update comment likes count
-    setComments(prev => prev.map(comment => {
+    const updatedComments = comments.map(comment => {
       if (comment.id === commentId) {
         return {
           ...comment,
@@ -106,7 +106,22 @@ const PostDetail = () => {
         };
       }
       return comment;
-    }));
+    });
+    
+    setComments(updatedComments);
+    
+    // Save updated comments to localStorage
+    const allComments = JSON.parse(localStorage.getItem('ishukart_comments') || '[]');
+    const updatedAllComments = allComments.map(comment => {
+      if (comment.id === commentId) {
+        return {
+          ...comment,
+          likes: isLiked ? comment.likes - 1 : comment.likes + 1
+        };
+      }
+      return comment;
+    });
+    localStorage.setItem('ishukart_comments', JSON.stringify(updatedAllComments));
     
     // Show feedback
     if (!isLiked) {
