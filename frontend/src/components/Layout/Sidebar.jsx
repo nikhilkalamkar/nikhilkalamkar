@@ -127,6 +127,25 @@ const Sidebar = () => {
         </div>
       </div>
 
+      {/* Create Options Modal */}
+      {showCreateOptions && (
+        <CreateOptionsModal
+          onClose={() => setShowCreateOptions(false)}
+          onSelectPost={() => {
+            setShowCreateOptions(false);
+            setShowCreateModal(true);
+          }}
+          onSelectStory={() => {
+            setShowCreateOptions(false);
+            setShowCreateStoryModal(true);
+          }}
+          onSelectLive={() => {
+            setShowCreateOptions(false);
+            setShowGoLiveModal(true);
+          }}
+        />
+      )}
+
       {/* Create Modals */}
       {showCreateModal && (
         <CreatePostModal
@@ -145,6 +164,12 @@ const Sidebar = () => {
             setShowCreateStoryModal(false);
             navigate('/');
           }}
+        />
+      )}
+
+      {showGoLiveModal && (
+        <GoLiveModal
+          onClose={() => setShowGoLiveModal(false)}
         />
       )}
     </>
