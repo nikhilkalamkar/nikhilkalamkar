@@ -77,12 +77,17 @@ const Sidebar = () => {
               <Link
                 key={item.label}
                 to={item.path}
-                className={`flex items-center gap-4 px-6 py-3 text-base transition-colors hover:bg-gray-100 dark:hover:bg-gray-900 ${
+                className={`flex items-center gap-4 px-6 py-3 text-base transition-colors hover:bg-gray-100 dark:hover:bg-gray-900 relative ${
                   isActive(item.path) ? 'font-bold' : 'font-normal'
                 }`}
               >
                 <item.icon className={`w-6 h-6 ${isActive(item.path) ? 'stroke-[2.5]' : 'stroke-2'}`} />
                 <span>{item.label}</span>
+                {item.label === 'Notifications' && unreadCount > 0 && (
+                  <span className="absolute left-8 top-2 w-5 h-5 bg-red-500 text-white text-xs flex items-center justify-center rounded-full font-bold">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
               </Link>
             ) : (
               <button
