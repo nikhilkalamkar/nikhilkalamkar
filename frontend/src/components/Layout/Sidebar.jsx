@@ -43,7 +43,7 @@ const Sidebar = () => {
         {/* Logo */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-800">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-            Instagram
+            IshukArt
           </h1>
         </div>
 
