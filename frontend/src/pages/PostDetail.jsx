@@ -19,6 +19,7 @@ const PostDetail = () => {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
+  const [likedComments, setLikedComments] = useState({});
 
   useEffect(() => {
     // Load user posts from localStorage
