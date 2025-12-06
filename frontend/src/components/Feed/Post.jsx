@@ -173,18 +173,32 @@ const Post = ({ post, onLike, onSave, onComment }) => {
           {formatTimeAgo(post.createdAt)} ago
         </div>
 
-        {/* Boost Button - Only for post owner */}
-        {currentUser?.username === post.user.username && (
+        {/* Mobile Quick Actions */}
+        <div className="mt-3 flex gap-2">
+          {/* Boost Button - Only for post owner */}
+          {currentUser?.username === post.user.username && (
+            <Button
+              onClick={() => setShowBoostModal(true)}
+              variant="outline"
+              size="sm"
+              className="flex-1 gap-2 border-purple-300 text-purple-600 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-400 dark:hover:bg-purple-900/10"
+            >
+              <TrendingUp className="w-4 h-4" />
+              Boost
+            </Button>
+          )}
+          
+          {/* Quick Share Button for Mobile */}
           <Button
-            onClick={() => setShowBoostModal(true)}
+            onClick={() => setShowShareModal(true)}
             variant="outline"
             size="sm"
-            className="mt-3 w-full gap-2 border-purple-300 text-purple-600 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-400 dark:hover:bg-purple-900/10"
+            className={`${currentUser?.username === post.user.username ? 'flex-1' : 'w-full'} gap-2 md:hidden`}
           >
-            <TrendingUp className="w-4 h-4" />
-            Boost this post
+            <Send className="w-4 h-4" />
+            Share / Save
           </Button>
-        )}
+        </div>
       </div>
 
       {/* Boost Modal */}
