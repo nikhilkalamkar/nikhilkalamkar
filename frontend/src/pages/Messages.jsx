@@ -430,13 +430,9 @@ const Messages = () => {
             </div>
           ) : (
             filteredConversations.map((conversation) => {
-              // Determine current category
-              const currentCategory = conversationCategories[conversation.id] || 
-                (() => {
-                  const lastMessageTime = new Date(conversation.lastMessageTime);
-                  const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-                  return (conversation.unreadCount > 0 || lastMessageTime > dayAgo) ? 'primary' : 'general';
-                })();
+              // Get current category (manual takes priority)
+              const currentCategory = getConversationCategory(conversation);
+              const isManuallySet = conversationCategories[conversation.id] !== undefined;
               
               return (
                 <div
