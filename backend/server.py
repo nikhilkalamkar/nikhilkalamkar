@@ -10,6 +10,7 @@ from typing import List
 import uuid
 from datetime import datetime
 from auth import router as auth_router
+from payments import router as payments_router
 
 
 ROOT_DIR = Path(__file__).parent
