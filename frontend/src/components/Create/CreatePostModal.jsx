@@ -125,9 +125,15 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
       window.location.reload(); // Refresh to show new post
     } catch (error) {
       console.error('Error creating post:', error);
+      
+      let errorMessage = error.message;
+      if (error.message && error.message.includes('quota')) {
+        errorMessage = 'Files are too large. Please use smaller images or shorter videos (under 5MB).';
+      }
+      
       toast({
         title: 'Failed to create post',
-        description: error.message || 'Please try again',
+        description: errorMessage,
         variant: 'destructive'
       });
     } finally {
