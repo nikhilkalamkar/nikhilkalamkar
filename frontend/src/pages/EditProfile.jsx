@@ -105,7 +105,20 @@ const EditProfile = () => {
         ...formData
       };
 
-      localStorage.setItem('ishukart_user', JSON.stringify(updatedUser));
+      try {
+        localStorage.setItem('ishukart_user', JSON.stringify(updatedUser));
+      } catch (storageError) {
+        if (storageError.name === 'QuotaExceededError' || storageError.message.includes('quota')) {
+          toast({
+            title: 'Image too large',
+            description: 'Please choose a smaller image for your avatar',
+            variant: 'destructive'
+          });
+          setLoading(false);
+          return;
+        }
+        throw storageError;
+      }
 
       // Try to update in backend (if user exists in DB)
       try {
