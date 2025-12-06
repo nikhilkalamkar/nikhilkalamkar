@@ -152,8 +152,21 @@ async def get_all_stories(request: Request):
             if not user:
                 continue
             
+            # Get backend URL from environment or use default
+            backend_url = os.getenv('BACKEND_URL', 'http://localhost:8001')
+            
+            # Format items with full URLs
+            items = story.get("items", [])
+            formatted_items = []
+            for item in items:
+                formatted_item = item.copy()
+                # Convert relative URL to absolute if needed
+                if formatted_item.get("url", "").startswith("/api/"):
+                    formatted_item["url"] = backend_url + formatted_item["url"]
+                formatted_items.append(formatted_item)
+            
             formatted_story = {
-                "id": story.get("story_id", story.get("_id")),
+                "id": story.get("story_id", str(story.get("_id"))),
                 "user": {
                     "id": user["user_id"],
                     "username": user["username"],
@@ -161,7 +174,7 @@ async def get_all_stories(request: Request):
                     "avatar": user.get("avatar", ""),
                     "isVerified": user.get("isVerified", False)
                 },
-                "items": story.get("items", []),
+                "items": formatted_items,
                 "hasUnviewed": story.get("hasUnviewed", True)
             }
             
