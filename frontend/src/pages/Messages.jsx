@@ -32,10 +32,10 @@ const Messages = () => {
   useEffect(() => {
     fetchConversations();
     
-    // Auto-refresh conversations every 3 seconds
+    // Auto-refresh conversations every 5 seconds (less frequent to reduce jumping)
     const refreshInterval = setInterval(() => {
       fetchConversations();
-    }, 3000);
+    }, 5000);
     
     return () => clearInterval(refreshInterval);
   }, []);
