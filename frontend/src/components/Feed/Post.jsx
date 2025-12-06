@@ -123,7 +123,7 @@ const Post = ({ post, onLike, onSave, onComment }) => {
             <button onClick={handleLike} className="hover:opacity-70 transition-opacity">
               <Heart className={`w-6 h-6 ${liked ? 'fill-red-500 stroke-red-500' : ''}`} />
             </button>
-            <button onClick={() => onComment?.(post.id)} className="hover:opacity-70 transition-opacity">
+            <button onClick={() => navigate(`/post/${post.id}`)} className="hover:opacity-70 transition-opacity">
               <MessageCircle className="w-6 h-6" />
             </button>
             <button className="hover:opacity-70 transition-opacity">
