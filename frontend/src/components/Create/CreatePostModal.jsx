@@ -171,22 +171,22 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
           </div>
 
           {/* Selected Images Preview */}
-          {selectedImages.length > 0 ? (
-          ) : (
-            <div>
-              <div className="grid grid-cols-3 gap-2 mb-4">
+          {selectedImages.length > 0 && (
+            <div className="mb-4">
+              <p className="text-sm font-semibold mb-2">Selected Media ({selectedImages.length}/10)</p>
+              <div className="grid grid-cols-3 gap-2 mb-3">
                 {selectedImages.map((img, index) => (
                   <div key={index} className="relative aspect-square group">
                     <img
                       src={img.preview}
                       alt={`Selected ${index + 1}`}
-                      className="w-full h-full object-cover rounded-lg"
+                      className="w-full h-full object-cover rounded-lg border-2 border-purple-200"
                     />
                     <button
                       onClick={() => removeImage(index)}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1.5 shadow-lg active:scale-90"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-3 h-3" />
                     </button>
                   </div>
                 ))}
@@ -194,11 +194,11 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
               <Button
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full"
+                className="w-full border-purple-300 hover:bg-purple-50"
                 disabled={selectedImages.length >= 10}
               >
                 <ImageIcon className="w-4 h-4 mr-2" />
-                Add more photos ({selectedImages.length}/10)
+                Add more ({selectedImages.length}/10)
               </Button>
             </div>
           )}
