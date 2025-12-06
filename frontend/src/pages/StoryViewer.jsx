@@ -170,11 +170,19 @@ const StoryViewer = () => {
         {/* Story header */}
         <div className="absolute top-4 left-0 right-0 z-30 flex items-center justify-between px-4">
           <div className="flex items-center gap-2">
-            <Avatar className="w-8 h-8 border-2 border-white">
+            <Avatar 
+              className="w-8 h-8 border-2 border-white cursor-pointer hover:opacity-80"
+              onClick={() => navigate(`/profile/${currentStory.user.username}`)}
+            >
               <AvatarImage src={currentStory.user.avatar} />
               <AvatarFallback>{currentStory.user.username[0].toUpperCase()}</AvatarFallback>
             </Avatar>
-            <span className="text-white font-semibold text-sm">{currentStory.user.username}</span>
+            <span 
+              className="text-white font-semibold text-sm cursor-pointer hover:opacity-80"
+              onClick={() => navigate(`/profile/${currentStory.user.username}`)}
+            >
+              {currentStory.user.username}
+            </span>
             <span className="text-white/70 text-xs">{currentItem?.createdAt ? formatTimeAgo(currentItem.createdAt) : 'Just now'}</span>
           </div>
           <div className="flex items-center gap-2">
