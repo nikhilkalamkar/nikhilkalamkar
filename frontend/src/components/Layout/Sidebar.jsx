@@ -12,6 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import CreatePostModal from '../Create/CreatePostModal';
+import CreateStoryModal from '../Create/CreateStoryModal';
 
 const Sidebar = () => {
   const location = useLocation();
