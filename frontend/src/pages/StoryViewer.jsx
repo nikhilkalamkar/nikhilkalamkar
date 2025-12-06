@@ -190,7 +190,7 @@ const StoryViewer = () => {
 
         {/* Story content */}
         <div className="relative w-full h-full rounded-lg overflow-hidden">
-          {currentItem.type === 'image' ? (
+          {currentItem && currentItem.type === 'image' ? (
             <img
               src={currentItem.url}
               alt="Story"
