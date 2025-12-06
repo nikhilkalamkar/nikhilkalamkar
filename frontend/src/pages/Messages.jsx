@@ -241,6 +241,13 @@ const Messages = () => {
     return () => clearInterval(messageRefreshInterval);
   }, [selectedConversation?.user?.id]);
 
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [selectedConversation?.messages]);
+
   const formatTime = (date) => {
     const messageDate = new Date(date);
     const now = new Date();
