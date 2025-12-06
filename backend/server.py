@@ -11,6 +11,8 @@ import uuid
 from datetime import datetime
 from auth import router as auth_router
 from payments import router as payments_router
+from posts import router as posts_router
+from stories import router as stories_router
 
 
 ROOT_DIR = Path(__file__).parent
