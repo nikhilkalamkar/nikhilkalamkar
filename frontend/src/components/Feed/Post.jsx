@@ -11,7 +11,9 @@ const Post = ({ post, onLike, onSave, onComment }) => {
   const [liked, setLiked] = useState(post.isLiked);
   const [saved, setSaved] = useState(post.isSaved);
   const [likesCount, setLikesCount] = useState(post.likes);
+  const [showBoostModal, setShowBoostModal] = useState(false);
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
   const handleLike = () => {
     const newLiked = !liked;
