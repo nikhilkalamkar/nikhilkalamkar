@@ -13,6 +13,7 @@ const Home = () => {
   const [posts, setPosts] = useState(mockPosts);
   const [stories, setStories] = useState(mockStories);
   const [suggestions, setSuggestions] = useState(mockUsers.slice(0, 5));
+  const [showCreateStoryModal, setShowCreateStoryModal] = useState(false);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
