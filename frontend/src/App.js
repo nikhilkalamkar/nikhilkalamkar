@@ -18,6 +18,8 @@ import Saved from "./pages/Saved";
 import Settings from "./pages/Settings";
 import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
+import PostDetail from "./pages/PostDetail";
+import StoryViewer from "./pages/StoryViewer";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
