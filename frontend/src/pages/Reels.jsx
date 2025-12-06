@@ -46,19 +46,38 @@ const Reels = () => {
   }, [currentReelIndex, reels.length]);
 
   const handleLike = () => {
-    console.log('Like reel:', currentReel.id);
+    const reelId = currentReel.id;
+    setLikedReels(prev => ({
+      ...prev,
+      [reelId]: !prev[reelId]
+    }));
+    toast({
+      title: likedReels[reelId] ? 'Unliked' : 'Liked',
+      description: likedReels[reelId] ? 'Removed from liked reels' : 'Added to liked reels',
+    });
   };
 
   const handleComment = () => {
-    console.log('Comment on reel:', currentReel.id);
+    navigate(`/post/${currentReel.id}`);
   };
 
   const handleShare = () => {
-    console.log('Share reel:', currentReel.id);
+    toast({
+      title: 'Share',
+      description: 'Share functionality coming soon!',
+    });
   };
 
   const handleSave = () => {
-    console.log('Save reel:', currentReel.id);
+    const reelId = currentReel.id;
+    setSavedReels(prev => ({
+      ...prev,
+      [reelId]: !prev[reelId]
+    }));
+    toast({
+      title: savedReels[reelId] ? 'Unsaved' : 'Saved',
+      description: savedReels[reelId] ? 'Removed from saved' : 'Saved to your collection',
+    });
   };
 
   return (
