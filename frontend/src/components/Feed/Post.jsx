@@ -25,6 +25,12 @@ const Post = ({ post, onLike, onSave, onComment }) => {
   const { currentUser } = useAuth();
   const { toast } = useToast();
 
+  // Sync with parent state changes
+  useEffect(() => {
+    setLiked(post.isLiked);
+    setLikesCount(post.likes);
+  }, [post.isLiked, post.likes]);
+
   const handleLike = () => {
     const newLiked = !liked;
     setLiked(newLiked);
