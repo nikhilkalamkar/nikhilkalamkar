@@ -18,6 +18,11 @@ const Messages = () => {
   const { currentUser } = useAuth();
   const { toast } = useToast();
   const [conversations, setConversations] = useState([]);
+  
+  // Update ref when conversations change
+  useEffect(() => {
+    conversationsRef.current = conversations;
+  }, [conversations]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messageText, setMessageText] = useState('');
   const [showNewMessageModal, setShowNewMessageModal] = useState(false);
