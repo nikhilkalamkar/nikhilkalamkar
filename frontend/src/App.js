@@ -51,6 +51,9 @@ function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/auth/debug" element={<OAuthDebug />} />
+              
+              {/* Live Stream - Outside protected routes for public viewing */}
+              <Route path="/live/:liveId" element={<LiveStream />} />
 
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
