@@ -14,7 +14,7 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState('light');
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem('instagram_theme') || 'light';
+    const storedTheme = localStorage.getItem('ishukart_theme') || 'light';
     setTheme(storedTheme);
     document.documentElement.classList.toggle('dark', storedTheme === 'dark');
   }, []);
