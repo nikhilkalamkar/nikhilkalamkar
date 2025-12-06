@@ -163,7 +163,6 @@ const CreateStoryModal = ({ onClose, onStoryCreated }) => {
                   id="story-video-input"
                   type="file"
                   accept="video/*"
-                  capture="environment"
                   onChange={handleMediaSelect}
                   className="hidden"
                 />
