@@ -6,6 +6,8 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Send, Info, Phone, Video, Smile, Image as ImageIcon, Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../hooks/use-toast';
+import NewMessageModal from '../components/Messages/NewMessageModal';
 
 const Messages = () => {
   const navigate = useNavigate();
