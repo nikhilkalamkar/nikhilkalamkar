@@ -229,15 +229,16 @@ const Messages = () => {
           </div>
           <h2 className="text-2xl font-light mb-2">Your messages</h2>
           <p className="text-gray-500 text-sm">Send private photos and messages to a friend or group.</p>
-          <Button className="mt-4 bg-blue-500 hover:bg-blue-600">Send message</Button>
+          <Button className="mt-4 bg-blue-500 hover:bg-blue-600" onClick={() => setShowNewMessageModal(true)}>Send message</Button>
         </div>
       )}
       
-      <NewMessageModal
-        isOpen={showNewMessageModal}
-        onClose={() => setShowNewMessageModal(false)}
-        onSelectUser={handleNewConversation}
-      />
+      {showNewMessageModal && (
+        <NewMessageModal
+          onClose={() => setShowNewMessageModal(false)}
+          onSelectUser={handleNewConversation}
+        />
+      )}
     </div>
   );
 };
