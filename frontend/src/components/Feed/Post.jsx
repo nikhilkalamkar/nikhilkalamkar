@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../hooks/use-toast';
 import BoostPostModal from '../Post/BoostPostModal';
+import SharePostModal from '../Post/SharePostModal';
 
 const Post = ({ post, onLike, onSave, onComment }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -13,6 +14,7 @@ const Post = ({ post, onLike, onSave, onComment }) => {
   const [saved, setSaved] = useState(post.isSaved);
   const [likesCount, setLikesCount] = useState(post.likes);
   const [showBoostModal, setShowBoostModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const { toast } = useToast();
