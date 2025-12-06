@@ -66,6 +66,8 @@ const CreateStoryModal = ({ onClose, onStoryCreated }) => {
         }
       );
 
+      console.log('Story created:', response.data);
+
       toast({
         title: 'Story posted! 🎉',
         description: 'Your story is now live for 24 hours',
