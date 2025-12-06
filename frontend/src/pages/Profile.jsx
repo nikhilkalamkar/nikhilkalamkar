@@ -4,9 +4,12 @@ import { Settings, Grid, Bookmark, UserPlus, Tag } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { currentUser as mockCurrentUser, users as mockUsers, posts as mockPosts } from '../mock/mockData';
+import { users as mockUsers, posts as mockPosts } from '../mock/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../hooks/use-toast';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Profile = () => {
   const { username } = useParams();
@@ -17,50 +20,67 @@ const Profile = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [activeTab, setActiveTab] = useState('posts');
   const [isFollowing, setIsFollowing] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load follow data from localStorage
-    const followData = JSON.parse(localStorage.getItem('ishukart_follow_data') || '{}');
-    const currentUserId = currentUser?.username || currentUser?.id;
-    
-    // Find user profile
-    let userProfile;
-    if (username === currentUser?.username) {
-      // Always get latest data from localStorage for current user
-      const storedUser = localStorage.getItem('ishukart_user');
-      if (storedUser) {
-        userProfile = JSON.parse(storedUser);
-      } else {
-        userProfile = currentUser;
-      }
-    } else {
-      userProfile = mockUsers.find(u => u.username === username);
-    }
-    
-    if (userProfile) {
-      // Update follower/following counts from localStorage
-      const userId = userProfile.username || userProfile.id;
-      const followersCount = (followData.followers && followData.followers[userId]) ? followData.followers[userId].length : (userProfile.followersCount || 0);
-      const followingCount = (followData.following && followData.following[userId]) ? followData.following[userId].length : (userProfile.followingCount || 0);
-      
-      setProfile({
-        ...userProfile,
-        followersCount,
-        followingCount
-      });
-      
-      // Check if current user is following this profile
-      const isCurrentlyFollowing = followData.following && 
-                                   followData.following[currentUserId] && 
-                                   followData.following[currentUserId].includes(userId);
-      setIsFollowing(isCurrentlyFollowing || false);
-    }
+    const fetchProfile = async () => {
+      setLoading(true);
+      try {
+        // Load follow data from localStorage
+        const followData = JSON.parse(localStorage.getItem('ishukart_follow_data') || '{}');
+        const currentUserId = currentUser?.username || currentUser?.id;
+        
+        // Find user profile
+        let userProfile;
+        if (username === currentUser?.username) {
+          // For current user, use their logged-in data
+          userProfile = currentUser;
+        } else {
+          // For other users, try to fetch from backend first
+          try {
+            const response = await axios.get(`${BACKEND_URL}/api/users/${username}`, {
+              withCredentials: true
+            });
+            userProfile = response.data.user;
+          } catch (apiError) {
+            console.log('API failed, using mock data:', apiError);
+            // Fallback to mock data
+            userProfile = mockUsers.find(u => u.username === username);
+          }
+        }
+        
+        if (userProfile) {
+          // Update follower/following counts from localStorage (temporary until backend integration)
+          const userId = userProfile.username || userProfile.id;
+          const followersCount = (followData.followers && followData.followers[userId]) ? followData.followers[userId].length : (userProfile.followersCount || 0);
+          const followingCount = (followData.following && followData.following[userId]) ? followData.following[userId].length : (userProfile.followingCount || 0);
+          
+          setProfile({
+            ...userProfile,
+            followersCount,
+            followingCount
+          });
+          
+          // Check if current user is following this profile
+          const isCurrentlyFollowing = followData.following && 
+                                       followData.following[currentUserId] && 
+                                       followData.following[currentUserId].includes(userId);
+          setIsFollowing(isCurrentlyFollowing || false);
+        }
 
-    // Get user's posts (including localStorage posts)
-    const localPosts = JSON.parse(localStorage.getItem('ishukart_posts') || '[]');
-    const allPosts = [...localPosts, ...mockPosts];
-    const posts = allPosts.filter(p => p.user.username === username);
-    setUserPosts(posts);
+        // Get user's posts (including localStorage posts)
+        const localPosts = JSON.parse(localStorage.getItem('ishukart_posts') || '[]');
+        const allPosts = [...localPosts, ...mockPosts];
+        const posts = allPosts.filter(p => p.user.username === username);
+        setUserPosts(posts);
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProfile();
   }, [username, currentUser]);
 
   const isOwnProfile = username === currentUser?.username;
