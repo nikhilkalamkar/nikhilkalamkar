@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from 'lucide-react';
+import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal, TrendingUp } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import BoostPostModal from '../Post/BoostPostModal';
 
 const Post = ({ post, onLike, onSave, onComment }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
