@@ -12,6 +12,7 @@ const Profile = () => {
   const { username } = useParams();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const { toast } = useToast();
   const [profile, setProfile] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [activeTab, setActiveTab] = useState('posts');
