@@ -14,6 +14,7 @@ const Home = () => {
   const [suggestions, setSuggestions] = useState(mockUsers.slice(0, 5));
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleLike = (postId, isLiked) => {
     // Update post like state - will be replaced with API call
