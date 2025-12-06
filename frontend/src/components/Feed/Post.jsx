@@ -149,13 +149,24 @@ const Post = ({ post, onLike, onSave, onComment }) => {
         </DropdownMenu>
       </div>
 
-      {/* Post Image(s) */}
+      {/* Post Image(s) / Video */}
       <div className="relative">
-        <img
-          src={post.images[currentImageIndex]}
-          alt="Post"
-          className="w-full aspect-square object-cover"
-        />
+        {post.images[currentImageIndex]?.startsWith('data:video/') ? (
+          <video
+            src={post.images[currentImageIndex]}
+            controls
+            className="w-full aspect-square object-cover bg-black"
+            playsInline
+          >
+            Your browser does not support the video tag.
+          </video>
+        ) : (
+          <img
+            src={post.images[currentImageIndex]}
+            alt="Post"
+            className="w-full aspect-square object-cover"
+          />
+        )}
         
         {/* Carousel Controls */}
         {post.images.length > 1 && (
