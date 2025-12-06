@@ -16,25 +16,42 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Check if user is logged in
-    const checkAuthStatus = async () => {
-      const storedUser = localStorage.getItem('ishukart_user');
-      if (storedUser) {
-        try {
-          const user = JSON.parse(storedUser);
-          console.log('[AuthContext] Found stored user:', user);
-          setCurrentUser(user);
-          setIsAuthenticated(true);
-        } catch (error) {
-          console.error('[AuthContext] Error parsing stored user:', error);
-          localStorage.removeItem('ishukart_user');
-        }
+  const checkAuthStatus = () => {
+    const storedUser = localStorage.getItem('ishukart_user');
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        console.log('[AuthContext] Found stored user:', user);
+        setCurrentUser(user);
+        setIsAuthenticated(true);
+        return true;
+      } catch (error) {
+        console.error('[AuthContext] Error parsing stored user:', error);
+        localStorage.removeItem('ishukart_user');
+        return false;
       }
-      setLoading(false);
-    };
-    
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    // Initial auth check
     checkAuthStatus();
+    setLoading(false);
+
+    // Listen for storage changes (from OAuth callback or other tabs)
+    const handleStorageChange = (e) => {
+      if (e.key === 'ishukart_user') {
+        console.log('[AuthContext] Storage changed, re-checking auth');
+        checkAuthStatus();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const login = async (email, password) => {
