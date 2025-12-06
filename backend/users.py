@@ -32,6 +32,12 @@ async def search_users(
         if not session:
             raise HTTPException(status_code=401, detail="Invalid session")
         
+        current_user_id = session["user_id"]
+        
+        # Get current user's blocked list
+        current_user = await db.users.find_one({"user_id": current_user_id}, {"_id": 0})
+        my_blocked_users = current_user.get("blocked_users", [])
+        
         # Search users by username or full name (case insensitive)
         if not q or not q.strip():
             return {"users": []}
