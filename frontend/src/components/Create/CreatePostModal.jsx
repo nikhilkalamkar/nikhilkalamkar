@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { X, Image as ImageIcon, Smile, MapPin, Loader2 } from 'lucide-react';
+import { X, Image as ImageIcon, Smile, MapPin, Video, Loader2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
