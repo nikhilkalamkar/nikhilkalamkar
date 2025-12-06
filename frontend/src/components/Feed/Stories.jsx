@@ -7,7 +7,7 @@ const Stories = ({ stories, onStoryClick, currentUser, onAddStory }) => {
     <div className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 py-4 px-4 overflow-x-auto">
       <div className="flex gap-4 min-w-max">
         {/* Add Story */}
-        <div className="flex flex-col items-center gap-1 cursor-pointer">
+        <div className="flex flex-col items-center gap-1 cursor-pointer" onClick={onAddStory}>
           <div className="relative">
             <Avatar className="w-16 h-16 border-2 border-gray-300">
               <AvatarImage src={currentUser?.avatar} />
