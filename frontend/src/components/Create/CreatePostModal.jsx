@@ -309,14 +309,39 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
           />
 
           {/* Location */}
-          <div className="flex items-center gap-2 mb-4">
-            <MapPin className="w-5 h-5 text-gray-400" />
-            <Input
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Add location"
-              className="flex-1"
-            />
+          <div className="mb-4">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-gray-400 flex-shrink-0" />
+              <Input
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Add location"
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleDetectLocation}
+                disabled={detectingLocation}
+                className="flex items-center gap-1 flex-shrink-0"
+              >
+                {detectingLocation ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span className="hidden sm:inline">Detecting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Navigation className="w-4 h-4" />
+                    <span className="hidden sm:inline">Detect</span>
+                  </>
+                )}
+              </Button>
+            </div>
+            <p className="text-xs text-gray-500 mt-1 ml-7">
+              Tap "Detect" to use your current location
+            </p>
           </div>
 
           {/* Selected Images Preview */}
