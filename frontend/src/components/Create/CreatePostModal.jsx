@@ -217,7 +217,7 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
               </div>
               <Button
                 variant="outline"
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => imageInputRef.current?.click()}
                 className="w-full border-purple-300 hover:bg-purple-50"
                 disabled={selectedImages.length >= 10}
               >
