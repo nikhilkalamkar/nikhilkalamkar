@@ -36,6 +36,26 @@ const Home = () => {
     navigate(`/stories/${story.user.username}`);
   };
 
+  const fetchStories = async () => {
+    try {
+      setLoadingStories(true);
+      const response = await axios.get(`${BACKEND_URL}/api/stories/all`, {
+        withCredentials: true
+      });
+      setStories(response.data.stories);
+    } catch (error) {
+      console.error('Error fetching stories:', error);
+      // Fallback to mock data if API fails
+      setStories(mockStories);
+    } finally {
+      setLoadingStories(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStories();
+  }, []);
+
   const handleFollow = (userId) => {
     setSuggestions(prev =>
       prev.map(user => {
