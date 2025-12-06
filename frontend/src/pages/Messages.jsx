@@ -40,11 +40,16 @@ const Messages = () => {
   const [conversationCategories, setConversationCategories] = useState({});
   const [likedMessages, setLikedMessages] = useState({});
   const [showHeartAnimation, setShowHeartAnimation] = useState(null);
+  const [messageReactions, setMessageReactions] = useState({});
+  const [showReactionPicker, setShowReactionPicker] = useState(null);
   const fileInputRef = React.useRef(null);
   const messagesEndRef = React.useRef(null);
   const conversationsRef = React.useRef([]);
   const lastMessageCountRef = React.useRef(0);
   const lastTapRef = React.useRef({});
+
+  // Common emoji reactions
+  const quickReactions = ['❤️', '😂', '😮', '😢', '😡', '👍', '👎', '🔥', '🎉', '💯'];
 
   // Load conversation categories from localStorage
   useEffect(() => {
