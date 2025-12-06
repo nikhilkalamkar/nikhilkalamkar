@@ -205,12 +205,6 @@ const CreateStoryModal = ({ onClose, onStoryCreated }) => {
             </div>
           )}
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            onChange={handleMediaSelect}
-            className="hidden"
-          />
         </div>
 
         {/* Footer */}
