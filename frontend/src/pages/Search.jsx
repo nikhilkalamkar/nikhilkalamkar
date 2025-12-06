@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { users as mockUsers } from '../mock/mockData';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Input } from '../components/ui/input';
 import { Search as SearchIcon, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Search = () => {
   const navigate = useNavigate();
@@ -12,37 +14,26 @@ const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [recentSearches, setRecentSearches] = useState([]);
-  const [allUsers, setAllUsers] = useState([]);
+  const [searching, setSearching] = useState(false);
 
-  useEffect(() => {
-    // Combine mock users with current logged-in user
-    const users = [...mockUsers];
-    
-    // Add current user if not already in list
-    if (currentUser && !users.find(u => u.username === currentUser.username)) {
-      users.push({
-        id: currentUser.id || currentUser.user_id,
-        username: currentUser.username,
-        fullName: currentUser.fullName || currentUser.username,
-        avatar: currentUser.avatar,
-        followersCount: currentUser.followersCount || 0,
-        followingCount: currentUser.followingCount || 0,
-        isVerified: currentUser.isVerified || false
-      });
-    }
-    
-    setAllUsers(users);
-  }, [currentUser]);
-
-  const handleSearch = (query) => {
+  const handleSearch = async (query) => {
     setSearchQuery(query);
     if (query.trim()) {
-      const results = allUsers.filter(
-        (user) =>
-          user.username.toLowerCase().includes(query.toLowerCase()) ||
-          (user.fullName && user.fullName.toLowerCase().includes(query.toLowerCase()))
-      );
-      setSearchResults(results);
+      setSearching(true);
+      try {
+        // Call backend API to search users
+        const response = await axios.get(`${BACKEND_URL}/api/users/search`, {
+          params: { q: query },
+          withCredentials: true
+        });
+        
+        setSearchResults(response.data.users || []);
+      } catch (error) {
+        console.error('Error searching users:', error);
+        setSearchResults([]);
+      } finally {
+        setSearching(false);
+      }
     } else {
       setSearchResults([]);
     }
