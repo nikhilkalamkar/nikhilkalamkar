@@ -21,13 +21,19 @@ const PostDetail = () => {
   const [likesCount, setLikesCount] = useState(0);
 
   useEffect(() => {
+    // Load user posts from localStorage
+    const userPosts = JSON.parse(localStorage.getItem('ishukart_posts') || '[]');
+    
+    // Combine with mock posts
+    const allPosts = [...userPosts, ...mockPosts];
+    
     // Find the post
-    const foundPost = mockPosts.find(p => p.id === postId);
+    const foundPost = allPosts.find(p => p.id === postId);
     if (foundPost) {
       setPost(foundPost);
-      setLiked(foundPost.isLiked);
-      setSaved(foundPost.isSaved);
-      setLikesCount(foundPost.likes);
+      setLiked(foundPost.isLiked || false);
+      setSaved(foundPost.isSaved || false);
+      setLikesCount(foundPost.likes || 0);
       
       // Get comments for this post
       const postComments = mockComments.filter(c => c.postId === postId);
