@@ -43,7 +43,7 @@ const Signup = () => {
         {/* Main Signup Box */}
         <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 p-10">
           <h1 className="text-4xl font-bold text-center mb-2 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-            Instagram
+            IshukArt
           </h1>
           <p className="text-center text-gray-500 font-semibold mb-6">
             Sign up to see photos and videos from your friends.
