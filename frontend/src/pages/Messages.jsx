@@ -292,6 +292,21 @@ const Messages = () => {
     return `${Math.floor(diffInSeconds / 604800)}w`;
   };
 
+  // Filter conversations based on active tab
+  const filteredConversations = conversations.filter(conv => {
+    if (activeTab === 'primary') {
+      // Primary: conversations with unread messages or recent activity (last 24 hours)
+      const lastMessageTime = new Date(conv.lastMessageTime);
+      const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      return conv.unreadCount > 0 || lastMessageTime > dayAgo;
+    } else {
+      // General: all other conversations
+      const lastMessageTime = new Date(conv.lastMessageTime);
+      const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      return conv.unreadCount === 0 && lastMessageTime <= dayAgo;
+    }
+  });
+
   return (
     <div className="flex h-screen bg-white dark:bg-black">
       {/* Conversations List */}
