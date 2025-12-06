@@ -92,10 +92,26 @@ const StoryViewer = () => {
     return `${Math.floor(diffInSeconds / 86400)}d ago`;
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+      </div>
+    );
+  }
+
   if (!currentStory) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black">
-        <p className="text-white">Story not found</p>
+        <div className="text-center">
+          <p className="text-white text-xl mb-4">Story not found</p>
+          <button
+            onClick={() => navigate('/')}
+            className="text-blue-400 hover:text-blue-300 underline"
+          >
+            Go back to home
+          </button>
+        </div>
       </div>
     );
   }
