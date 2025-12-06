@@ -194,6 +194,14 @@ const Post = ({ post, onLike, onSave, onComment }) => {
           onClose={() => setShowBoostModal(false)}
         />
       )}
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <SharePostModal
+          post={post}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
     </div>
   );
 };
