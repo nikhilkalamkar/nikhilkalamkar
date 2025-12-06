@@ -49,6 +49,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/auth/debug" element={<OAuthDebug />} />
 
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
