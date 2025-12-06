@@ -16,26 +16,34 @@ const StoryViewer = () => {
   const [allStories, setAllStories] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch stories
+  // Fetch user's stories
   useEffect(() => {
-    const fetchStories = async () => {
+    const fetchUserStories = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}/api/stories/all`, {
+        const response = await axios.get(`${BACKEND_URL}/api/stories/user/${username}`, {
           withCredentials: true
         });
-        setAllStories(response.data.stories);
+        
+        if (response.data.story) {
+          setAllStories([response.data.story]);
+        } else {
+          setAllStories([]);
+        }
       } catch (error) {
         console.error('Error fetching stories:', error);
+        setAllStories([]);
       } finally {
         setLoading(false);
       }
     };
-    fetchStories();
-  }, []);
+    
+    if (username) {
+      fetchUserStories();
+    }
+  }, [username]);
 
-  // Find stories for the user
-  const userStories = allStories.filter(s => s.user.username === username);
-  const currentStory = userStories[currentStoryIndex];
+  // Get current story and item
+  const currentStory = allStories[currentStoryIndex];
   const currentItem = currentStory?.items[currentItemIndex];
 
   useEffect(() => {
