@@ -98,13 +98,24 @@ const PostDetail = () => {
   return (
     <div className="max-w-5xl mx-auto my-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-0 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
-        {/* Post Image */}
+        {/* Post Image/Video */}
         <div className="bg-black flex items-center justify-center">
-          <img
-            src={post.images[0]}
-            alt="Post"
-            className="w-full h-full object-contain max-h-[600px]"
-          />
+          {post.images[0]?.startsWith('data:video/') ? (
+            <video
+              src={post.images[0]}
+              controls
+              className="w-full h-full object-contain max-h-[600px]"
+              playsInline
+            >
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            <img
+              src={post.images[0]}
+              alt="Post"
+              className="w-full h-full object-contain max-h-[600px]"
+            />
+          )}
         </div>
 
         {/* Post Details and Comments */}
