@@ -8,12 +8,16 @@ import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { useToast } from '../hooks/use-toast';
 import CreateStoryModal from '../components/Create/CreateStoryModal';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Home = () => {
   const [posts, setPosts] = useState(mockPosts);
-  const [stories, setStories] = useState(mockStories);
+  const [stories, setStories] = useState([]);
   const [suggestions, setSuggestions] = useState(mockUsers.slice(0, 5));
   const [showCreateStoryModal, setShowCreateStoryModal] = useState(false);
+  const [loadingStories, setLoadingStories] = useState(true);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
