@@ -52,57 +52,133 @@ const CallModal = ({ type, user, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black z-[200] flex flex-col">
+      {/* Header with close button (only when not in call) */}
+      {callStatus !== 'active' && (
+        <div className="absolute top-4 right-4 z-10">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-white/10"
+            onClick={onClose}
+          >
+            <X className="w-6 h-6" />
+          </Button>
+        </div>
+      )}
+
       {/* Call Interface */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-gradient-to-br from-purple-900 to-pink-900">
-        {/* User Info */}
-        <div className="text-center mb-8">
-          <Avatar className="w-32 h-32 mx-auto mb-4 ring-4 ring-white/20">
-            <AvatarImage src={user.avatar} />
-            <AvatarFallback className="text-4xl">{user.username?.[0]?.toUpperCase()}</AvatarFallback>
-          </Avatar>
-          <h2 className="text-2xl font-semibold text-white mb-2">{user.username}</h2>
-          <p className="text-white/70 text-lg">
-            {callStatus === 'connecting' && 'Connecting...'}
-            {callStatus === 'ringing' && 'Ringing...'}
-            {callStatus === 'active' && formatDuration(duration)}
-            {callStatus === 'ended' && 'Call Ended'}
-          </p>
+      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
+        {/* Animated background circles */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         </div>
 
-        {/* Video Preview (for video calls) */}
-        {type === 'video' && callStatus === 'active' && (
-          <div className="w-full max-w-md aspect-video bg-black/50 rounded-lg mb-6 relative overflow-hidden">
-            <div className="absolute inset-0 flex items-center justify-center">
-              {isVideoOff ? (
-                <div className="text-center">
-                  <VideoOff className="w-16 h-16 text-white/50 mx-auto mb-2" />
-                  <p className="text-white/50">Camera is off</p>
-                </div>
-              ) : (
-                <div className="text-white/50">Video Preview</div>
+        <div className="relative z-10">
+          {/* User Info */}
+          <div className="text-center mb-8">
+            <div className="relative inline-block mb-6">
+              <Avatar className={`w-40 h-40 mx-auto ring-4 ${
+                callStatus === 'active' ? 'ring-green-500' : 'ring-white/20'
+              } transition-all duration-300`}>
+                <AvatarImage src={user.avatar} />
+                <AvatarFallback className="text-5xl bg-gradient-to-br from-purple-500 to-pink-500">
+                  {user.username?.[0]?.toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              {/* Pulsing ring animation when ringing */}
+              {callStatus === 'ringing' && (
+                <>
+                  <div className="absolute inset-0 rounded-full ring-4 ring-white/40 animate-ping"></div>
+                  <div className="absolute inset-0 rounded-full ring-8 ring-white/20 animate-pulse"></div>
+                </>
+              )}
+              {/* Status indicator */}
+              {callStatus === 'active' && (
+                <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-4 border-black rounded-full"></div>
               )}
             </div>
-            {/* Small self-view */}
-            <div className="absolute top-4 right-4 w-24 h-32 bg-gray-800 rounded-lg"></div>
+            <h2 className="text-3xl font-bold text-white mb-2">{user.username}</h2>
+            <p className="text-white/80 text-xl font-medium">
+              {callStatus === 'connecting' && (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="inline-block w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                  Connecting...
+                </span>
+              )}
+              {callStatus === 'ringing' && (
+                <span className="flex items-center justify-center gap-2">
+                  <Phone className="w-5 h-5 animate-bounce" />
+                  Ringing...
+                </span>
+              )}
+              {callStatus === 'active' && (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                  {formatDuration(duration)}
+                </span>
+              )}
+              {callStatus === 'ended' && (
+                <span className="text-red-400">Call Ended</span>
+              )}
+            </p>
+            {type === 'video' && callStatus === 'active' && (
+              <p className="text-white/60 text-sm mt-2">
+                {isVideoOff ? 'Camera Off' : 'HD Video'}
+              </p>
+            )}
           </div>
-        )}
 
-        {/* Status Animation */}
-        {(callStatus === 'connecting' || callStatus === 'ringing') && (
-          <div className="flex gap-2 mb-8">
-            <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-            <div className="w-3 h-3 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-            <div className="w-3 h-3 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-          </div>
-        )}
-
-        {callStatus === 'ended' && (
-          <div className="text-center">
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <X className="w-8 h-8 text-white" />
+          {/* Video Preview (for video calls) */}
+          {type === 'video' && callStatus === 'active' && (
+            <div className="w-full max-w-2xl aspect-video bg-black/50 rounded-2xl mb-6 relative overflow-hidden shadow-2xl border border-white/10">
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
+                {isVideoOff ? (
+                  <div className="text-center">
+                    <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <VideoOff className="w-12 h-12 text-white/70" />
+                    </div>
+                    <p className="text-white/70 text-lg font-medium">Camera is off</p>
+                    <p className="text-white/50 text-sm mt-1">Turn on camera to show video</p>
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <div className="w-24 h-24 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                      <Video className="w-12 h-12 text-white/70" />
+                    </div>
+                    <p className="text-white/50 text-sm">Video stream active</p>
+                  </div>
+                )}
+              </div>
+              {/* Small self-view */}
+              <div className="absolute top-4 right-4 w-32 h-40 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border-2 border-white/20 overflow-hidden shadow-xl">
+                <div className="w-full h-full flex items-center justify-center">
+                  <Avatar className="w-16 h-16">
+                    <AvatarFallback className="text-2xl">You</AvatarFallback>
+                  </Avatar>
+                </div>
+              </div>
+              {/* Fullscreen button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-4 left-4 text-white hover:bg-white/10"
+                onClick={() => setIsFullscreen(!isFullscreen)}
+              >
+                <Maximize2 className="w-5 h-5" />
+              </Button>
             </div>
-          </div>
-        )}
+          )}
+
+          {callStatus === 'ended' && (
+            <div className="text-center">
+              <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
+                <PhoneOff className="w-10 h-10 text-red-400" />
+              </div>
+              <p className="text-white/60">Thank you for calling</p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Call Controls */}
