@@ -16,8 +16,22 @@ const Messages = () => {
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (messageText.trim()) {
-      console.log('Send message:', messageText);
+    if (messageText.trim() && selectedConversation) {
+      const newMessage = {
+        id: `msg_${Date.now()}`,
+        senderId: currentUser?.id,
+        text: messageText,
+        createdAt: new Date().toISOString()
+      };
+      
+      // Add message to conversation
+      setSelectedConversation(prev => ({
+        ...prev,
+        messages: [...prev.messages, newMessage],
+        lastMessage: messageText,
+        lastMessageTime: newMessage.createdAt
+      }));
+      
       setMessageText('');
     }
   };
