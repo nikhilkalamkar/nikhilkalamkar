@@ -47,11 +47,17 @@ const Home = () => {
       if (error.response?.status === 404) {
         // Update UI anyway for localStorage posts
         setPosts(prevPosts => 
-          prevPosts.map(post => 
-            post.id === postId 
-              ? { ...post, isLiked: isLiked }
-              : post
-          )
+          prevPosts.map(post => {
+            if (post.id === postId) {
+              const currentLikes = post.likes || 0;
+              return {
+                ...post,
+                isLiked: isLiked,
+                likes: isLiked ? currentLikes + 1 : Math.max(0, currentLikes - 1)
+              };
+            }
+            return post;
+          })
         );
       } else {
         // Only show error for non-404 errors
