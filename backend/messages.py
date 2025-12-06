@@ -263,3 +263,115 @@ async def mark_message_read(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/like/{message_id}")
+async def like_message(
+    message_id: str,
+    request: Request
+):
+    """Like/unlike a message"""
+    try:
+        # Get current user
+        session_token = await get_session_token(request, None)
+        if not session_token:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        session = await db.user_sessions.find_one({"session_token": session_token})
+        if not session:
+            raise HTTPException(status_code=401, detail="Invalid session")
+        
+        user_id = session["user_id"]
+        
+        # Find the message
+        message = await db.messages.find_one({"message_id": message_id})
+        if not message:
+            raise HTTPException(status_code=404, detail="Message not found")
+        
+        # Get current likes
+        likes = message.get("likes", [])
+        
+        # Toggle like
+        if user_id in likes:
+            # Unlike
+            likes.remove(user_id)
+            action = "unliked"
+        else:
+            # Like
+            likes.append(user_id)
+            action = "liked"
+        
+        # Update message
+        await db.messages.update_one(
+            {"message_id": message_id},
+            {"$set": {"likes": likes}}
+        )
+        
+        return {"success": True, "action": action, "likes": likes}
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class AddReactionRequest(BaseModel):
+    emoji: str
+
+@router.post("/reaction/{message_id}")
+async def add_reaction(
+    message_id: str,
+    request: Request,
+    reaction_data: AddReactionRequest
+):
+    """Add/remove emoji reaction to a message"""
+    try:
+        # Get current user
+        session_token = await get_session_token(request, None)
+        if not session_token:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        session = await db.user_sessions.find_one({"session_token": session_token})
+        if not session:
+            raise HTTPException(status_code=401, detail="Invalid session")
+        
+        user_id = session["user_id"]
+        
+        # Find the message
+        message = await db.messages.find_one({"message_id": message_id})
+        if not message:
+            raise HTTPException(status_code=404, detail="Message not found")
+        
+        # Get current reactions
+        reactions = message.get("reactions", {})
+        emoji = reaction_data.emoji
+        emoji_reactions = reactions.get(emoji, [])
+        
+        # Toggle reaction
+        if user_id in emoji_reactions:
+            # Remove reaction
+            emoji_reactions.remove(user_id)
+            action = "removed"
+        else:
+            # Add reaction
+            emoji_reactions.append(user_id)
+            action = "added"
+        
+        # Update reactions
+        if len(emoji_reactions) == 0:
+            # Remove emoji key if no reactions
+            if emoji in reactions:
+                del reactions[emoji]
+        else:
+            reactions[emoji] = emoji_reactions
+        
+        # Update message
+        await db.messages.update_one(
+            {"message_id": message_id},
+            {"$set": {"reactions": reactions}}
+        )
+        
+        return {"success": True, "action": action, "reactions": reactions}
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
