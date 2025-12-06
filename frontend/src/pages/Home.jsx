@@ -117,6 +117,20 @@ const Home = () => {
           onAddStory={() => setShowCreateStoryModal(true)}
         />
 
+        {/* Live Streams */}
+        {liveStreams.length > 0 && (
+          <div className="border-b border-gray-200 dark:border-gray-800 py-4 px-2">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold">Live Now</h2>
+            </div>
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+              {liveStreams.map((liveSession) => (
+                <LiveCard key={liveSession.id} liveSession={liveSession} />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Posts Feed */}
         <div className="mt-4">
           {posts.map((post) => (
