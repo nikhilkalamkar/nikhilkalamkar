@@ -149,14 +149,14 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
 
           {/* Image Upload Area */}
           {selectedImages.length === 0 ? (
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-12 text-center cursor-pointer hover:border-purple-400 transition-colors"
+            <label
+              htmlFor="post-image-input"
+              className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-12 text-center cursor-pointer hover:border-purple-400 transition-colors active:scale-95 block"
             >
               <ImageIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
               <p className="text-lg font-semibold mb-2">Select photos</p>
-              <p className="text-sm text-gray-500">or drag and drop</p>
-            </div>
+              <p className="text-sm text-gray-500">Tap to choose from gallery</p>
+            </label>
           ) : (
             <div>
               <div className="grid grid-cols-3 gap-2 mb-4">
