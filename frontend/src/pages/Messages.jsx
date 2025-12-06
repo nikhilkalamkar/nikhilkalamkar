@@ -231,22 +231,37 @@ const Messages = () => {
     const refreshMessages = async () => {
       const conv = await fetchConversationMessages(selectedConversation.user.id);
       if (conv) {
-        setSelectedConversation(conv);
+        // Only update if there are new messages
+        const currentMessageCount = selectedConversation.messages?.length || 0;
+        const newMessageCount = conv.messages?.length || 0;
+        
+        if (newMessageCount > currentMessageCount) {
+          setSelectedConversation(conv);
+        } else if (newMessageCount === currentMessageCount) {
+          // Update silently without triggering re-render if count is same
+          const hasChanges = JSON.stringify(conv.messages) !== JSON.stringify(selectedConversation.messages);
+          if (hasChanges) {
+            setSelectedConversation(conv);
+          }
+        }
       }
     };
     
-    // Refresh messages every 2 seconds
-    const messageRefreshInterval = setInterval(refreshMessages, 2000);
+    // Refresh messages every 3 seconds (reduced frequency)
+    const messageRefreshInterval = setInterval(refreshMessages, 3000);
     
     return () => clearInterval(messageRefreshInterval);
   }, [selectedConversation?.user?.id]);
 
-  // Scroll to bottom when messages change
+  // Scroll to bottom only when new messages arrive
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current && selectedConversation?.messages?.length > 0) {
+      // Use setTimeout to ensure DOM is updated
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     }
-  }, [selectedConversation?.messages]);
+  }, [selectedConversation?.messages?.length]);
 
   const formatTime = (date) => {
     const messageDate = new Date(date);
