@@ -44,6 +44,51 @@ const MobileNav = () => {
           </Avatar>
         </Link>
       </div>
+
+      {/* Modals */}
+      {showCreateOptions && (
+        <CreateOptionsModal
+          onClose={() => setShowCreateOptions(false)}
+          onSelectPost={() => {
+            setShowCreateOptions(false);
+            setShowCreateModal(true);
+          }}
+          onSelectStory={() => {
+            setShowCreateOptions(false);
+            setShowCreateStoryModal(true);
+          }}
+          onSelectLive={() => {
+            setShowCreateOptions(false);
+            setShowGoLiveModal(true);
+          }}
+        />
+      )}
+
+      {showCreateModal && (
+        <CreatePostModal
+          onClose={() => setShowCreateModal(false)}
+          onPostCreated={() => {
+            setShowCreateModal(false);
+            navigate('/');
+          }}
+        />
+      )}
+
+      {showCreateStoryModal && (
+        <CreateStoryModal
+          onClose={() => setShowCreateStoryModal(false)}
+          onStoryCreated={() => {
+            setShowCreateStoryModal(false);
+            navigate('/');
+          }}
+        />
+      )}
+
+      {showGoLiveModal && (
+        <GoLiveModal
+          onClose={() => setShowGoLiveModal(false)}
+        />
+      )}
     </div>
   );
 };
