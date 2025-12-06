@@ -34,7 +34,7 @@ const Sidebar = () => {
     { icon: Video, label: 'Reels', path: '/reels' },
     { icon: MessageCircle, label: 'Messages', path: '/messages' },
     { icon: Heart, label: 'Notifications', path: '/notifications' },
-    { icon: PlusSquare, label: 'Create', action: () => setShowCreateModal(true) },
+    { icon: PlusSquare, label: 'Create', action: () => setShowCreateOptions(true) },
   ];
 
   const isActive = (path) => location.pathname === path;
