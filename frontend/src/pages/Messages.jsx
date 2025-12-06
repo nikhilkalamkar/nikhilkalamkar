@@ -71,6 +71,51 @@ const Messages = () => {
     }
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Create message with image
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const newMessage = {
+        id: `msg_${Date.now()}`,
+        senderId: currentUser?.id,
+        text: '[Image]',
+        image: event.target.result,
+        createdAt: new Date().toISOString()
+      };
+
+      const updatedConversation = {
+        ...selectedConversation,
+        messages: [...selectedConversation.messages, newMessage],
+        lastMessage: '[Image]',
+        lastMessageTime: newMessage.createdAt,
+        unreadCount: 0
+      };
+
+      setSelectedConversation(updatedConversation);
+      setConversations(prev =>
+        prev.map(conv =>
+          conv.id === selectedConversation.id ? updatedConversation : conv
+        )
+      );
+
+      toast({
+        title: 'Image sent',
+        description: 'Your image has been delivered',
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const commonEmojis = ['❤️', '😂', '😍', '🔥', '👍', '🎉', '😊', '💯'];
+
+  const handleEmojiClick = (emoji) => {
+    setMessageText(prev => prev + emoji);
+    setShowEmojiPicker(false);
+  };
+
   const handleNewConversation = (user) => {
     // Check if conversation already exists
     const existingConv = conversations.find(conv => conv.user.id === user.id);
