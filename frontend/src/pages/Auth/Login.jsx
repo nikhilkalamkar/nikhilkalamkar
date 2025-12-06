@@ -76,7 +76,7 @@ const Login = () => {
             </div>
           </div>
 
-          <Button variant="ghost" className="w-full text-blue-900 dark:text-blue-500 font-semibold">
+          <Button variant="ghost" className="w-full text-blue-900 dark:text-blue-500 font-semibold" onClick={() => window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(window.location.origin + '/auth/callback')}`}>
             Log in with Google
           </Button>
 
