@@ -69,40 +69,60 @@ const Messages = () => {
     }
   };
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (messageText.trim() && selectedConversation) {
-      const newMessage = {
-        id: `msg_${Date.now()}`,
-        senderId: currentUser?.id,
-        text: messageText,
-        createdAt: new Date().toISOString()
-      };
-      
-      // Update selected conversation
-      const updatedConversation = {
-        ...selectedConversation,
-        messages: [...selectedConversation.messages, newMessage],
-        lastMessage: messageText,
-        lastMessageTime: newMessage.createdAt,
-        unreadCount: 0
-      };
-      
-      setSelectedConversation(updatedConversation);
-      
-      // Update conversations list
-      setConversations(prev =>
-        prev.map(conv =>
-          conv.id === selectedConversation.id ? updatedConversation : conv
-        )
-      );
-      
-      setMessageText('');
-      
-      toast({
-        title: 'Message sent',
-        description: 'Your message has been delivered',
-      });
+      try {
+        // Send message to backend
+        await axios.post(
+          `${BACKEND_URL}/api/messages/send`,
+          {
+            recipient_id: selectedConversation.user.id,
+            text: messageText
+          },
+          { withCredentials: true }
+        );
+
+        // Create new message for UI
+        const newMessage = {
+          id: `msg_${Date.now()}`,
+          senderId: currentUser?.user_id || currentUser?.id,
+          text: messageText,
+          createdAt: new Date().toISOString()
+        };
+        
+        // Update selected conversation
+        const updatedConversation = {
+          ...selectedConversation,
+          messages: [...(selectedConversation.messages || []), newMessage],
+          lastMessage: messageText,
+          lastMessageTime: newMessage.createdAt,
+          unreadCount: 0
+        };
+        
+        setSelectedConversation(updatedConversation);
+        
+        // Update conversations list
+        setConversations(prev =>
+          prev.map(conv =>
+            conv.id === selectedConversation.id ? updatedConversation : conv
+          )
+        );
+        
+        setMessageText('');
+        
+        toast({
+          title: 'Message sent',
+          description: 'Your message has been delivered',
+        });
+      } catch (error) {
+        console.error('Error sending message:', error);
+        toast({
+          title: 'Failed to send message',
+          description: 'Please try again',
+          variant: 'destructive'
+        });
+      }
     }
   };
 
