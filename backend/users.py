@@ -128,6 +128,7 @@ async def get_user_by_username(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/check/{user_id}")
 async def check_blocked(
     user_id: str,
