@@ -152,18 +152,20 @@ const StoryViewer = () => {
       {/* Story container */}
       <div className="relative max-w-md w-full h-[600px] md:h-[700px]">
         {/* Progress bars */}
-        <div className="absolute top-0 left-0 right-0 z-30 flex gap-1 p-2">
-          {currentStory.items.map((_, index) => (
-            <div key={index} className="flex-1 h-0.5 bg-gray-500/50 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-white transition-all"
-                style={{
-                  width: index < currentItemIndex ? '100%' : index === currentItemIndex ? `${progress}%` : '0%'
-                }}
-              />
-            </div>
-          ))}
-        </div>
+        {currentStory && currentStory.items && (
+          <div className="absolute top-0 left-0 right-0 z-30 flex gap-1 p-2">
+            {currentStory.items.map((_, index) => (
+              <div key={index} className="flex-1 h-0.5 bg-gray-500/50 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-white transition-all"
+                  style={{
+                    width: index < currentItemIndex ? '100%' : index === currentItemIndex ? `${progress}%` : '0%'
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Story header */}
         <div className="absolute top-4 left-0 right-0 z-30 flex items-center justify-between px-4">
