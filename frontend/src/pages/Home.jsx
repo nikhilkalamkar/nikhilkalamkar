@@ -6,6 +6,7 @@ import { posts as mockPosts, stories as mockStories, users as mockUsers } from '
 import { useAuth } from '../context/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
+import { useToast } from '../hooks/use-toast';
 
 const Home = () => {
   const [posts, setPosts] = useState(mockPosts);
