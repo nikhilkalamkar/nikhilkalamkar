@@ -1,12 +1,21 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Search, PlusSquare, Video, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import CreateOptionsModal from '../Create/CreateOptionsModal';
+import CreatePostModal from '../Create/CreatePostModal';
+import CreateStoryModal from '../Create/CreateStoryModal';
+import GoLiveModal from '../Live/GoLiveModal';
 
 const MobileNav = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const [showCreateOptions, setShowCreateOptions] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreateStoryModal, setShowCreateStoryModal] = useState(false);
+  const [showGoLiveModal, setShowGoLiveModal] = useState(false);
 
   const isActive = (path) => location.pathname === path;
 
