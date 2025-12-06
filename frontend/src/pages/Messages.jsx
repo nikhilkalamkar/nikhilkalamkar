@@ -3,11 +3,17 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { Send, Info, Phone, Video, Smile, Image as ImageIcon, Heart } from 'lucide-react';
+import { Send, Info, Phone, Video, Smile, Image as ImageIcon, Heart, MoreVertical, FolderInput, Inbox } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../hooks/use-toast';
 import NewMessageModal from '../components/Messages/NewMessageModal';
 import CallModal from '../components/Messages/CallModal';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../components/ui/dropdown-menu';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
