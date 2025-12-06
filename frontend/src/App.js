@@ -57,8 +57,10 @@ function App() {
                 <Route path="messages" element={<Messages />} />
                 <Route path="messages/:id" element={<Messages />} />
                 <Route path="search" element={<Search />} />
-                <Route path="reels" element={<div className="p-8 text-center">Reels coming soon!</div>} />
-                <Route path="notifications" element={<div className="p-8 text-center">Notifications coming soon!</div>} />
+                <Route path="reels" element={<Reels />} />
+                <Route path="notifications" element={<Notifications />} />
+                <Route path="saved" element={<Saved />} />
+                <Route path="settings" element={<Settings />} />
               </Route>
             </Routes>
           </BrowserRouter>
