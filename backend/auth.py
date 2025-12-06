@@ -39,9 +39,10 @@ async def create_session(session_data: SessionData, response: Response):
     """Process session_id from Emergent Auth and create user session"""
     try:
         # Call Emergent Auth API to get user data
+        auth_api_url = os.environ.get('EMERGENT_AUTH_API_URL', 'https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data')
         async with httpx.AsyncClient() as client:
             resp = await client.get(
-                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                auth_api_url,
                 headers={"X-Session-ID": session_data.session_id}
             )
             
