@@ -10,9 +10,10 @@ import { useAuth } from '../context/AuthContext';
 const Messages = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const [conversations] = useState(mockMessages);
+  const [conversations, setConversations] = useState(mockMessages);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messageText, setMessageText] = useState('');
+  const [showNewMessageModal, setShowNewMessageModal] = useState(false);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
