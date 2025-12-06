@@ -30,6 +30,13 @@ const Messages = () => {
   // Fetch conversations
   useEffect(() => {
     fetchConversations();
+    
+    // Auto-refresh conversations every 3 seconds
+    const refreshInterval = setInterval(() => {
+      fetchConversations();
+    }, 3000);
+    
+    return () => clearInterval(refreshInterval);
   }, []);
 
   // Handle opening chat from profile page
