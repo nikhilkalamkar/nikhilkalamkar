@@ -31,10 +31,19 @@ const Messages = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('primary'); // 'primary' or 'general'
+  const [conversationCategories, setConversationCategories] = useState({});
   const fileInputRef = React.useRef(null);
   const messagesEndRef = React.useRef(null);
   const conversationsRef = React.useRef([]);
   const lastMessageCountRef = React.useRef(0);
+
+  // Load conversation categories from localStorage
+  useEffect(() => {
+    const savedCategories = localStorage.getItem('ishukart_conversation_categories');
+    if (savedCategories) {
+      setConversationCategories(JSON.parse(savedCategories));
+    }
+  }, []);
 
   // Fetch conversations
   useEffect(() => {
