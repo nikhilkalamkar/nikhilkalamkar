@@ -263,15 +263,25 @@ const Messages = () => {
                   message.senderId === currentUser?.id ? 'justify-end' : 'justify-start'
                 }`}
               >
-                <div
-                  className={`max-w-xs px-4 py-2 rounded-3xl ${
-                    message.senderId === currentUser?.id
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-200 dark:bg-gray-800'
-                  }`}
-                >
-                  {message.text}
-                </div>
+                {message.image ? (
+                  <div className="max-w-xs">
+                    <img 
+                      src={message.image} 
+                      alt="Shared" 
+                      className="rounded-2xl max-w-full h-auto"
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className={`max-w-xs px-4 py-2 rounded-3xl ${
+                      message.senderId === currentUser?.id
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-gray-200 dark:bg-gray-800'
+                    }`}
+                  >
+                    {message.text}
+                  </div>
+                )}
               </div>
             ))}
           </div>
