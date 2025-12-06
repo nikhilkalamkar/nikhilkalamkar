@@ -116,8 +116,8 @@ const Reels = () => {
           {/* Actions - Right Side */}
           <div className="absolute bottom-20 right-4 flex flex-col gap-6 text-white">
             <button onClick={handleLike} className="flex flex-col items-center gap-1">
-              <Heart className={`w-7 h-7 ${reel.isLiked ? 'fill-red-500 text-red-500' : ''}`} />
-              <span className="text-xs">{reel.likes}</span>
+              <Heart className={`w-7 h-7 ${likedReels[reel.id] ? 'fill-red-500 text-red-500' : ''}`} />
+              <span className="text-xs">{reel.likes + (likedReels[reel.id] ? 1 : 0)}</span>
             </button>
             
             <button onClick={handleComment} className="flex flex-col items-center gap-1">
@@ -127,13 +127,14 @@ const Reels = () => {
             
             <button onClick={handleShare} className="flex flex-col items-center gap-1">
               <Send className="w-7 h-7" />
+              <span className="text-xs">Share</span>
             </button>
             
             <button onClick={handleSave} className="flex flex-col items-center gap-1">
-              <Bookmark className={`w-7 h-7 ${reel.isSaved ? 'fill-white' : ''}`} />
+              <Bookmark className={`w-7 h-7 ${savedReels[reel.id] ? 'fill-white' : ''}`} />
             </button>
             
-            <button className="w-7 h-7 border border-white rounded-sm overflow-hidden">
+            <button onClick={() => navigate(`/profile/${reel.user.username}`)} className="w-10 h-10 border-2 border-white rounded-full overflow-hidden">
               <img src={reel.user.avatar} alt="Profile" className="w-full h-full object-cover" />
             </button>
           </div>
