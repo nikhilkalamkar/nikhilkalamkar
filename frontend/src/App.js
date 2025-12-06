@@ -21,6 +21,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import PostDetail from "./pages/PostDetail";
 import StoryViewer from "./pages/StoryViewer";
 import AuthCallback from "./pages/Auth/AuthCallback";
+import OAuthDebug from "./pages/Auth/OAuthDebug";
 import EditProfile from "./pages/EditProfile";
 
 const ProtectedRoute = ({ children }) => {
