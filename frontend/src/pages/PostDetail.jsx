@@ -36,9 +36,13 @@ const PostDetail = () => {
       setSaved(foundPost.isSaved || false);
       setLikesCount(foundPost.likes || 0);
       
-      // Get comments for this post
-      const postComments = mockComments.filter(c => c.postId === postId);
-      setComments(postComments);
+      // Get comments from localStorage
+      const allComments = JSON.parse(localStorage.getItem('ishukart_comments') || '[]');
+      const postComments = allComments.filter(c => c.postId === postId);
+      
+      // Merge with mock comments
+      const mockPostComments = mockComments.filter(c => c.postId === postId);
+      setComments([...postComments, ...mockPostComments]);
     }
   }, [postId]);
 
