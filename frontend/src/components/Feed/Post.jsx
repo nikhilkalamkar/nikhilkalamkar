@@ -42,20 +42,39 @@ const Post = ({ post, onLike, onSave, onComment }) => {
     setShowShareModal(true);
   };
 
-  const handleDeletePost = () => {
-    if (window.confirm('Are you sure you want to delete this post?')) {
+  const handleDeletePost = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('[Delete] Attempting to delete post:', post.id);
+    
+    try {
       // Remove from localStorage
       const posts = JSON.parse(localStorage.getItem('ishukart_posts') || '[]');
+      console.log('[Delete] Found posts in localStorage:', posts.length);
+      
       const updatedPosts = posts.filter(p => p.id !== post.id);
+      console.log('[Delete] After filter:', updatedPosts.length);
+      
       localStorage.setItem('ishukart_posts', JSON.stringify(updatedPosts));
+      console.log('[Delete] Saved to localStorage');
       
       toast({
-        title: 'Post deleted',
-        description: 'Your post has been deleted successfully',
+        title: '✅ Post deleted!',
+        description: 'Your post has been removed',
       });
       
-      // Refresh the page to show updated feed
-      window.location.reload();
+      // Refresh the page after a short delay
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    } catch (error) {
+      console.error('[Delete] Error:', error);
+      toast({
+        title: 'Error',
+        description: 'Could not delete post',
+        variant: 'destructive'
+      });
     }
   };
 
