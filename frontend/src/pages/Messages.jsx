@@ -114,7 +114,27 @@ const Messages = () => {
       const response = await axios.get(`${BACKEND_URL}/api/messages/conversation/${partnerId}`, {
         withCredentials: true
       });
-      return response.data.conversation;
+      const conversation = response.data.conversation;
+      
+      // Extract likes and reactions from messages
+      if (conversation && conversation.messages) {
+        const likes = {};
+        const reactions = {};
+        
+        conversation.messages.forEach(msg => {
+          if (msg.likes && msg.likes.length > 0) {
+            likes[msg.id] = true; // Current user liked if their ID is in the array
+          }
+          if (msg.reactions) {
+            reactions[msg.id] = msg.reactions;
+          }
+        });
+        
+        setLikedMessages(likes);
+        setMessageReactions(reactions);
+      }
+      
+      return conversation;
     } catch (error) {
       console.error('Error fetching messages:', error);
       return null;
