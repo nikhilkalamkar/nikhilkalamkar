@@ -129,33 +129,46 @@ const CreateStoryModal = ({ onClose, onStoryCreated }) => {
         <div className="flex-1 overflow-y-auto p-4">
           {!selectedMedia ? (
             <div className="space-y-4">
-              <button
-                onClick={() => {
-                  fileInputRef.current.accept = 'image/*';
-                  fileInputRef.current.click();
-                }}
-                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center hover:border-purple-400 transition-colors"
+              <label
+                htmlFor="story-image-input"
+                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center hover:border-purple-400 transition-colors cursor-pointer active:scale-95"
               >
                 <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <ImageIcon className="w-8 h-8 text-white" />
                 </div>
                 <p className="text-lg font-semibold mb-2">Add Photo</p>
-                <p className="text-sm text-gray-500">Share a photo as your story</p>
-              </button>
+                <p className="text-sm text-gray-500">Tap to select a photo</p>
+                <input
+                  id="story-image-input"
+                  ref={(el) => {
+                    if (el && !fileInputRef.current) fileInputRef.current = el;
+                  }}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleMediaSelect}
+                  className="hidden"
+                />
+              </label>
 
-              <button
-                onClick={() => {
-                  fileInputRef.current.accept = 'video/*';
-                  fileInputRef.current.click();
-                }}
-                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center hover:border-purple-400 transition-colors"
+              <label
+                htmlFor="story-video-input"
+                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center hover:border-purple-400 transition-colors cursor-pointer active:scale-95"
               >
                 <div className="bg-gradient-to-r from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Video className="w-8 h-8 text-white" />
                 </div>
                 <p className="text-lg font-semibold mb-2">Add Video</p>
-                <p className="text-sm text-gray-500">Share a video as your story</p>
-              </button>
+                <p className="text-sm text-gray-500">Tap to select a video</p>
+                <input
+                  id="story-video-input"
+                  type="file"
+                  accept="video/*"
+                  capture="environment"
+                  onChange={handleMediaSelect}
+                  className="hidden"
+                />
+              </label>
             </div>
           ) : (
             <div className="space-y-4">
