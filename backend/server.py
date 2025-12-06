@@ -15,6 +15,7 @@ from posts import router as posts_router
 from stories import router as stories_router
 from users import router as users_router
 from messages import router as messages_router
+from blocking import router as blocking_router
 
 
 ROOT_DIR = Path(__file__).parent
