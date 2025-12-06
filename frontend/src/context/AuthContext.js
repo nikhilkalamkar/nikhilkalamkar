@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Check if user is logged in (mock for now)
-    const storedUser = localStorage.getItem('instagram_user');
+    const storedUser = localStorage.getItem('ishukart_user');
     if (storedUser) {
       setCurrentUser(JSON.parse(storedUser));
       setIsAuthenticated(true);
