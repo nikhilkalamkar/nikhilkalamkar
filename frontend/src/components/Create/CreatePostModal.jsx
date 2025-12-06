@@ -128,26 +128,48 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
             </div>
           </div>
 
-          {/* Image Upload Area - MUST BE FIRST on mobile */}
+          {/* Image/Video Upload Buttons - Like Story Modal */}
           {selectedImages.length === 0 ? (
-            <div className="mb-4">
+            <div className="space-y-4 mb-4">
               <label
                 htmlFor="post-image-input"
-                className="border-2 border-dashed border-purple-300 dark:border-purple-700 bg-purple-50 dark:bg-purple-900/10 rounded-lg p-8 sm:p-12 text-center cursor-pointer hover:border-purple-500 active:border-purple-600 active:bg-purple-100 dark:active:bg-purple-900/20 transition-all active:scale-[0.98] block"
+                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center cursor-pointer hover:border-purple-400 transition-colors active:scale-[0.98] block"
               >
                 <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
                   <ImageIcon className="w-8 h-8 text-white" />
                 </div>
-                <p className="text-lg font-bold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  📸 Tap to Upload
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                  Select photos or videos from your device
-                </p>
-                <p className="text-xs text-gray-500 mt-2">
-                  (Up to 10 images/videos)
-                </p>
+                <p className="text-lg font-semibold mb-1">Add Photo</p>
+                <p className="text-sm text-gray-500">Share a photo to your feed</p>
               </label>
+
+              <label
+                htmlFor="post-video-input"
+                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center cursor-pointer hover:border-purple-400 transition-colors active:scale-[0.98] block"
+              >
+                <div className="bg-gradient-to-r from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Video className="w-8 h-8 text-white" />
+                </div>
+                <p className="text-lg font-semibold mb-1">Add Video</p>
+                <p className="text-sm text-gray-500">Share a video to your feed</p>
+              </label>
+
+              <input
+                id="post-image-input"
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleImageSelect}
+                className="hidden"
+              />
+              <input
+                id="post-video-input"
+                type="file"
+                multiple
+                accept="video/*"
+                onChange={handleImageSelect}
+                className="hidden"
+              />
             </div>
           ) : null}
 
