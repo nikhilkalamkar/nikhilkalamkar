@@ -25,8 +25,6 @@ const Home = () => {
   };
 
   const handleStoryClick = (story) => {
-    // Navigate to story viewer - will be implemented
-    console.log('View story:', story);
     navigate(`/stories/${story.user.username}`);
   };
 
