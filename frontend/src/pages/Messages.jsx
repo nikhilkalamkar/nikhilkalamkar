@@ -28,6 +28,7 @@ const Messages = () => {
   const fileInputRef = React.useRef(null);
   const messagesEndRef = React.useRef(null);
   const conversationsRef = React.useRef([]);
+  const lastMessageCountRef = React.useRef(0);
 
   // Fetch conversations
   useEffect(() => {
