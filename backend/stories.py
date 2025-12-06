@@ -190,3 +190,61 @@ async def get_all_stories(request: Request):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/user/{username}")
+async def get_user_stories(username: str, request: Request):
+    """Get stories for a specific user"""
+    try:
+        # Get current user for authentication
+        session_token = await get_session_token(request, None)
+        if not session_token:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        # Find user by username
+        user = await db.users.find_one({"username": username}, {"_id": 0})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        user_id = user["user_id"]
+        
+        # Get user's active stories
+        current_time = datetime.now(timezone.utc)
+        story = await db.stories.find_one({
+            "user_id": user_id,
+            "expires_at": {"$gt": current_time}
+        })
+        
+        if not story:
+            return {"story": None}
+        
+        # Get backend URL
+        backend_url = os.getenv('BACKEND_URL', 'http://localhost:8001')
+        
+        # Format items with full URLs
+        items = story.get("items", [])
+        formatted_items = []
+        for item in items:
+            formatted_item = item.copy()
+            if formatted_item.get("url", "").startswith("/api/"):
+                formatted_item["url"] = backend_url + formatted_item["url"]
+            formatted_items.append(formatted_item)
+        
+        formatted_story = {
+            "id": story.get("story_id", str(story.get("_id"))),
+            "user": {
+                "id": user["user_id"],
+                "username": user["username"],
+                "fullName": user.get("fullName", ""),
+                "avatar": user.get("avatar", ""),
+                "isVerified": user.get("isVerified", False)
+            },
+            "items": formatted_items,
+            "hasUnviewed": story.get("hasUnviewed", True)
+        }
+        
+        return {"story": formatted_story}
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
