@@ -67,10 +67,15 @@ const StoryViewer = () => {
   }, [currentItemIndex, isPaused]);
 
   const handleNext = () => {
+    if (!currentStory) {
+      navigate('/');
+      return;
+    }
+    
     if (currentItemIndex < currentStory.items.length - 1) {
       setCurrentItemIndex(prev => prev + 1);
       setProgress(0);
-    } else if (currentStoryIndex < userStories.length - 1) {
+    } else if (currentStoryIndex < allStories.length - 1) {
       setCurrentStoryIndex(prev => prev + 1);
       setCurrentItemIndex(0);
       setProgress(0);
