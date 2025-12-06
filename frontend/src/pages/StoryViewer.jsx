@@ -47,7 +47,7 @@ const StoryViewer = () => {
   const currentItem = currentStory?.items[currentItemIndex];
 
   useEffect(() => {
-    if (!currentItem || isPaused) return;
+    if (!currentStory || !currentItem || isPaused) return;
 
     const duration = 5000; // 5 seconds per story
     const interval = 50; // Update every 50ms
@@ -64,7 +64,7 @@ const StoryViewer = () => {
     }, interval);
 
     return () => clearInterval(timer);
-  }, [currentItemIndex, isPaused]);
+  }, [currentItemIndex, isPaused, currentStory, currentItem]);
 
   const handleNext = () => {
     if (!currentStory) {
