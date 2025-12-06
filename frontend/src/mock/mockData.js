@@ -2,9 +2,9 @@
 
 export const currentUser = {
   id: 'user_1',
-  username: 'john_doe',
-  fullName: 'John Doe',
-  email: 'john@example.com',
+  username: 'ishuk_artist',
+  fullName: 'Ishuk Artist',
+  email: 'ishuk@example.com',
   avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwxfHxhdmF0YXJ8ZW58MHx8fHwxNzY0OTUyOTcyfDA&ixlib=rb-4.1.0&q=85',
   bio: 'Living life one photo at a time 📸',
   website: 'https://johndoe.com',
