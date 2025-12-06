@@ -223,6 +223,23 @@ const Messages = () => {
     }
   };
 
+  // Auto-refresh selected conversation messages
+  useEffect(() => {
+    if (!selectedConversation) return;
+    
+    const refreshMessages = async () => {
+      const conv = await fetchConversationMessages(selectedConversation.user.id);
+      if (conv) {
+        setSelectedConversation(conv);
+      }
+    };
+    
+    // Refresh messages every 2 seconds
+    const messageRefreshInterval = setInterval(refreshMessages, 2000);
+    
+    return () => clearInterval(messageRefreshInterval);
+  }, [selectedConversation?.user?.id]);
+
   const formatTime = (date) => {
     const messageDate = new Date(date);
     const now = new Date();
