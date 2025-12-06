@@ -351,8 +351,19 @@ const Messages = () => {
               <p className="text-gray-500 mb-2">No messages yet</p>
               <p className="text-sm text-gray-400">Start a conversation by clicking the + button</p>
             </div>
+          ) : filteredConversations.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+              <p className="text-gray-500 mb-2">
+                {activeTab === 'primary' ? 'No recent conversations' : 'No older conversations'}
+              </p>
+              <p className="text-sm text-gray-400">
+                {activeTab === 'primary' 
+                  ? 'Your active chats will appear here' 
+                  : 'Older chats will appear here'}
+              </p>
+            </div>
           ) : (
-            conversations.map((conversation) => (
+            filteredConversations.map((conversation) => (
               <div
                 key={conversation.id}
                 className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors ${
