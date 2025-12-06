@@ -154,6 +154,52 @@ const Profile = () => {
     });
   };
 
+  const handleMessage = () => {
+    navigate('/messages', {
+      state: {
+        openChatWith: profile
+      }
+    });
+  };
+
+  const handleBlock = async () => {
+    if (!profile) return;
+    
+    setBlockLoading(true);
+    try {
+      if (isBlocked) {
+        // Unblock
+        await axios.delete(`${BACKEND_URL}/api/block/user/${profile.id}`, {
+          withCredentials: true
+        });
+        setIsBlocked(false);
+        toast({
+          title: '✅ User Unblocked',
+          description: `You have unblocked ${profile.username}`,
+        });
+      } else {
+        // Block
+        await axios.post(`${BACKEND_URL}/api/block/user/${profile.id}`, {}, {
+          withCredentials: true
+        });
+        setIsBlocked(true);
+        toast({
+          title: '🚫 User Blocked',
+          description: `You have blocked ${profile.username}. You won't see each other anymore.`,
+        });
+      }
+    } catch (error) {
+      console.error('Error blocking/unblocking user:', error);
+      toast({
+        title: 'Error',
+        description: error.response?.data?.detail || 'Failed to update block status',
+        variant: 'destructive'
+      });
+    } finally {
+      setBlockLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
