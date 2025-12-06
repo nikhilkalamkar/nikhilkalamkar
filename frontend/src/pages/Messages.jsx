@@ -301,8 +301,29 @@ const Messages = () => {
     return `${Math.floor(diffInSeconds / 604800)}w`;
   };
 
+  // Move conversation between Primary and General
+  const moveConversation = (conversationId, toCategory) => {
+    const newCategories = {
+      ...conversationCategories,
+      [conversationId]: toCategory
+    };
+    setConversationCategories(newCategories);
+    localStorage.setItem('ishukart_conversation_categories', JSON.stringify(newCategories));
+    
+    toast({
+      title: toCategory === 'primary' ? '📌 Moved to Primary' : '📁 Moved to General',
+      description: `Conversation moved to ${toCategory === 'primary' ? 'Primary' : 'General'} tab`,
+    });
+  };
+
   // Filter conversations based on active tab
   const filteredConversations = conversations.filter(conv => {
+    // Check if user has manually categorized this conversation
+    if (conversationCategories[conv.id]) {
+      return conversationCategories[conv.id] === activeTab;
+    }
+    
+    // Default auto-categorization
     if (activeTab === 'primary') {
       // Primary: conversations with unread messages or recent activity (last 24 hours)
       const lastMessageTime = new Date(conv.lastMessageTime);
