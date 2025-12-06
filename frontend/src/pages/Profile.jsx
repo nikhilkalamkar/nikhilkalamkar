@@ -112,7 +112,11 @@ const Profile = () => {
                 >
                   {isFollowing ? 'Following' : 'Follow'}
                 </Button>
-                <Button variant="secondary" size="sm">
+                <Button 
+                  variant="secondary" 
+                  size="sm"
+                  onClick={() => navigate('/messages', { state: { openChatWith: profile } })}
+                >
                   Message
                 </Button>
                 <Button variant="ghost" size="icon">
