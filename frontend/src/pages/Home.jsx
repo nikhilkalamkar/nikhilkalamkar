@@ -26,7 +26,7 @@ const Home = () => {
 
   const handleLike = async (postId, isLiked) => {
     try {
-      // Call backend API to like/unlike post
+      // Try to call backend API to like/unlike post
       const response = await axios.post(`${BACKEND_URL}/api/posts/${postId}/like`, {}, {
         withCredentials: true
       });
@@ -40,12 +40,27 @@ const Home = () => {
         )
       );
     } catch (error) {
-      console.error('Error liking post:', error);
-      toast({
-        title: 'Error',
-        description: 'Could not update like status',
-        variant: 'destructive'
-      });
+      console.log('Backend like failed, using local storage for post:', postId, error.response?.status);
+      
+      // If post doesn't exist in backend (404), just update local state
+      // This handles posts created in localStorage that aren't in DB yet
+      if (error.response?.status === 404) {
+        // Update UI anyway for localStorage posts
+        setPosts(prevPosts => 
+          prevPosts.map(post => 
+            post.id === postId 
+              ? { ...post, isLiked: isLiked }
+              : post
+          )
+        );
+      } else {
+        // Only show error for non-404 errors
+        toast({
+          title: 'Error',
+          description: 'Could not update like status',
+          variant: 'destructive'
+        });
+      }
     }
   };
 
