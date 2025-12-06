@@ -56,6 +56,7 @@ const Home = () => {
           stories={stories}
           onStoryClick={handleStoryClick}
           currentUser={currentUser}
+          onAddStory={() => setShowCreateStoryModal(true)}
         />
 
         {/* Posts Feed */}
