@@ -1,42 +1,53 @@
 import React, { useState } from 'react';
-import { X, TrendingUp, Users, Zap } from 'lucide-react';
+import { X, TrendingUp, Users, Clock, Check } from 'lucide-react';
 import { Button } from '../ui/button';
-import { Card } from '../ui/card';
-import axios from 'axios';
 import { useToast } from '../../hooks/use-toast';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-
 const BoostPostModal = ({ post, onClose }) => {
+  const { toast } = useToast();
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
 
   const boostPlans = [
     {
       id: 'basic',
       name: 'Basic Boost',
-      reach: 10000,
-      price: 100,
-      duration: '7 days',
-      features: ['10,000 users reach', 'Priority in feeds', '7 days active', 'Analytics dashboard']
+      price: 99,
+      duration: '3 days',
+      reach: '1,000-2,000',
+      features: [
+        'Appear in Explore page',
+        'Priority in follower feeds',
+        '3 days promotion'
+      ]
     },
     {
       id: 'pro',
       name: 'Pro Boost',
-      reach: 50000,
-      price: 450,
+      price: 249,
       duration: '7 days',
-      features: ['50,000 users reach', 'Top priority', '7 days active', 'Advanced analytics', 'Featured badge'],
+      reach: '5,000-10,000',
+      features: [
+        'Featured in Explore',
+        'Top of follower feeds',
+        'Suggested to similar users',
+        '7 days promotion'
+      ],
       popular: true
     },
     {
       id: 'premium',
       name: 'Premium Boost',
-      reach: 100000,
-      price: 850,
-      duration: '7 days',
-      features: ['100,000 users reach', 'Maximum priority', '7 days active', 'Premium analytics', 'Featured badge', 'Explore page feature']
+      price: 499,
+      duration: '14 days',
+      reach: '15,000-30,000',
+      features: [
+        'Premium placement',
+        'Maximum visibility',
+        'Targeted recommendations',
+        'Analytics dashboard',
+        '14 days promotion'
+      ]
     }
   ];
 
@@ -53,8 +64,8 @@ const BoostPostModal = ({ post, onClose }) => {
   const handleBoost = async () => {
     if (!selectedPlan) {
       toast({
-        title: 'Error',
-        description: 'Please select a boost plan',
+        title: 'Select a plan',
+        description: 'Please choose a boost plan to continue',
         variant: 'destructive'
       });
       return;
@@ -64,202 +75,193 @@ const BoostPostModal = ({ post, onClose }) => {
 
     try {
       // Load Razorpay script
-      const res = await loadRazorpayScript();
-      if (!res) {
-        toast({
-          title: 'Error',
-          description: 'Razorpay SDK failed to load',
-          variant: 'destructive'
-        });
-        setLoading(false);
-        return;
+      const scriptLoaded = await loadRazorpayScript();
+      
+      if (!scriptLoaded) {
+        throw new Error('Razorpay SDK failed to load');
       }
 
-      // Create order
-      const orderResponse = await axios.post(
-        `${BACKEND_URL}/api/payments/create-boost-order`,
-        {
-          post_id: post.id,
-          amount: selectedPlan.price * 100, // Convert to paise
-          reach: selectedPlan.reach
-        },
-        { withCredentials: true }
-      );
-
-      const { order_id, amount, currency, key_id } = orderResponse.data;
-
-      // Razorpay options
+      const plan = boostPlans.find(p => p.id === selectedPlan);
+      
+      // Create Razorpay order (this should come from backend in production)
       const options = {
-        key: key_id,
-        amount: amount,
-        currency: currency,
+        key: process.env.REACT_APP_RAZORPAY_KEY || 'rzp_test_dummy_key',
+        amount: plan.price * 100, // Amount in paise
+        currency: 'INR',
         name: 'IshukArt',
-        description: `Boost Post - ${selectedPlan.name}`,
-        order_id: order_id,
-        handler: async function (response) {
-          try {
-            // Verify payment
-            const verifyResponse = await axios.post(
-              `${BACKEND_URL}/api/payments/verify-payment`,
-              {
-                order_id: response.razorpay_order_id,
-                payment_id: response.razorpay_payment_id,
-                signature: response.razorpay_signature,
-                post_id: post.id
-              },
-              { withCredentials: true }
-            );
-
-            toast({
-              title: 'Success! 🎉',
-              description: verifyResponse.data.message,
-            });
-
-            onClose();
-            window.location.reload(); // Refresh to show boosted status
-          } catch (error) {
-            toast({
-              title: 'Verification Failed',
-              description: error.response?.data?.detail || 'Payment verification failed',
-              variant: 'destructive'
-            });
-          }
+        description: `${plan.name} - ${plan.duration}`,
+        image: '/logo.png',
+        handler: function (response) {
+          // Payment successful
+          console.log('Payment successful:', response);
+          
+          // Store boost info in localStorage
+          const boostData = {
+            postId: post.id,
+            planId: plan.id,
+            planName: plan.name,
+            startDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + (parseInt(plan.duration) * 24 * 60 * 60 * 1000)).toISOString(),
+            paymentId: response.razorpay_payment_id,
+            amount: plan.price
+          };
+          
+          const boostedPosts = JSON.parse(localStorage.getItem('ishukart_boosted_posts') || '[]');
+          boostedPosts.push(boostData);
+          localStorage.setItem('ishukart_boosted_posts', JSON.stringify(boostedPosts));
+          
+          toast({
+            title: 'Post Boosted! 🚀',
+            description: `Your post will be promoted for ${plan.duration}`,
+          });
+          
+          onClose();
         },
         prefill: {
-          name: post.user.fullName || post.user.username,
-          email: post.user.email || '',
-          contact: ''
+          name: post.user.username,
+          email: post.user.email || 'user@ishukart.com'
         },
         theme: {
-          color: '#9333EA'
+          color: '#8B5CF6'
         },
         modal: {
-          ondismiss: function () {
+          ondismiss: function() {
             setLoading(false);
-            toast({
-              title: 'Payment Cancelled',
-              description: 'You cancelled the payment'
-            });
           }
         }
       };
 
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
-      setLoading(false);
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
     } catch (error) {
-      setLoading(false);
+      console.error('Error initiating payment:', error);
       toast({
-        title: 'Error',
-        description: error.response?.data?.detail || 'Failed to create order',
+        title: 'Payment Error',
+        description: 'Failed to initiate payment. Please try again.',
         variant: 'destructive'
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white dark:bg-gray-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
-        <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 p-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Boost Your Post</h2>
-            <p className="text-sm text-gray-500 mt-1">Reach more users and grow your audience</p>
+        <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 p-4 z-10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold">Boost Post</h2>
+                <p className="text-sm text-gray-500">Get more reach & engagement</p>
+              </div>
+            </div>
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+              <X className="w-6 h-6" />
+            </button>
           </div>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-            <X className="w-6 h-6" />
-          </button>
         </div>
 
         {/* Post Preview */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-800">
-          <div className="flex items-center gap-4">
-            <img src={post.images[0]} alt="Post" className="w-20 h-20 object-cover rounded-lg" />
-            <div className="flex-1">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+          <p className="text-sm font-medium text-gray-500 mb-2">Your Post</p>
+          <div className="flex items-center gap-3">
+            <img 
+              src={post.images[0]} 
+              alt="Post preview" 
+              className="w-20 h-20 object-cover rounded-lg"
+            />
+            <div className="flex-1 min-w-0">
               <p className="font-semibold">{post.user.username}</p>
-              <p className="text-sm text-gray-500 line-clamp-2">{post.caption}</p>
+              <p className="text-sm text-gray-500 truncate">{post.caption}</p>
             </div>
           </div>
         </div>
 
-        {/* Boost Plans */}
-        <div className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Choose Your Boost Plan</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Plans */}
+        <div className="p-4">
+          <p className="text-sm font-medium text-gray-500 mb-4">Choose Your Plan</p>
+          <div className="space-y-3">
             {boostPlans.map((plan) => (
-              <Card
+              <div
                 key={plan.id}
-                className={`relative p-6 cursor-pointer transition-all hover:shadow-lg ${
-                  selectedPlan?.id === plan.id
-                    ? 'ring-2 ring-purple-500 bg-purple-50 dark:bg-purple-900/10'
-                    : 'hover:border-purple-300'
-                } ${plan.popular ? 'border-purple-400' : ''}`}
-                onClick={() => setSelectedPlan(plan)}
+                onClick={() => setSelectedPlan(plan.id)}
+                className={`relative border-2 rounded-xl p-4 cursor-pointer transition-all ${
+                  selectedPlan === plan.id
+                    ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/10'
+                    : 'border-gray-200 dark:border-gray-800 hover:border-purple-300'
+                } ${plan.popular ? 'ring-2 ring-purple-500 ring-offset-2' : ''}`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
-                      POPULAR
-                    </span>
+                  <div className="absolute -top-3 left-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
+                    MOST POPULAR
+                  </div>
+                )}
+                
+                {selectedPlan === plan.id && (
+                  <div className="absolute top-4 right-4">
+                    <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
                   </div>
                 )}
 
-                <div className="text-center mb-4">
-                  <h4 className="text-lg font-bold mb-2">{plan.name}</h4>
-                  <div className="flex items-center justify-center gap-1">
-                    <span className="text-3xl font-bold">₹{plan.price}</span>
-                  </div>
-                  <p className="text-sm text-gray-500 mt-1">{plan.duration}</p>
-                </div>
-
-                <div className="space-y-3">
-                  {plan.features.map((feature, index) => (
-                    <div key={index} className="flex items-start gap-2">
-                      <Zap className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="text-lg font-bold">{plan.name}</h3>
+                    <div className="flex items-center gap-4 mt-1 text-sm text-gray-600 dark:text-gray-400">
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        {plan.duration}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Users className="w-4 h-4" />
+                        {plan.reach} reach
+                      </span>
                     </div>
-                  ))}
-                </div>
-
-                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center justify-center gap-2 text-purple-600 dark:text-purple-400">
-                    <Users className="w-4 h-4" />
-                    <span className="font-semibold">{plan.reach.toLocaleString()} reach</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      ₹{plan.price}
+                    </div>
+                    <div className="text-xs text-gray-500">one-time</div>
                   </div>
                 </div>
-              </Card>
+
+                <ul className="space-y-2">
+                  {plan.features.map((feature, index) => (
+                    <li key={index} className="flex items-center gap-2 text-sm">
+                      <Check className="w-4 h-4 text-purple-500 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Benefits */}
-        <div className="px-6 pb-6">
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/10 dark:to-pink-900/10 rounded-lg p-4">
-            <h4 className="font-semibold mb-3 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-purple-500" />
-              Why Boost Your Post?
-            </h4>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <li>✓ Reach thousands of targeted users</li>
-              <li>✓ Increase engagement and followers</li>
-              <li>✓ Appear in top feeds and explore page</li>
-              <li>✓ Detailed analytics and insights</li>
-            </ul>
+        {/* Footer */}
+        <div className="sticky bottom-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4">
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={onClose} className="flex-1">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleBoost}
+              disabled={!selectedPlan || loading}
+              className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            >
+              {loading ? 'Processing...' : selectedPlan ? `Pay ₹${boostPlans.find(p => p.id === selectedPlan)?.price}` : 'Select a Plan'}
+            </Button>
           </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="sticky bottom-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-6 flex gap-3">
-          <Button variant="outline" onClick={onClose} className="flex-1">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleBoost}
-            disabled={!selectedPlan || loading}
-            className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-          >
-            {loading ? 'Processing...' : selectedPlan ? `Pay ₹${selectedPlan.price}` : 'Select Plan'}
-          </Button>
+          <p className="text-xs text-center text-gray-500 mt-2">
+            Secure payment powered by Razorpay 🔒
+          </p>
         </div>
       </div>
     </div>
