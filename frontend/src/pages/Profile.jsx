@@ -48,10 +48,55 @@ const Profile = () => {
     const newFollowState = !isFollowing;
     setIsFollowing(newFollowState);
     
-    // Update profile follower count
+    // Get or initialize followers/following data
+    const followData = JSON.parse(localStorage.getItem('ishukart_follow_data') || '{}');
+    
+    // Initialize arrays if they don't exist
+    if (!followData.followers) followData.followers = {};
+    if (!followData.following) followData.following = {};
+    
+    const currentUserId = currentUser?.username || currentUser?.id;
+    const targetUserId = profile?.username || profile?.id;
+    
+    if (newFollowState) {
+      // Add to following list (current user follows target user)
+      if (!followData.following[currentUserId]) {
+        followData.following[currentUserId] = [];
+      }
+      if (!followData.following[currentUserId].includes(targetUserId)) {
+        followData.following[currentUserId].push(targetUserId);
+      }
+      
+      // Add to followers list (target user gains a follower)
+      if (!followData.followers[targetUserId]) {
+        followData.followers[targetUserId] = [];
+      }
+      if (!followData.followers[targetUserId].includes(currentUserId)) {
+        followData.followers[targetUserId].push(currentUserId);
+      }
+    } else {
+      // Remove from following
+      if (followData.following[currentUserId]) {
+        followData.following[currentUserId] = followData.following[currentUserId].filter(id => id !== targetUserId);
+      }
+      
+      // Remove from followers
+      if (followData.followers[targetUserId]) {
+        followData.followers[targetUserId] = followData.followers[targetUserId].filter(id => id !== currentUserId);
+      }
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('ishukart_follow_data', JSON.stringify(followData));
+    
+    // Update profile with new counts
+    const followersCount = (followData.followers[targetUserId] || []).length;
+    const followingCount = (followData.following[targetUserId] || []).length;
+    
     setProfile(prev => ({
       ...prev,
-      followersCount: newFollowState ? prev.followersCount + 1 : prev.followersCount - 1
+      followersCount: followersCount,
+      followingCount: followingCount
     }));
 
     toast({
