@@ -28,16 +28,60 @@ const Messages = () => {
         createdAt: new Date().toISOString()
       };
       
-      // Add message to conversation
-      setSelectedConversation(prev => ({
-        ...prev,
-        messages: [...prev.messages, newMessage],
+      // Update selected conversation
+      const updatedConversation = {
+        ...selectedConversation,
+        messages: [...selectedConversation.messages, newMessage],
         lastMessage: messageText,
-        lastMessageTime: newMessage.createdAt
-      }));
+        lastMessageTime: newMessage.createdAt,
+        unreadCount: 0
+      };
+      
+      setSelectedConversation(updatedConversation);
+      
+      // Update conversations list
+      setConversations(prev =>
+        prev.map(conv =>
+          conv.id === selectedConversation.id ? updatedConversation : conv
+        )
+      );
       
       setMessageText('');
+      
+      toast({
+        title: 'Message sent',
+        description: 'Your message has been delivered',
+      });
     }
+  };
+
+  const handleNewConversation = (user) => {
+    // Check if conversation already exists
+    const existingConv = conversations.find(conv => conv.user.id === user.id);
+    if (existingConv) {
+      setSelectedConversation(existingConv);
+      setShowNewMessageModal(false);
+      return;
+    }
+
+    // Create new conversation
+    const newConversation = {
+      id: `conversation_${Date.now()}`,
+      user: user,
+      lastMessage: '',
+      lastMessageTime: new Date().toISOString(),
+      unreadCount: 0,
+      messages: []
+    };
+
+    setConversations(prev => [newConversation, ...prev]);
+    setSelectedConversation(newConversation);
+    setShowNewMessageModal(false);
+
+    toast({
+      title: 'New conversation',
+      description: `Started chat with ${user.username}`,
+    });
   };
 
   const formatTime = (date) => {
