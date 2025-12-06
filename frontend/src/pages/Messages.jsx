@@ -171,16 +171,22 @@ const Messages = () => {
     setShowEmojiPicker(false);
   };
 
-  const handleNewConversation = (user) => {
+  const handleNewConversation = async (user) => {
     // Check if conversation already exists
     const existingConv = conversations.find(conv => conv.user.id === user.id);
     if (existingConv) {
-      setSelectedConversation(existingConv);
+      // Fetch messages for this conversation
+      const conv = await fetchConversationMessages(user.id);
+      if (conv) {
+        setSelectedConversation(conv);
+      } else {
+        setSelectedConversation(existingConv);
+      }
       setShowNewMessageModal(false);
       return;
     }
 
-    // Create new conversation
+    // Create new conversation (will be saved to backend when first message is sent)
     const newConversation = {
       id: `conversation_${Date.now()}`,
       user: user,
@@ -198,6 +204,16 @@ const Messages = () => {
       title: 'New conversation',
       description: `Started chat with ${user.username}`,
     });
+  };
+
+  const handleSelectConversation = async (conversation) => {
+    // Fetch full conversation with messages
+    const conv = await fetchConversationMessages(conversation.user.id);
+    if (conv) {
+      setSelectedConversation(conv);
+    } else {
+      setSelectedConversation(conversation);
+    }
   };
 
   const formatTime = (date) => {
