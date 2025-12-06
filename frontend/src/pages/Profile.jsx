@@ -44,6 +44,11 @@ const Profile = () => {
       ...prev,
       followersCount: newFollowState ? prev.followersCount + 1 : prev.followersCount - 1
     }));
+
+    toast({
+      title: newFollowState ? 'Following' : 'Unfollowed',
+      description: newFollowState ? `You are now following ${profile.username}` : `Unfollowed ${profile.username}`,
+    });
   };
 
   if (!profile) {
