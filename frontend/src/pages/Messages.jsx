@@ -232,6 +232,12 @@ const Messages = () => {
           <Button className="mt-4 bg-blue-500 hover:bg-blue-600">Send message</Button>
         </div>
       )}
+      
+      <NewMessageModal
+        isOpen={showNewMessageModal}
+        onClose={() => setShowNewMessageModal(false)}
+        onSelectUser={handleNewConversation}
+      />
     </div>
   );
 };
