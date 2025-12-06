@@ -130,7 +130,7 @@ const Post = ({ post, onLike, onSave, onComment }) => {
             <button onClick={() => navigate(`/post/${post.id}`)} className="hover:opacity-70 transition-opacity">
               <MessageCircle className="w-6 h-6" />
             </button>
-            <button className="hover:opacity-70 transition-opacity">
+            <button onClick={handleShare} className="hover:opacity-70 transition-opacity">
               <Send className="w-6 h-6" />
             </button>
           </div>
