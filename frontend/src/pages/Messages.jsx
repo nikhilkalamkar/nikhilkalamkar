@@ -415,9 +415,10 @@ const Messages = () => {
   };
 
   // Add emoji reaction to message
-  const addReaction = (messageId, emoji) => {
+  const addReaction = async (messageId, emoji) => {
     const currentUserId = currentUser?.user_id || currentUser?.id;
     
+    // Update UI immediately (optimistic update)
     setMessageReactions(prev => {
       const messageReactions = prev[messageId] || {};
       const emojiReactions = messageReactions[emoji] || [];
@@ -425,11 +426,20 @@ const Messages = () => {
       // Check if user already reacted with this emoji
       if (emojiReactions.includes(currentUserId)) {
         // Remove reaction
+        const newReactions = emojiReactions.filter(id => id !== currentUserId);
+        if (newReactions.length === 0) {
+          const newMessageReactions = { ...messageReactions };
+          delete newMessageReactions[emoji];
+          return {
+            ...prev,
+            [messageId]: newMessageReactions
+          };
+        }
         return {
           ...prev,
           [messageId]: {
             ...messageReactions,
-            [emoji]: emojiReactions.filter(id => id !== currentUserId)
+            [emoji]: newReactions
           }
         };
       } else {
@@ -445,6 +455,17 @@ const Messages = () => {
     });
     
     setShowReactionPicker(null);
+
+    // Send to backend
+    try {
+      await axios.post(`${BACKEND_URL}/api/messages/reaction/${messageId}`, {
+        emoji: emoji
+      }, {
+        withCredentials: true
+      });
+    } catch (error) {
+      console.error('Error adding reaction:', error);
+    }
   };
 
   // Get current category for a conversation (manual takes priority)
