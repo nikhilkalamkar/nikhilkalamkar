@@ -15,6 +15,7 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
   const [caption, setCaption] = useState('');
   const [location, setLocation] = useState('');
   const [loading, setLoading] = useState(false);
+  const [detectingLocation, setDetectingLocation] = useState(false);
   const imageInputRef = useRef(null);
   const videoInputRef = useRef(null);
   const { currentUser } = useAuth();
