@@ -39,13 +39,26 @@ const Home = () => {
   const fetchStories = async () => {
     try {
       setLoadingStories(true);
-      const response = await axios.get(`${BACKEND_URL}/api/stories/all`, {
-        withCredentials: true
-      });
-      setStories(response.data.stories);
+      
+      // Try to get stories from backend
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/stories/all`, {
+          withCredentials: true
+        });
+        
+        // Merge backend stories with localStorage stories
+        const localStories = JSON.parse(localStorage.getItem('ishukart_stories') || '[]');
+        const allStories = [...localStories, ...response.data.stories];
+        setStories(allStories);
+      } catch (apiError) {
+        console.log('API failed, using localStorage and mock:', apiError);
+        // Fallback to localStorage + mock data
+        const localStories = JSON.parse(localStorage.getItem('ishukart_stories') || '[]');
+        const allStories = [...localStories, ...mockStories];
+        setStories(allStories);
+      }
     } catch (error) {
       console.error('Error fetching stories:', error);
-      // Fallback to mock data if API fails
       setStories(mockStories);
     } finally {
       setLoadingStories(false);
