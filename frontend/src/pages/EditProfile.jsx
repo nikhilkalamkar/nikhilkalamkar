@@ -31,10 +31,52 @@ const EditProfile = () => {
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Check file size (max 2MB before compression)
+      if (file.size > 2 * 1024 * 1024) {
+        toast({
+          title: 'Image too large',
+          description: 'Please choose an image smaller than 2MB',
+          variant: 'destructive'
+        });
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAvatarPreview(reader.result);
-        setFormData({ ...formData, avatar: reader.result });
+        // Compress image before saving
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          // Resize to max 400x400 (profile picture size)
+          let width = img.width;
+          let height = img.height;
+          const maxSize = 400;
+          
+          if (width > height) {
+            if (width > maxSize) {
+              height = (height * maxSize) / width;
+              width = maxSize;
+            }
+          } else {
+            if (height > maxSize) {
+              width = (width * maxSize) / height;
+              height = maxSize;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Convert to base64 with compression (0.7 quality)
+          const compressedImage = canvas.toDataURL('image/jpeg', 0.7);
+          
+          setAvatarPreview(compressedImage);
+          setFormData({ ...formData, avatar: compressedImage });
+        };
+        img.src = reader.result;
       };
       reader.readAsDataURL(file);
     }
