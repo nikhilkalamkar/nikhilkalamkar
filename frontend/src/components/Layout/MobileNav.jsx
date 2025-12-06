@@ -31,9 +31,12 @@ const MobileNav = () => {
         <Link to="/reels" className="flex items-center justify-center w-full h-full">
           <Video className={`w-6 h-6 ${isActive('/reels') ? 'fill-current' : ''}`} />
         </Link>
-        <Link to="/explore" className="flex items-center justify-center w-full h-full">
+        <button 
+          onClick={() => setShowCreateOptions(true)}
+          className="flex items-center justify-center w-full h-full"
+        >
           <PlusSquare className="w-6 h-6" />
-        </Link>
+        </button>
         <Link to={`/profile/${currentUser?.username}`} className="flex items-center justify-center w-full h-full">
           <Avatar className="w-7 h-7">
             <AvatarImage src={currentUser?.avatar} />
