@@ -21,15 +21,24 @@ const Profile = () => {
   useEffect(() => {
     // Find user profile
     if (username === currentUser?.username) {
-      setProfile(currentUser);
+      // Always get latest data from localStorage for current user
+      const storedUser = localStorage.getItem('ishukart_user');
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        setProfile(parsedUser);
+      } else {
+        setProfile(currentUser);
+      }
     } else {
       const user = mockUsers.find(u => u.username === username);
       setProfile(user);
       setIsFollowing(user?.isFollowing || false);
     }
 
-    // Get user's posts
-    const posts = mockPosts.filter(p => p.user.username === username);
+    // Get user's posts (including localStorage posts)
+    const localPosts = JSON.parse(localStorage.getItem('ishukart_posts') || '[]');
+    const allPosts = [...localPosts, ...mockPosts];
+    const posts = allPosts.filter(p => p.user.username === username);
     setUserPosts(posts);
   }, [username, currentUser]);
 
