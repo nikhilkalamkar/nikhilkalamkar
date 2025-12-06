@@ -107,9 +107,27 @@ const Post = ({ post, onLike, onSave, onComment }) => {
             )}
           </div>
         </div>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
-          <MoreHorizontal className="w-5 h-5" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <MoreHorizontal className="w-5 h-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            {isOwnPost && (
+              <DropdownMenuItem onClick={handleDeletePost} className="text-red-600 focus:text-red-600 cursor-pointer">
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete Post
+              </DropdownMenuItem>
+            )}
+            {!isOwnPost && (
+              <DropdownMenuItem className="cursor-pointer">
+                <Flag className="w-4 h-4 mr-2" />
+                Report Post
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Post Image(s) */}
