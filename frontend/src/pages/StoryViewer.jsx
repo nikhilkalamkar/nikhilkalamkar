@@ -173,7 +173,7 @@ const StoryViewer = () => {
               <AvatarFallback>{currentStory.user.username[0].toUpperCase()}</AvatarFallback>
             </Avatar>
             <span className="text-white font-semibold text-sm">{currentStory.user.username}</span>
-            <span className="text-white/70 text-xs">{formatTimeAgo(currentItem.createdAt)}</span>
+            <span className="text-white/70 text-xs">{currentItem?.createdAt ? formatTimeAgo(currentItem.createdAt) : 'Just now'}</span>
           </div>
           <div className="flex items-center gap-2">
             <button
