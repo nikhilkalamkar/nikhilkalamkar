@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
   const signup = async (email, password, username, fullName) => {
     // Mock signup - will be replaced with actual API call
     const user = { ...mockCurrentUser, email, username, fullName };
-    localStorage.setItem('instagram_user', JSON.stringify(user));
+    localStorage.setItem('ishukart_user', JSON.stringify(user));
     setCurrentUser(user);
     setIsAuthenticated(true);
     return user;
