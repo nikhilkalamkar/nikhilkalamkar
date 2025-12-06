@@ -249,14 +249,24 @@ const Messages = () => {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {conversations.map((conversation) => (
-            <div
-              key={conversation.id}
-              className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors ${
-                selectedConversation?.id === conversation.id ? 'bg-gray-100 dark:bg-gray-900' : ''
-              }`}
-              onClick={() => setSelectedConversation(conversation)}
-            >
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 dark:border-white"></div>
+            </div>
+          ) : conversations.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+              <p className="text-gray-500 mb-2">No messages yet</p>
+              <p className="text-sm text-gray-400">Start a conversation by clicking the + button</p>
+            </div>
+          ) : (
+            conversations.map((conversation) => (
+              <div
+                key={conversation.id}
+                className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors ${
+                  selectedConversation?.id === conversation.id ? 'bg-gray-100 dark:bg-gray-900' : ''
+                }`}
+                onClick={() => handleSelectConversation(conversation)}
+              >
               <Avatar className="w-14 h-14">
                 <AvatarImage src={conversation.user.avatar} />
                 <AvatarFallback>{conversation.user.username[0].toUpperCase()}</AvatarFallback>
