@@ -29,29 +29,129 @@ const SharePostModal = ({ post, onClose }) => {
   const handleDownloadImage = async () => {
     try {
       const imageUrl = post.images[0];
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `ishukart_${post.id}.jpg`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
       
-      toast({
-        title: 'Downloaded! 💾',
-        description: 'Image saved to your device',
-      });
+      // For mobile devices, try to open image in new tab
+      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        // Open image in new tab - user can long press to save
+        const newWindow = window.open(imageUrl, '_blank');
+        if (newWindow) {
+          toast({
+            title: 'Image opened! 📱',
+            description: 'Long press the image to save to your gallery',
+          });
+        } else {
+          // Fallback: download
+          const a = document.createElement('a');
+          a.href = imageUrl;
+          a.download = `ishukart_${post.user.username}_${Date.now()}.jpg`;
+          a.target = '_blank';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          
+          toast({
+            title: 'Downloading... 💾',
+            description: 'Check your downloads folder',
+          });
+        }
+      } else {
+        // Desktop: download directly
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `ishukart_${post.user.username}_${Date.now()}.jpg`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        toast({
+          title: 'Downloaded! 💾',
+          description: 'Image saved to your downloads',
+        });
+      }
+      
       onClose();
     } catch (error) {
       console.error('Error downloading:', error);
+      
+      // Final fallback: just open in new tab
+      window.open(post.images[0], '_blank');
       toast({
-        title: 'Error',
-        description: 'Failed to download image',
-        variant: 'destructive'
+        title: 'Image opened',
+        description: 'Right-click or long press to save',
       });
+    }
+  };
+
+  const handleSaveToDevice = async () => {
+    try {
+      const imageUrl = post.images[0];
+      
+      // Create canvas to convert image
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = imageUrl;
+      
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            handleDownloadImage();
+            return;
+          }
+          
+          // For mobile: use share API to save
+          if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            const file = new File([blob], `ishukart_${Date.now()}.jpg`, { type: 'image/jpeg' });
+            navigator.share({
+              files: [file],
+              title: `Post by ${post.user.username}`,
+              text: post.caption || 'Check out this post on IshukArt'
+            }).then(() => {
+              toast({
+                title: 'Shared! 📱',
+                description: 'You can now save to gallery from share menu',
+              });
+              onClose();
+            }).catch((error) => {
+              if (error.name !== 'AbortError') {
+                handleDownloadImage();
+              }
+            });
+          } else {
+            // Desktop: download
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ishukart_${post.user.username}_${Date.now()}.jpg`;
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            toast({
+              title: 'Downloaded! 💾',
+              description: 'Saved to your downloads',
+            });
+            onClose();
+          }
+        }, 'image/jpeg', 0.95);
+      };
+      
+      img.onerror = () => {
+        handleDownloadImage();
+      };
+    } catch (error) {
+      console.error('Error saving:', error);
+      handleDownloadImage();
     }
   };
 
