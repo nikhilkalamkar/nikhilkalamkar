@@ -6,6 +6,7 @@ import { Button } from '../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { currentUser as mockCurrentUser, users as mockUsers, posts as mockPosts } from '../mock/mockData';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../hooks/use-toast';
 
 const Profile = () => {
   const { username } = useParams();
