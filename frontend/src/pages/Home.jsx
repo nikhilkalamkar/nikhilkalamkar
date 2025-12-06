@@ -182,7 +182,12 @@ const Home = () => {
           onClose={() => setShowCreateStoryModal(false)}
           onStoryCreated={() => {
             setShowCreateStoryModal(false);
-            window.location.reload();
+            // Refresh stories
+            fetchStories();
+            toast({
+              title: 'Story posted!',
+              description: 'Your story is now live',
+            });
           }}
         />
       )}
