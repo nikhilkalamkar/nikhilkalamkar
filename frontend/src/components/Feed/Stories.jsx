@@ -2,7 +2,7 @@ import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Plus } from 'lucide-react';
 
-const Stories = ({ stories, onStoryClick, currentUser }) => {
+const Stories = ({ stories, onStoryClick, currentUser, onAddStory }) => {
   return (
     <div className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 py-4 px-4 overflow-x-auto">
       <div className="flex gap-4 min-w-max">
