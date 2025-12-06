@@ -137,7 +137,7 @@ const Home = () => {
             <span>•</span>
             <a href="#" className="hover:underline">Terms</a>
           </div>
-          <p>© 2025 INSTAGRAM CLONE</p>
+          <p>© 2025 ISHUKART</p>
         </div>
       </div>
     </div>
