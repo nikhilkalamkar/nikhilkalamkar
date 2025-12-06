@@ -28,6 +28,20 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
 
   const handleImageSelect = (e) => {
     const files = Array.from(e.target.files);
+    
+    // Check file sizes (limit 5MB per file for localStorage)
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    const oversizedFiles = files.filter(file => file.size > MAX_FILE_SIZE);
+    
+    if (oversizedFiles.length > 0) {
+      toast({
+        title: 'File too large',
+        description: `Please select files smaller than 5MB. Videos should be short clips.`,
+        variant: 'destructive'
+      });
+      return;
+    }
+    
     if (files.length + selectedImages.length > 10) {
       toast({
         title: 'Too many images',
