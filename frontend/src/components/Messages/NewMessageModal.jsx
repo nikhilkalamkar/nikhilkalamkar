@@ -3,37 +3,44 @@ import { X, Search } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { users as mockUsers } from '../../mock/mockData';
 import { useAuth } from '../../context/AuthContext';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const NewMessageModal = ({ onClose, onSelectUser }) => {
   const { currentUser } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [allUsers, setAllUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [searching, setSearching] = useState(false);
 
   useEffect(() => {
-    // Combine mock users with current logged-in user
-    const users = [...mockUsers];
-    
-    // Add current user if not already in list
-    if (currentUser && !users.find(u => u.username === currentUser.username)) {
-      users.push({
-        id: currentUser.id || currentUser.user_id,
-        username: currentUser.username,
-        fullName: currentUser.fullName || currentUser.username,
-        avatar: currentUser.avatar,
-        isVerified: currentUser.isVerified || false
-      });
-    }
-    
-    setAllUsers(users);
-  }, [currentUser]);
+    const searchUsers = async () => {
+      if (!searchQuery.trim()) {
+        setFilteredUsers([]);
+        return;
+      }
 
-  const filteredUsers = allUsers.filter(user =>
-    user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (user.fullName && user.fullName.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+      setSearching(true);
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/users/search`, {
+          params: { q: searchQuery },
+          withCredentials: true
+        });
+        
+        setFilteredUsers(response.data.users || []);
+      } catch (error) {
+        console.error('Error searching users:', error);
+        setFilteredUsers([]);
+      } finally {
+        setSearching(false);
+      }
+    };
+
+    const debounceTimer = setTimeout(searchUsers, 300);
+    return () => clearTimeout(debounceTimer);
+  }, [searchQuery]);
 
   const handleSelectUser = (user) => {
     if (selectedUsers.find(u => u.id === user.id)) {
