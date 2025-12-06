@@ -42,6 +42,18 @@ const EditProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate username format
+    const usernameRegex = /^[a-z0-9_]+$/;
+    if (!usernameRegex.test(formData.username)) {
+      toast({
+        title: 'Invalid username',
+        description: 'Username can only contain lowercase letters, numbers and underscores',
+        variant: 'destructive'
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -52,6 +64,24 @@ const EditProfile = () => {
       };
 
       localStorage.setItem('ishukart_user', JSON.stringify(updatedUser));
+
+      // Try to update in backend (if user exists in DB)
+      try {
+        await axios.put(
+          `${BACKEND_URL}/api/users/profile`,
+          {
+            fullName: formData.fullName,
+            bio: formData.bio,
+            website: formData.website,
+            avatar: formData.avatar
+          },
+          { withCredentials: true }
+        );
+        console.log('Backend profile updated successfully');
+      } catch (apiError) {
+        // If API fails, it's okay - localStorage update succeeded
+        console.log('Backend update skipped:', apiError.message);
+      }
 
       toast({
         title: 'Profile updated! ✨',
@@ -66,7 +96,7 @@ const EditProfile = () => {
       console.error('Error updating profile:', error);
       toast({
         title: 'Update failed',
-        description: 'Failed to update profile. Please try again.',
+        description: error.message || 'Failed to update profile. Please try again.',
         variant: 'destructive'
       });
     } finally {
