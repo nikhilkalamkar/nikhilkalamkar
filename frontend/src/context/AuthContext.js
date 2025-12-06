@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     // Mock login - will be replaced with actual API call
     const user = mockCurrentUser;
-    localStorage.setItem('instagram_user', JSON.stringify(user));
+    localStorage.setItem('ishukart_user', JSON.stringify(user));
     setCurrentUser(user);
     setIsAuthenticated(true);
     return user;
