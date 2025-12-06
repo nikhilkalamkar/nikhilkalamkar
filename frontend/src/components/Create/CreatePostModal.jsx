@@ -142,29 +142,31 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
 
           {/* Image/Video Upload Buttons */}
           {selectedImages.length === 0 && (
-            <div className="space-y-3 mb-4">
-              {/* Photo Upload */}
+            <div className="space-y-4 mb-4">
+              {/* Photo Upload - SUPER VISIBLE */}
               <label 
                 htmlFor="image-file-input"
-                className="block w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center cursor-pointer hover:border-purple-400 active:bg-purple-50 dark:active:bg-purple-900/10 transition-colors"
+                className="block w-full border-4 border-purple-500 bg-purple-50 rounded-xl p-8 text-center cursor-pointer active:bg-purple-100"
+                style={{ minHeight: '120px' }}
               >
-                <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <ImageIcon className="w-8 h-8 text-white" />
+                <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <ImageIcon className="w-10 h-10 text-white" />
                 </div>
-                <p className="text-lg font-semibold mb-1">📸 Add Photo</p>
-                <p className="text-sm text-gray-500">Tap to select photos from gallery</p>
+                <p className="text-2xl font-bold mb-2 text-purple-700">📸 TAP HERE FOR PHOTO</p>
+                <p className="text-base text-purple-600">Select from your gallery</p>
               </label>
 
-              {/* Video Upload */}
+              {/* Video Upload - SUPER VISIBLE */}
               <label 
                 htmlFor="video-file-input"
-                className="block w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center cursor-pointer hover:border-purple-400 active:bg-blue-50 dark:active:bg-blue-900/10 transition-colors"
+                className="block w-full border-4 border-blue-500 bg-blue-50 rounded-xl p-8 text-center cursor-pointer active:bg-blue-100"
+                style={{ minHeight: '120px' }}
               >
-                <div className="bg-gradient-to-r from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Video className="w-8 h-8 text-white" />
+                <div className="bg-gradient-to-r from-blue-500 to-purple-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Video className="w-10 h-10 text-white" />
                 </div>
-                <p className="text-lg font-semibold mb-1">🎥 Add Video</p>
-                <p className="text-sm text-gray-500">Tap to select videos from gallery</p>
+                <p className="text-2xl font-bold mb-2 text-blue-700">🎥 TAP HERE FOR VIDEO</p>
+                <p className="text-base text-blue-600">Select from your gallery</p>
               </label>
 
               {/* Hidden File Inputs */}
