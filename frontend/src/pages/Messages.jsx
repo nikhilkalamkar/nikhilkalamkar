@@ -373,6 +373,39 @@ const Messages = () => {
     }
   };
 
+  // Add emoji reaction to message
+  const addReaction = (messageId, emoji) => {
+    const currentUserId = currentUser?.user_id || currentUser?.id;
+    
+    setMessageReactions(prev => {
+      const messageReactions = prev[messageId] || {};
+      const emojiReactions = messageReactions[emoji] || [];
+      
+      // Check if user already reacted with this emoji
+      if (emojiReactions.includes(currentUserId)) {
+        // Remove reaction
+        return {
+          ...prev,
+          [messageId]: {
+            ...messageReactions,
+            [emoji]: emojiReactions.filter(id => id !== currentUserId)
+          }
+        };
+      } else {
+        // Add reaction
+        return {
+          ...prev,
+          [messageId]: {
+            ...messageReactions,
+            [emoji]: [...emojiReactions, currentUserId]
+          }
+        };
+      }
+    });
+    
+    setShowReactionPicker(null);
+  };
+
   // Get current category for a conversation (manual takes priority)
   const getConversationCategory = (conv) => {
     // If user has manually categorized, ALWAYS use that
