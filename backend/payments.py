@@ -1,11 +1,17 @@
 from fastapi import APIRouter, HTTPException, Request, Depends
 from pydantic import BaseModel
 from motor.motor_asyncio import AsyncIOMotorClient
+from dotenv import load_dotenv
+from pathlib import Path
 import razorpay
 import os
 from datetime import datetime, timezone
 import uuid
 from auth import get_session_token
+
+# Load environment variables
+ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / '.env')
 
 router = APIRouter(prefix="/api/payments", tags=["payments"])
 
