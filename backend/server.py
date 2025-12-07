@@ -356,20 +356,32 @@ async def send_message(chat_id: str, content: str = Form(""), message_type: str 
         raise HTTPException(status_code=403, detail="Cannot send message to this user")
     
     media_url = None
+    actual_message_type = message_type
     if media:
-        file_ext = media.filename.split('.')[-1]
+        file_ext = media.filename.split('.')[-1].lower()
         file_name = f"{uuid.uuid4()}.{file_ext}"
         file_path = f"/tmp/{file_name}"
         async with aiofiles.open(file_path, 'wb') as f:
             content_file = await media.read()
             await f.write(content_file)
         media_url = f"/api/media/{file_name}"
+        
+        # Determine actual message type based on file extension
+        image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg']
+        video_extensions = ['mp4', 'mov', 'avi', 'webm', 'mkv', 'flv', 'wmv']
+        
+        if file_ext in image_extensions:
+            actual_message_type = "image"
+        elif file_ext in video_extensions:
+            actual_message_type = "video"
+        else:
+            actual_message_type = "media"
     
     message = Message(
         chat_id=chat_id,
         sender_id=user_id,
         content=content,
-        message_type=message_type,
+        message_type=actual_message_type,
         media_url=media_url
     )
     message_dict = message.model_dump()
