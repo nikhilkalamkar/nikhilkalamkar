@@ -617,7 +617,9 @@ export default function ChatView() {
         </div>
       )}
 
-      <div className="flex-1 overflow-y-auto px-4 py-6 max-w-md mx-auto w-full">
+      <div className={`flex-1 overflow-y-auto px-4 py-6 max-w-md mx-auto w-full transition-all duration-300 ${
+        contentBlurred ? 'blur-lg select-none pointer-events-none' : ''
+      }`}>
         {messages.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-gray-400">No messages yet</p>
