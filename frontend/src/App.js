@@ -8,6 +8,7 @@ import ChatPage from '@/pages/ChatPage';
 import StoryViewPage from '@/pages/StoryViewPage';
 import ProfilePage from '@/pages/ProfilePage';
 import AdminPage from '@/pages/AdminPage';
+import BlockedUsersPage from '@/pages/BlockedUsersPage';
 import './App.css';
 
 function PrivateRoute({ children }) {
