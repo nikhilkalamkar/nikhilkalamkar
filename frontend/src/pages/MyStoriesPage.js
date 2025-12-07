@@ -28,6 +28,7 @@ export default function MyStoriesPage() {
   const [loading, setLoading] = useState(true);
   const [selectedStory, setSelectedStory] = useState(null);
   const [showPromoteDialog, setShowPromoteDialog] = useState(false);
+  const [selectedTier, setSelectedTier] = useState('basic');
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   const navigate = useNavigate();
   
