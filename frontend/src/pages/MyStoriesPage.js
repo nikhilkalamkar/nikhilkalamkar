@@ -79,7 +79,7 @@ export default function MyStoriesPage() {
     try {
       const response = await axios.post(
         `${API_URL}/stories/${selectedStory.story_id}/promote`,
-        {},
+        { tier: selectedTier },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
