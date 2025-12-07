@@ -17,7 +17,7 @@ export default function StoryRing({ user, stories, index }) {
     >
       <div className={`p-0.5 rounded-full ${hasUnread ? 'story-ring' : 'border-2 border-border'}`}>
         <Avatar className="w-16 h-16 border-2 border-background">
-          <AvatarImage src={user.profile_picture} />
+          <AvatarImage src={user.profile_picture} loading="lazy" />
           <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
         </Avatar>
       </div>
