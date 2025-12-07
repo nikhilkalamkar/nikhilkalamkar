@@ -54,18 +54,44 @@ export default function ChatView() {
     }
   };
 
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setSelectedImage(reader.result);
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        toast.error('Please select an image file');
+      }
+    }
+  };
+
+  const clearImage = () => {
+    setSelectedImage('');
+    setImagePreview('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const sendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() && !selectedImage) return;
 
     try {
       await axios.post(`${API}/messages`, {
         recipient_id: friendId,
-        text: newMessage
+        text: newMessage || null,
+        image_url: selectedImage || null
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setNewMessage('');
+      clearImage();
       fetchMessages();
     } catch (error) {
       toast.error('Failed to send message');
