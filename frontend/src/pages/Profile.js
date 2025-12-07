@@ -23,6 +23,29 @@ export default function Profile() {
     fileInputRef.current?.click();
   };
 
+  const fetchBlockedUsers = async () => {
+    try {
+      const response = await axios.get(`${API}/friends/blocked`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setBlockedUsers(response.data);
+    } catch (error) {
+      console.error('Failed to fetch blocked users:', error);
+    }
+  };
+
+  const unblockUser = async (userId) => {
+    try {
+      await axios.post(`${API}/friends/unblock/${userId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('User unblocked');
+      fetchBlockedUsers();
+    } catch (error) {
+      toast.error('Failed to unblock user');
+    }
+  };
+
   const handleFileSelect = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
