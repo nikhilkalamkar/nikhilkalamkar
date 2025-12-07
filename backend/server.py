@@ -492,11 +492,12 @@ async def unblock_user(user_id_to_unblock: str, user_id: str = Depends(verify_to
 @api_router.get("/blocked-users")
 async def get_blocked_users(user_id: str = Depends(verify_token)):
     blocked = await db.blocked_users.find({"blocker_id": user_id}, {"_id": 0}).to_list(1000)
-    blocked_users = []
-    for block in blocked:
-        user = await db.users.find_one({"user_id": block['blocked_id']}, {"_id": 0, "password_hash": 0})
-        if user:
-            blocked_users.append(user)
+    
+    if not blocked:
+        return []
+    
+    blocked_ids = [b['blocked_id'] for b in blocked]
+    blocked_users = await db.users.find({"user_id": {"$in": blocked_ids}}, {"_id": 0, "password_hash": 0}).to_list(len(blocked_ids))
     return blocked_users
 
 @api_router.get("/token/agora")
