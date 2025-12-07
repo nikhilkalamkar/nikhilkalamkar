@@ -524,6 +524,35 @@ export default function ChatView() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={showDeleteMenu} onOpenChange={setShowDeleteMenu}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              Delete Message
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this message? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3 mt-4">
+            <Button
+              onClick={() => setShowDeleteMenu(false)}
+              variant="outline"
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => handleDeleteMessage(longPressMessage?.message_id)}
+              className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+            >
+              Delete
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <div className="bg-white border-b px-4 py-4 flex items-center gap-3">
         <Button
           onClick={() => navigate('/chats')}
