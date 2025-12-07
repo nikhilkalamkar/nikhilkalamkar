@@ -623,7 +623,7 @@ async def get_agora_token(channel: str, user_id: str = Depends(verify_token)):
 
 @api_router.get("/media/{filename}")
 async def get_media(filename: str):
-    file_path = f"/tmp/{filename}"
+    file_path = f"/app/uploads/{filename}"
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="File not found")
     
