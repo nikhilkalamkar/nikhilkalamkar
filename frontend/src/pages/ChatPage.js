@@ -372,7 +372,14 @@ export default function ChatPage() {
                     ) : null}
                   </div>
                 )}
-                <p className="break-words">{message.content}</p>
+                {message.deleted_for_everyone ? (
+                  <p className="break-words italic text-muted-foreground">
+                    <Trash2 className="w-3 h-3 inline mr-1" />
+                    This message was deleted
+                  </p>
+                ) : (
+                  <p className="break-words">{message.content}</p>
+                )}
                 <p className={`text-xs mt-1 font-mono ${isSent ? 'text-black/60' : 'text-white/60'}`}>
                   {formatTime(message.created_at)}
                 </p>
