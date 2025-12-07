@@ -26,6 +26,10 @@ export const useChatStore = create((set, get) => ({
       set({ messages: { ...get().messages, [chat_id]: [...messages, data.data] } });
     });
     
+    socket.on('timer_updated', (data) => {
+      // Timer update will be handled in ChatPage component
+    });
+    
     set({ socket });
   },
   
