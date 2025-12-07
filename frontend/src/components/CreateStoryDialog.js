@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,6 @@ import { Plus, Upload, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
-import useRazorpay from 'react-razorpay';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL + '/api';
 
