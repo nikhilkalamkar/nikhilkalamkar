@@ -532,9 +532,21 @@ export default function ChatView() {
                 data-testid={`message-${message.message_id}`}
               >
                 {message.disappearing && (
-                  <div className="bg-orange-100 px-3 py-1 flex items-center gap-2 text-xs font-bold text-orange-700">
+                  <div className={`px-3 py-1 flex items-center gap-2 text-xs font-bold ${
+                    messageCountdowns[message.message_id] 
+                      ? messageCountdowns[message.message_id] <= 3 
+                        ? 'bg-red-100 text-red-700 animate-pulse' 
+                        : 'bg-orange-100 text-orange-700'
+                      : 'bg-orange-100 text-orange-700'
+                  }`}>
                     <Timer size={12} />
-                    Disappearing message • {message.disappear_after_seconds}s
+                    {messageCountdowns[message.message_id] !== undefined ? (
+                      <>Deleting in {messageCountdowns[message.message_id]}s</>
+                    ) : message.viewed_at ? (
+                      <>Disappearing message • {message.disappear_after_seconds}s</>
+                    ) : (
+                      <>Disappearing message • View to start timer</>
+                    )}
                   </div>
                 )}
                 {message.image_url && (
