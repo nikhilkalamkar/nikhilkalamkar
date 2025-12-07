@@ -6,7 +6,7 @@ import { Camera as CameraIcon, Image as ImageIcon, Upload } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 const placeholderImages = [
   'https://images.unsplash.com/photo-1758275557473-6e6359ced762?w=800',
