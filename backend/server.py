@@ -277,6 +277,56 @@ async def get_current_user(user_id: str = Depends(verify_token)):
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+@api_router.put("/users/me")
+async def update_profile(
+    bio: str = Form(None),
+    profile_picture: Optional[UploadFile] = File(None),
+    user_id: str = Depends(verify_token)
+):
+    """Update user profile (bio and/or profile picture)"""
+    update_data = {}
+    
+    # Update bio if provided
+    if bio is not None:
+        update_data["bio"] = bio
+    
+    # Update profile picture if provided
+    if profile_picture:
+        file_ext = profile_picture.filename.split('.')[-1].lower()
+        content_file = await profile_picture.read()
+        
+        # Optimize image
+        image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']
+        if file_ext in image_extensions:
+            content_file = await optimize_image(content_file, profile_picture.filename)
+            file_name = f"profile_{user_id}_{uuid.uuid4()}.jpg"
+        else:
+            file_name = f"profile_{user_id}_{uuid.uuid4()}.{file_ext}"
+        
+        file_path = f"/app/uploads/{file_name}"
+        async with aiofiles.open(file_path, 'wb') as f:
+            await f.write(content_file)
+        
+        profile_picture_url = f"/api/media/{file_name}"
+        update_data["profile_picture"] = profile_picture_url
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No data to update")
+    
+    # Update user in database
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    result = await db.users.update_one(
+        {"user_id": user_id},
+        {"$set": update_data}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Return updated user
+    updated_user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "password_hash": 0})
+    return updated_user
+
 @api_router.get("/users/search")
 async def search_users(q: str, user_id: str = Depends(verify_token)):
     blocked = await db.blocked_users.find({"blocker_id": user_id}, {"_id": 0}).to_list(1000)
