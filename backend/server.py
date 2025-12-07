@@ -619,7 +619,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
 @api_router.get("/admin/users")
 async def get_all_users(user_id: str = Depends(verify_token)):
     admin_user = await db.users.find_one({"user_id": user_id})
-    if not admin_user or admin_user.get('email') != 'admin@snapclone.com':
+    if not admin_user or admin_user.get('email') != 'admin@ishukart.com':
         raise HTTPException(status_code=403, detail="Admin access required")
     
     users = await db.users.find({}, {"_id": 0, "password_hash": 0}).to_list(1000)
