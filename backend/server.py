@@ -457,9 +457,12 @@ async def get_stories(user_id: str = Depends(verify_token)):
     
     friends = await db.friends.find({"$or": [{"user1": user_id}, {"user2": user_id}]}, {"_id": 0}).to_list(1000)
     friend_ids = [f['user2'] if f['user1'] == user_id else f['user1'] for f in friends]
-    friend_ids.append(user_id)
     
-    friend_ids = [fid for fid in friend_ids if fid not in blocked_ids]
+    # Always include own user_id first (to show your own stories)
+    friend_ids.insert(0, user_id)
+    
+    # Remove duplicates and blocked users
+    friend_ids = list(set([fid for fid in friend_ids if fid not in blocked_ids]))
     
     current_time = datetime.now(timezone.utc)
     stories = await db.stories.find(
