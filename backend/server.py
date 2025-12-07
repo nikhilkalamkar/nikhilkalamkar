@@ -95,6 +95,8 @@ class MessageCreate(BaseModel):
     recipient_id: str
     text: Optional[str] = None
     image_url: Optional[str] = None
+    disappearing: bool = False
+    disappear_after_seconds: int = 10
 
 class Message(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -104,6 +106,11 @@ class Message(BaseModel):
     recipient_id: str
     text: Optional[str] = None
     image_url: Optional[str] = None
+    disappearing: bool = False
+    viewed: bool = False
+    disappear_after_seconds: int = 10
+    viewed_at: Optional[str] = None
+    expires_at: Optional[str] = None
     created_at: str
 
 class FriendRequest(BaseModel):
