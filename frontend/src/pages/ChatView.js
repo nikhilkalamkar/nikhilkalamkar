@@ -1,0 +1,162 @@
+import { useState, useEffect, useContext, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { AuthContext, API } from '@/App';
+import axios from 'axios';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Send, Camera } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
+
+export default function ChatView() {
+  const { friendId } = useParams();
+  const navigate = useNavigate();
+  const { token, user } = useContext(AuthContext);
+  const [messages, setMessages] = useState([]);
+  const [friend, setFriend] = useState(null);
+  const [newMessage, setNewMessage] = useState('');
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    fetchFriend();
+    fetchMessages();
+    const interval = setInterval(fetchMessages, 3000);
+    return () => clearInterval(interval);
+  }, [friendId]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const fetchFriend = async () => {
+    try {
+      const response = await axios.get(`${API}/friends`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const friendData = response.data.find(f => f.user_id === friendId);
+      setFriend(friendData);
+    } catch (error) {
+      console.error('Failed to fetch friend:', error);
+    }
+  };
+
+  const fetchMessages = async () => {
+    try {
+      const response = await axios.get(`${API}/messages/${friendId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setMessages(response.data);
+    } catch (error) {
+      console.error('Failed to fetch messages:', error);
+    }
+  };
+
+  const sendMessage = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+
+    try {
+      await axios.post(`${API}/messages`, {
+        recipient_id: friendId,
+        text: newMessage
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNewMessage('');
+      fetchMessages();
+    } catch (error) {
+      toast.error('Failed to send message');
+    }
+  };
+
+  if (!friend) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#F5E618] border-t-transparent" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 bg-gray-50 flex flex-col z-40" data-testid="chat-view-page">
+      <div className="bg-white border-b px-4 py-4 flex items-center gap-3">
+        <Button
+          onClick={() => navigate('/chats')}
+          className="rounded-full w-10 h-10 p-0 bg-gray-100 hover:bg-gray-200"
+          data-testid="back-btn"
+        >
+          <ArrowLeft size={20} />
+        </Button>
+        <img
+          src={friend.avatar_url || 'https://images.unsplash.com/photo-1675526607070-f5cbd71dde92?w=200'}
+          alt={friend.username}
+          className="w-10 h-10 rounded-full object-cover"
+        />
+        <div className="flex-1">
+          <p className="font-bold text-lg">{friend.username}</p>
+        </div>
+        <Button
+          onClick={() => navigate('/')}
+          className="rounded-full w-10 h-10 p-0 bg-[#F5E618] hover:bg-[#F5E618]/90"
+          data-testid="camera-btn"
+        >
+          <Camera size={20} className="text-black" />
+        </Button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-4 py-6 max-w-md mx-auto w-full">
+        {messages.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-gray-400">No messages yet</p>
+            <p className="text-gray-400 text-sm mt-2">Send a message to start chatting</p>
+          </div>
+        ) : (
+          messages.map((message, index) => (
+            <motion.div
+              key={message.message_id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className={`mb-3 flex ${message.sender_id === user.user_id ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[75%] rounded-2xl px-4 py-3 ${
+                  message.sender_id === user.user_id
+                    ? 'bg-[#F5E618] text-black rounded-br-sm'
+                    : 'bg-white text-black rounded-bl-sm shadow-sm'
+                }`}
+                data-testid={`message-${message.message_id}`}
+              >
+                <p className="font-medium">{message.text}</p>
+                <p className={`text-xs mt-1 ${
+                  message.sender_id === user.user_id ? 'text-black/60' : 'text-gray-500'
+                }`}>
+                  {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </p>
+              </div>
+            </motion.div>
+          ))
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      <form onSubmit={sendMessage} className="bg-white border-t px-4 py-4 flex items-center gap-3 max-w-md mx-auto w-full">
+        <Input
+          placeholder="Type a message..."
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          className="flex-1 h-12 rounded-full bg-gray-100 border-transparent"
+          data-testid="message-input"
+        />
+        <Button
+          type="submit"
+          disabled={!newMessage.trim()}
+          className="bg-[#F5E618] text-black rounded-full w-12 h-12 p-0 hover:scale-105 transition-transform"
+          data-testid="send-message-btn"
+        >
+          <Send size={20} />
+        </Button>
+      </form>
+    </div>
+  );
+}
