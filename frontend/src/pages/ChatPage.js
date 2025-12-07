@@ -380,6 +380,19 @@ export default function ChatPage() {
                   <p className="text-xs text-destructive mt-1">Screenshot detected</p>
                 )}
               </div>
+              {isSent && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => {
+                    setSelectedMessage(message);
+                    setShowDeleteDialog(true);
+                  }}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              )}
             </div>
           );
         })}
