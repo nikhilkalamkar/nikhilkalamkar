@@ -360,12 +360,18 @@ export default function ChatPage() {
                         className="rounded-lg max-w-full"
                         loading="lazy"
                         decoding="async"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
                       />
                     ) : message.message_type === 'video' ? (
                       <video 
                         controls 
                         className="rounded-lg max-w-full"
                         preload="metadata"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
                       >
                         <source src={message.media_url.startsWith('http') ? message.media_url : `${process.env.REACT_APP_BACKEND_URL}${message.media_url}`} />
                       </video>
