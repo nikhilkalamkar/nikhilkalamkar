@@ -228,7 +228,7 @@ export default function CreateStoryDialog({ onStoryCreated }) {
                   
                   <Button
                     data-testid="cancel-upload-button"
-                    onClick={() => setSelectedFiles([])}}
+                    onClick={() => setSelectedFiles([])}
                     variant="ghost"
                     className="w-full"
                   >
