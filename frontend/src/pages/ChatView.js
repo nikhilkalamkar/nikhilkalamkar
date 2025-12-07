@@ -27,6 +27,7 @@ export default function ChatView() {
   const [callType, setCallType] = useState(null);
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
+  const [showPermissionHelp, setShowPermissionHelp] = useState(false);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const localVideoRef = useRef(null);
