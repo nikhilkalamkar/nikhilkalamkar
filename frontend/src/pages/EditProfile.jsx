@@ -107,6 +107,63 @@ const EditProfile = () => {
 
       try {
         localStorage.setItem('ishukart_user', JSON.stringify(updatedUser));
+        
+        // If username changed, update all posts and comments with new username
+        if (formData.username !== currentUser?.username) {
+          // Update posts
+          const posts = JSON.parse(localStorage.getItem('ishukart_posts') || '[]');
+          const updatedPosts = posts.map(post => {
+            if (post.user && (post.user.username === currentUser?.username || post.user.id === currentUser?.user_id)) {
+              return {
+                ...post,
+                user: {
+                  ...post.user,
+                  username: formData.username,
+                  fullName: formData.fullName,
+                  avatar: formData.avatar
+                }
+              };
+            }
+            return post;
+          });
+          localStorage.setItem('ishukart_posts', JSON.stringify(updatedPosts));
+          
+          // Update comments
+          const comments = JSON.parse(localStorage.getItem('ishukart_comments') || '[]');
+          const updatedComments = comments.map(comment => {
+            if (comment.user && (comment.user.username === currentUser?.username || comment.user.id === currentUser?.user_id)) {
+              return {
+                ...comment,
+                user: {
+                  ...comment.user,
+                  username: formData.username,
+                  fullName: formData.fullName,
+                  avatar: formData.avatar
+                }
+              };
+            }
+            return comment;
+          });
+          localStorage.setItem('ishukart_comments', JSON.stringify(updatedComments));
+          
+          // Update stories
+          const stories = JSON.parse(localStorage.getItem('ishukart_stories') || '[]');
+          const updatedStories = stories.map(story => {
+            if (story.user && (story.user.username === currentUser?.username || story.user.id === currentUser?.user_id)) {
+              return {
+                ...story,
+                user: {
+                  ...story.user,
+                  username: formData.username,
+                  fullName: formData.fullName,
+                  avatar: formData.avatar
+                }
+              };
+            }
+            return story;
+          });
+          localStorage.setItem('ishukart_stories', JSON.stringify(updatedStories));
+        }
       } catch (storageError) {
         if (storageError.name === 'QuotaExceededError' || storageError.message.includes('quota')) {
           toast({
