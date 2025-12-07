@@ -351,22 +351,22 @@ export default function ChatPage() {
                   isSent ? 'chat-bubble-sent' : 'chat-bubble-received'
                 }`}
               >
-                {message.media_url && (
-                  <div className="mb-2">
+                {message.media_url && !message.deleted_for_everyone && (
+                  <div className="mb-2 relative">
                     {message.message_type === 'image' ? (
                       <img
                         src={message.media_url.startsWith('http') ? message.media_url : `${process.env.REACT_APP_BACKEND_URL}${message.media_url}`}
                         alt="Message media"
                         className="rounded-lg max-w-full"
-                        onError={(e) => {
-                          console.error('Image failed to load:', e.target.src);
-                          console.log('REACT_APP_BACKEND_URL:', process.env.REACT_APP_BACKEND_URL);
-                          console.log('media_url:', message.media_url);
-                        }}
-                        onLoad={() => console.log('Image loaded successfully:', message.media_url)}
+                        loading="lazy"
+                        decoding="async"
                       />
                     ) : message.message_type === 'video' ? (
-                      <video controls className="rounded-lg max-w-full">
+                      <video 
+                        controls 
+                        className="rounded-lg max-w-full"
+                        preload="metadata"
+                      >
                         <source src={message.media_url.startsWith('http') ? message.media_url : `${process.env.REACT_APP_BACKEND_URL}${message.media_url}`} />
                       </video>
                     ) : null}
