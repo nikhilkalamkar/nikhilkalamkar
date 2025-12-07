@@ -40,6 +40,52 @@ export default function Landing() {
     }
   };
 
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    if (!resetEmail) {
+      toast.error('Please enter your email');
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await axios.post(`${API}/auth/forgot-password`, { email: resetEmail });
+      toast.success(response.data.message);
+      setShowForgotPassword(false);
+      setShowResetPassword(true);
+    } catch (error) {
+      toast.error('Failed to verify email');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (!formData.password) {
+      toast.error('Please enter a new password');
+      return;
+    }
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+    setLoading(true);
+    try {
+      await axios.post(`${API}/auth/reset-password`, {
+        email: resetEmail,
+        new_password: formData.password
+      });
+      toast.success('Password reset successfully! Please login.');
+      setShowResetPassword(false);
+      setResetEmail('');
+      setFormData({ username: '', email: '', password: '' });
+    } catch (error) {
+      toast.error('Failed to reset password');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-yellow-50 via-pink-50 to-purple-50">
       <motion.div 
