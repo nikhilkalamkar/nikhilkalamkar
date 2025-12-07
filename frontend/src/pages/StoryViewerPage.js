@@ -34,6 +34,7 @@ export default function StoryViewerPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const navigate = useNavigate();
   const timerRef = useRef(null);
   const progressInterval = useRef(null);
