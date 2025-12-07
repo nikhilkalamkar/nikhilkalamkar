@@ -504,10 +504,25 @@ async def verify_promotion(story_id: str, payment_id: str, order_id: str, signat
             'razorpay_signature': signature
         })
         
-        await db.story_promotions.update_one({"order_id": order_id}, {"$set": {"status": "completed", "payment_id": payment_id}})
-        await db.stories.update_one({"story_id": story_id}, {"$set": {"is_promoted": True}})
+        promotion = await db.story_promotions.find_one({"order_id": order_id})
+        if not promotion:
+            raise HTTPException(status_code=404, detail="Promotion not found")
         
-        return {"message": "Promotion successful"}
+        await db.story_promotions.update_one(
+            {"order_id": order_id}, 
+            {"$set": {"status": "completed", "payment_id": payment_id}}
+        )
+        
+        await db.stories.update_one(
+            {"story_id": story_id}, 
+            {"$set": {
+                "is_promoted": True,
+                "promotion_tier": promotion.get("tier", "basic"),
+                "promotion_views": 0
+            }}
+        )
+        
+        return {"message": "Promotion successful", "tier": promotion.get("tier")}
     except:
         raise HTTPException(status_code=400, detail="Payment verification failed")
 
