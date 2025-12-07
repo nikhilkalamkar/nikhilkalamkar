@@ -52,6 +52,18 @@ export default function Profile() {
     }
   };
 
+  const toggleScreenshotNotifications = async (enabled) => {
+    try {
+      await axios.put(`${API}/settings/screenshot-notifications?enabled=${enabled}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setScreenshotNotifications(enabled);
+      toast.success(`Screenshot notifications ${enabled ? 'enabled' : 'disabled'}`);
+    } catch (error) {
+      toast.error('Failed to update settings');
+    }
+  };
+
   const handleFileSelect = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
