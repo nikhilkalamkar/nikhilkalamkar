@@ -290,18 +290,36 @@ class SnapCloneAPITester:
     def test_story_functionality(self):
         """Test story creation"""
         # Create a dummy image file for testing
+        import requests
         import io
-        dummy_image = io.BytesIO(b"fake image content")
         
+        url = f"{self.base_url}/stories"
+        headers = {'Authorization': f'Bearer {self.token}'}
+        
+        # Create a simple test image
+        dummy_image = io.BytesIO(b"fake image content for testing")
         files = {'media': ('test.jpg', dummy_image, 'image/jpeg')}
         
-        success, response = self.run_test(
-            "Create Story",
-            "POST",
-            "stories",
-            200,
-            files=files
-        )
+        try:
+            response = requests.post(url, files=files, headers=headers, timeout=10)
+            success = response.status_code == 200
+            details = f"Status: {response.status_code}"
+            if not success:
+                try:
+                    error_data = response.json()
+                    details += f", Error: {error_data.get('detail', 'Unknown error')}"
+                except:
+                    details += f", Response: {response.text[:100]}"
+            self.log_test("Create Story", success, details)
+            
+            if success:
+                response_data = response.json()
+            else:
+                response_data = {}
+        except Exception as e:
+            self.log_test("Create Story", False, f"Exception: {str(e)}")
+            success = False
+            response_data = {}
         
         if success:
             # Get stories
