@@ -177,14 +177,14 @@ export default function Camera() {
       </div>
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-md" data-testid="send-dialog">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto" data-testid="send-dialog">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>
               Send Your Snap
             </DialogTitle>
             <DialogDescription>Choose to send a snap to a friend or post a story for everyone.</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-4 pb-4">
             {selectedImage && (
               <img src={selectedImage} alt="Selected" className="w-full aspect-[9/16] object-cover rounded-2xl" />
             )}
