@@ -555,6 +555,14 @@ async def mark_message_viewed(message_id: str, current_user_id: str = Depends(ge
 
 @api_router.get("/messages/{friend_id}", response_model=List[Message])
 async def get_messages(friend_id: str, current_user_id: str = Depends(get_current_user)):
+    now = datetime.now(timezone.utc).isoformat()
+    
+    # Delete expired disappearing messages
+    await db.messages.delete_many({
+        "disappearing": True,
+        "expires_at": {"$ne": None, "$lt": now}
+    })
+    
     messages = await db.messages.find(
         {
             "$or": [
