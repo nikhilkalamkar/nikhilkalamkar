@@ -161,22 +161,35 @@ export default function ChatView() {
       }
     });
 
-    // Auto-delete expired disappearing messages
-    const checkExpiredMessages = () => {
-      const now = new Date().toISOString();
-      const hasExpired = messages.some(msg => {
+    // Update countdown timers for disappearing messages
+    const updateCountdowns = () => {
+      const now = new Date();
+      const newCountdowns = {};
+      let hasExpired = false;
+
+      messages.forEach(msg => {
         if (msg.disappearing && msg.expires_at) {
-          return msg.expires_at < now;
+          const expiresAt = new Date(msg.expires_at);
+          const remaining = Math.max(0, Math.floor((expiresAt - now) / 1000));
+          
+          if (remaining > 0) {
+            newCountdowns[msg.message_id] = remaining;
+          } else {
+            hasExpired = true;
+          }
         }
-        return false;
       });
 
+      setMessageCountdowns(newCountdowns);
+
+      // Refresh messages to remove expired ones
       if (hasExpired) {
-        fetchMessages(); // Refresh to remove expired messages
+        fetchMessages();
       }
     };
 
-    const interval = setInterval(checkExpiredMessages, 1000); // Check every second
+    updateCountdowns();
+    const interval = setInterval(updateCountdowns, 1000);
     return () => clearInterval(interval);
   }, [messages]);
 
