@@ -60,12 +60,16 @@ export default function HomePage() {
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
     try {
-      const response = await axios.get(`${API_URL}/users/search?q=${searchQuery}`, {
+      const response = await axios.get(`${API_URL}/users/search?q=${encodeURIComponent(searchQuery)}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSearchResults(response.data);
+      if (response.data.length === 0) {
+        toast.info('No users found');
+      }
     } catch (error) {
-      toast.error('Search failed');
+      console.error('Search error:', error);
+      toast.error(error.response?.data?.detail || 'Search failed. Please try again.');
     }
   };
   
