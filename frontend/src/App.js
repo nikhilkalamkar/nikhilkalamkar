@@ -6,6 +6,7 @@ import AuthPage from '@/pages/AuthPage';
 import HomePage from '@/pages/HomePage';
 import ChatPage from '@/pages/ChatPage';
 import StoryViewPage from '@/pages/StoryViewPage';
+import StoryViewerPage from '@/pages/StoryViewerPage';
 import ProfilePage from '@/pages/ProfilePage';
 import AdminPage from '@/pages/AdminPage';
 import BlockedUsersPage from '@/pages/BlockedUsersPage';
