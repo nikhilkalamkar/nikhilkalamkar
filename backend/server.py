@@ -364,6 +364,7 @@ async def send_message(chat_id: str, content: str = Form(""), message_type: str 
         async with aiofiles.open(file_path, 'wb') as f:
             content_file = await media.read()
             await f.write(content_file)
+        # Store relative path for API, frontend will construct full URL
         media_url = f"/api/media/{file_name}"
         
         # Determine actual message type based on file extension
