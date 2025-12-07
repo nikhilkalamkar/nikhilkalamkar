@@ -676,6 +676,9 @@ class SnapCloneAPITester:
         self.test_friend_request_flow()
         self.test_chat_functionality()
         
+        # Disappearing Messages Feature Testing
+        self.test_disappearing_messages_end_to_end()
+        
         # Story functionality
         self.test_story_functionality()
         
