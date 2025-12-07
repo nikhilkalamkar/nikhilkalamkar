@@ -76,37 +76,49 @@ export default function Camera() {
     }
 
     if (type === 'snap' && !selectedFriend) {
-      toast.error('Please select a friend');
+      toast.error('Please select a friend to send snap');
+      return;
+    }
+
+    if (type === 'snap' && friends.length === 0) {
+      toast.error('You need to add friends first! Go to Chats page to add friends.');
       return;
     }
 
     setLoading(true);
     try {
+      console.log('Sending...', { type, imageUrl: imageUrl.substring(0, 50) });
+      
       if (type === 'snap') {
-        await axios.post(`${API}/snaps`, {
+        const response = await axios.post(`${API}/snaps`, {
           recipient_id: selectedFriend,
           image_url: imageUrl,
-          text
+          text: text || ''
         }, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        toast.success('Snap sent!');
+        console.log('Snap sent successfully:', response.data);
+        toast.success('Snap sent successfully!');
       } else {
-        await axios.post(`${API}/stories`, {
+        const response = await axios.post(`${API}/stories`, {
           image_url: imageUrl,
-          text
+          text: text || ''
         }, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        toast.success('Story posted!');
+        console.log('Story posted successfully:', response.data);
+        toast.success('Story posted successfully!');
       }
+      
       setShowDialog(false);
       setSelectedImage('');
       setImageUrl('');
       setText('');
       setSelectedFriend('');
     } catch (error) {
-      toast.error('Failed to send');
+      console.error('Send error:', error.response?.data || error.message);
+      const errorMsg = error.response?.data?.detail || error.message || 'Failed to send';
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
