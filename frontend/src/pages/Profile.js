@@ -12,6 +12,7 @@ export default function Profile() {
   const [uploading, setUploading] = useState(false);
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [showBlocked, setShowBlocked] = useState(false);
+  const [screenshotNotifications, setScreenshotNotifications] = useState(user?.screenshot_notifications ?? true);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -19,6 +20,10 @@ export default function Profile() {
       fetchBlockedUsers();
     }
   }, [showBlocked]);
+
+  useEffect(() => {
+    setScreenshotNotifications(user?.screenshot_notifications ?? true);
+  }, [user]);
 
   const handlePhotoClick = () => {
     fileInputRef.current?.click();
