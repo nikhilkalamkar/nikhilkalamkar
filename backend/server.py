@@ -691,9 +691,21 @@ async def startup():
     await db.users.create_index("email", unique=True)
     await db.chats.create_index("chat_id", unique=True)
     await db.messages.create_index("chat_id")
+    
+    # Drop and recreate expires_at indexes with TTL for automatic deletion
+    try:
+        await db.messages.drop_index("expires_at_1")
+    except:
+        pass
     await db.messages.create_index("expires_at", expireAfterSeconds=0)
+    
     await db.stories.create_index("user_id")
+    try:
+        await db.stories.drop_index("expires_at_1")
+    except:
+        pass
     await db.stories.create_index("expires_at", expireAfterSeconds=0)
+    
     await db.blocked_users.create_index(["blocker_id", "blocked_id"], unique=True)
     logger.info("Database indexes created with TTL")
 
