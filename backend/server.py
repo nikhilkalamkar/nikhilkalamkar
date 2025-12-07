@@ -156,7 +156,7 @@ async def register(user_data: UserRegister):
     await db.users.insert_one(user_dict)
     
     token = jwt.encode({'user_id': user.user_id, 'exp': datetime.now(timezone.utc) + timedelta(days=30)}, JWT_SECRET, algorithm=JWT_ALGORITHM)
-    user_response = {k: v for k, v in user_dict.items() if k != 'password_hash'}
+    user_response = {k: v for k, v in user_dict.items() if k not in ['password_hash', '_id']}
     return TokenResponse(access_token=token, user=user_response)
 
 @api_router.post("/auth/login", response_model=TokenResponse)
