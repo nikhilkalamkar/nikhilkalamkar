@@ -446,6 +446,9 @@ async def mark_story_viewed(story_id: str, current_user_id: str = Depends(get_cu
 async def send_message(message_data: MessageCreate, current_user_id: str = Depends(get_current_user)):
     sender = await db.users.find_one({"user_id": current_user_id}, {"_id": 0})
     
+    if not message_data.text and not message_data.image_url:
+        raise HTTPException(status_code=400, detail="Message must contain text or image")
+    
     message_id = secrets.token_urlsafe(16)
     now = datetime.now(timezone.utc)
     
@@ -455,6 +458,7 @@ async def send_message(message_data: MessageCreate, current_user_id: str = Depen
         "sender_username": sender["username"],
         "recipient_id": message_data.recipient_id,
         "text": message_data.text,
+        "image_url": message_data.image_url,
         "created_at": now.isoformat()
     }
     
