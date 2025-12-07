@@ -171,6 +171,33 @@ async def login(credentials: UserLogin):
     token = create_access_token({"sub": user["user_id"]})
     return {"token": token, "user": User(**user)}
 
+@api_router.post("/auth/forgot-password")
+async def forgot_password(request: PasswordResetRequest):
+    user = await db.users.find_one({"email": request.email}, {"_id": 0})
+    if not user:
+        return {"message": "If the email exists, a reset link has been sent"}
+    
+    return {
+        "message": "Email verified. You can now reset your password.",
+        "email": request.email,
+        "username": user["username"]
+    }
+
+@api_router.post("/auth/reset-password")
+async def reset_password(reset_data: PasswordReset):
+    user = await db.users.find_one({"email": reset_data.email}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    hashed_password = pwd_context.hash(reset_data.new_password)
+    
+    await db.users.update_one(
+        {"email": reset_data.email},
+        {"$set": {"password": hashed_password}}
+    )
+    
+    return {"message": "Password reset successfully"}
+
 @api_router.get("/users/me", response_model=User)
 async def get_me(current_user_id: str = Depends(get_current_user)):
     user = await db.users.find_one({"user_id": current_user_id}, {"_id": 0, "password": 0})
