@@ -222,7 +222,7 @@ export default function Landing() {
               onClick={() => setIsLogin(true)}
               className={`flex-1 rounded-full font-bold h-12 ${
                 isLogin 
-                  ? 'bg-[#F5E618] text-black hover:bg-[#F5E618]/90' 
+                  ? 'bg-blue-600 text-white hover:bg-blue-700' 
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
               data-testid="login-tab-btn"
@@ -233,7 +233,7 @@ export default function Landing() {
               onClick={() => setIsLogin(false)}
               className={`flex-1 rounded-full font-bold h-12 ${
                 !isLogin 
-                  ? 'bg-[#F5E618] text-black hover:bg-[#F5E618]/90' 
+                  ? 'bg-blue-600 text-white hover:bg-blue-700' 
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
               data-testid="signup-tab-btn"
