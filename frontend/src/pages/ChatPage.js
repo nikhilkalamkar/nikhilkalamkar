@@ -331,8 +331,21 @@ export default function ChatPage() {
             <div
               key={message.message_id}
               data-testid={`message-${message.message_id}`}
-              className={`flex ${isSent ? 'justify-end' : 'justify-start'}`}
+              className={`flex items-center gap-2 group ${isSent ? 'justify-end' : 'justify-start'}`}
             >
+              {!isSent && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => {
+                    setSelectedMessage(message);
+                    setShowDeleteDialog(true);
+                  }}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              )}
               <div
                 className={`max-w-[75%] rounded-2xl px-4 py-2 ${
                   isSent ? 'chat-bubble-sent' : 'chat-bubble-received'
