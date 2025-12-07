@@ -300,9 +300,15 @@ async def decline_friend_request(request_id: str, user_id: str = Depends(verify_
 @api_router.get("/friends/requests")
 async def get_friend_requests(user_id: str = Depends(verify_token)):
     requests = await db.friend_requests.find({"receiver_id": user_id, "status": "pending"}, {"_id": 0}).to_list(100)
-    for req in requests:
-        sender = await db.users.find_one({"user_id": req['sender_id']}, {"_id": 0, "password_hash": 0})
-        req['sender'] = sender
+    
+    if requests:
+        sender_ids = [req['sender_id'] for req in requests]
+        senders = await db.users.find({"user_id": {"$in": sender_ids}}, {"_id": 0, "password_hash": 0}).to_list(len(sender_ids))
+        sender_map = {s['user_id']: s for s in senders}
+        
+        for req in requests:
+            req['sender'] = sender_map.get(req['sender_id'])
+    
     return requests
 
 @api_router.get("/chats")
