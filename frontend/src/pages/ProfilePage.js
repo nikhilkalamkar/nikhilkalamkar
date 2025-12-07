@@ -98,23 +98,98 @@ export default function ProfilePage() {
           <Card className="glass-effect border-border/50">
             <CardContent className="pt-6">
               <div className="flex flex-col items-center gap-4">
-                <Avatar className="w-24 h-24 ring-4 ring-primary/20">
-                  <AvatarImage src={user?.profile_picture} />
-                  <AvatarFallback className="text-2xl">
-                    {user?.username?.[0]?.toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative">
+                  <Avatar className="w-24 h-24 ring-4 ring-primary/20">
+                    <AvatarImage src={previewUrl || user?.profile_picture} />
+                    <AvatarFallback className="text-2xl">
+                      {user?.username?.[0]?.toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  {isEditing && (
+                    <>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageSelect}
+                        className="hidden"
+                      />
+                      <Button
+                        onClick={() => fileInputRef.current?.click()}
+                        size="icon"
+                        className="absolute -bottom-2 -right-2 rounded-full h-10 w-10"
+                        data-testid="change-photo-button"
+                      >
+                        <Camera className="w-5 h-5" />
+                      </Button>
+                    </>
+                  )}
+                </div>
                 
-                <div className="text-center">
+                <div className="text-center w-full">
                   <h2 className="text-2xl font-heading font-bold">{user?.username}</h2>
                   <p className="text-muted-foreground">{user?.email}</p>
                 </div>
                 
                 <div className="w-full pt-4">
-                  <p className="text-sm text-muted-foreground text-center">
-                    {user?.bio || 'No bio yet'}
-                  </p>
+                  {isEditing ? (
+                    <Textarea
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                      placeholder="Write something about yourself..."
+                      className="min-h-20 resize-none"
+                      maxLength={150}
+                      data-testid="bio-input"
+                    />
+                  ) : (
+                    <p className="text-sm text-muted-foreground text-center">
+                      {user?.bio || 'No bio yet'}
+                    </p>
+                  )}
+                  {isEditing && (
+                    <p className="text-xs text-muted-foreground text-right mt-1">
+                      {bio.length}/150
+                    </p>
+                  )}
                 </div>
+                
+                {!isEditing ? (
+                  <Button
+                    onClick={() => {
+                      setIsEditing(true);
+                      setBio(user?.bio || '');
+                    }}
+                    variant="outline"
+                    className="w-full rounded-full"
+                    data-testid="edit-profile-button"
+                  >
+                    <Edit2 className="w-4 h-4 mr-2" />
+                    Edit Profile
+                  </Button>
+                ) : (
+                  <div className="flex gap-2 w-full">
+                    <Button
+                      onClick={handleCancelEdit}
+                      variant="outline"
+                      className="flex-1 rounded-full"
+                      disabled={saving}
+                      data-testid="cancel-edit-button"
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleSaveProfile}
+                      className="flex-1 rounded-full"
+                      disabled={saving}
+                      data-testid="save-profile-button"
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      {saving ? 'Saving...' : 'Save'}
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
