@@ -306,6 +306,23 @@ async def accept_friend_request(request_id: str, current_user_id: str = Depends(
     
     return {"message": "Friend request accepted"}
 
+@api_router.post("/friends/decline/{request_id}")
+async def decline_friend_request(request_id: str, current_user_id: str = Depends(get_current_user)):
+    request = await db.friend_requests.find_one(
+        {"request_id": request_id, "recipient_id": current_user_id},
+        {"_id": 0}
+    )
+    
+    if not request:
+        raise HTTPException(status_code=404, detail="Friend request not found")
+    
+    await db.friend_requests.update_one(
+        {"request_id": request_id},
+        {"$set": {"status": "declined"}}
+    )
+    
+    return {"message": "Friend request declined"}
+
 @api_router.get("/friends")
 async def get_friends(current_user_id: str = Depends(get_current_user)):
     user = await db.users.find_one({"user_id": current_user_id}, {"_id": 0})
