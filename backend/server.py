@@ -483,13 +483,7 @@ async def send_message(chat_id: str, content: str = Form(""), message_type: str 
     actual_message_type = message_type
     if media:
         file_ext = media.filename.split('.')[-1].lower()
-        file_name = f"{uuid.uuid4()}.{file_ext}"
-        file_path = f"/app/uploads/{file_name}"
-        async with aiofiles.open(file_path, 'wb') as f:
-            content_file = await media.read()
-            await f.write(content_file)
-        # Store relative path for API, frontend will construct full URL
-        media_url = f"/api/media/{file_name}"
+        content_file = await media.read()
         
         # Determine actual message type based on file extension
         image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg']
@@ -497,6 +491,9 @@ async def send_message(chat_id: str, content: str = Form(""), message_type: str 
         
         if file_ext in image_extensions:
             actual_message_type = "image"
+            # Optimize image
+            content_file = await optimize_image(content_file, media.filename)
+            file_name = f"{uuid.uuid4()}.jpg"  # Save as JPEG after optimization
         elif file_ext in video_extensions:
             actual_message_type = "video"
         else:
