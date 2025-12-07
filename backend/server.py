@@ -403,6 +403,29 @@ async def get_friend_requests(user_id: str = Depends(verify_token)):
     
     return requests
 
+@api_router.get("/friends")
+async def get_friends(user_id: str = Depends(verify_token)):
+    """Get list of user's friends with details"""
+    # Get all friendships for this user
+    friends = await db.friends.find(
+        {"$or": [{"user1": user_id}, {"user2": user_id}]}, 
+        {"_id": 0}
+    ).to_list(1000)
+    
+    if not friends:
+        return []
+    
+    # Extract friend IDs
+    friend_ids = [f['user2'] if f['user1'] == user_id else f['user1'] for f in friends]
+    
+    # Get friend user details
+    friend_users = await db.users.find(
+        {"user_id": {"$in": friend_ids}}, 
+        {"_id": 0, "password_hash": 0}
+    ).to_list(len(friend_ids))
+    
+    return friend_users
+
 @api_router.get("/chats")
 async def get_chats(user_id: str = Depends(verify_token)):
     chats = await db.chats.find({"participants": user_id}, {"_id": 0}).to_list(100)
