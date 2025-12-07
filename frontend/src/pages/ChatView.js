@@ -245,33 +245,104 @@ export default function ChatView() {
   }, [friendId, token]);
 
   useEffect(() => {
-    // Detect screenshot (works on some browsers)
+    // Screenshot prevention system
+    const handleScreenshotAttempt = () => {
+      // Blur content immediately
+      setContentBlurred(true);
+      setScreenshotAttempt(true);
+      
+      // Notify friend
+      notifyScreenshot();
+      
+      // Show warning
+      toast.error('🚫 Screenshot blocked! Content is protected.', { duration: 3000 });
+      
+      // Restore content after 2 seconds
+      setTimeout(() => {
+        setContentBlurred(false);
+        setScreenshotAttempt(false);
+      }, 2000);
+    };
+
+    // Disable right-click
+    const disableRightClick = (e) => {
+      e.preventDefault();
+      handleScreenshotAttempt();
+      return false;
+    };
+
+    // Detect screenshot keyboard shortcuts
     const handleKeyDown = (e) => {
-      // Detect Windows/Linux screenshot shortcuts
-      if ((e.key === 'PrintScreen') || 
-          (e.shiftKey && e.metaKey && e.key === '3') || // Mac screenshot
-          (e.shiftKey && e.metaKey && e.key === '4')) {  // Mac screenshot area
-        notifyScreenshot();
+      // PrintScreen key
+      if (e.key === 'PrintScreen') {
+        e.preventDefault();
+        handleScreenshotAttempt();
+        return false;
+      }
+
+      // Windows Snipping Tool (Win + Shift + S)
+      if (e.key === 's' && e.shiftKey && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        handleScreenshotAttempt();
+        return false;
+      }
+
+      // Mac Screenshot shortcuts
+      if ((e.key === '3' || e.key === '4' || e.key === '5') && e.shiftKey && e.metaKey) {
+        e.preventDefault();
+        handleScreenshotAttempt();
+        return false;
+      }
+
+      // F12 DevTools
+      if (e.key === 'F12') {
+        e.preventDefault();
+        return false;
+      }
+
+      // Ctrl+Shift+I DevTools
+      if (e.key === 'I' && e.ctrlKey && e.shiftKey) {
+        e.preventDefault();
+        return false;
       }
     };
 
+    // Detect window blur (possible screenshot tool)
+    const handleBlur = () => {
+      setContentBlurred(true);
+    };
+
+    const handleFocus = () => {
+      setTimeout(() => setContentBlurred(false), 500);
+    };
+
+    // Detect visibility change
     const handleVisibilityChange = () => {
-      // Detect when user switches away (possible screenshot)
       if (document.hidden) {
-        // User might be taking screenshot
+        setContentBlurred(true);
         setTimeout(() => {
           if (!document.hidden) {
-            notifyScreenshot();
+            handleScreenshotAttempt();
           }
         }, 100);
+      } else {
+        setTimeout(() => setContentBlurred(false), 500);
       }
     };
 
+    document.addEventListener('contextmenu', disableRightClick);
     document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyDown);
+    window.addEventListener('blur', handleBlur);
+    window.addEventListener('focus', handleFocus);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
+      document.removeEventListener('contextmenu', disableRightClick);
       document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keyup', handleKeyDown);
+      window.removeEventListener('blur', handleBlur);
+      window.removeEventListener('focus', handleFocus);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [friendId, token, notifyScreenshot]);
