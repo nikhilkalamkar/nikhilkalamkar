@@ -109,13 +109,16 @@ export default function ChatView() {
       console.log('Sending message:', { 
         hasText: !!newMessage, 
         hasImage: !!selectedImage,
+        disappearing: disappearingMode,
         imageSize: selectedImage ? selectedImage.length : 0 
       });
       
       const response = await axios.post(`${API}/messages`, {
         recipient_id: friendId,
         text: newMessage || null,
-        image_url: selectedImage || null
+        image_url: selectedImage || null,
+        disappearing: disappearingMode,
+        disappear_after_seconds: disappearTime
       }, {
         headers: { 
           Authorization: `Bearer ${token}`,
@@ -128,13 +131,35 @@ export default function ChatView() {
       setNewMessage('');
       clearImage();
       fetchMessages();
-      toast.success('Message sent!');
+      toast.success(disappearingMode ? 'Disappearing message sent!' : 'Message sent!');
     } catch (error) {
       console.error('Failed to send message:', error.response?.data || error.message);
       const errorMsg = error.response?.data?.detail || error.message || 'Failed to send message';
       toast.error(errorMsg);
     }
   };
+
+  const markAsViewed = async (messageId) => {
+    if (viewedMessages.has(messageId)) return;
+    
+    try {
+      await axios.put(`${API}/messages/${messageId}/view`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setViewedMessages(prev => new Set([...prev, messageId]));
+    } catch (error) {
+      console.error('Failed to mark message as viewed:', error);
+    }
+  };
+
+  useEffect(() => {
+    // Mark disappearing messages as viewed when they appear
+    messages.forEach(msg => {
+      if (msg.disappearing && msg.recipient_id === user.user_id && !msg.viewed) {
+        markAsViewed(msg.message_id);
+      }
+    });
+  }, [messages]);
 
   const startCall = async (type) => {
     try {
