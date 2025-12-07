@@ -112,7 +112,7 @@ export default function HomePage() {
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-heading font-black tracking-tight">ishukart</h1>
             <div className="flex items-center gap-2">
-              {user?.email === 'admin@snapclone.com' && (
+              {user?.email === 'admin@ishukart.com' && (
                 <Button
                   data-testid="admin-button"
                   onClick={() => navigate('/admin')}
