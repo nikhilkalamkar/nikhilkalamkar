@@ -209,11 +209,18 @@ export default function ChatView() {
           <p className="font-bold text-lg">{friend.username}</p>
         </div>
         <Button
-          onClick={() => navigate('/')}
-          className="rounded-full w-10 h-10 p-0 bg-[#F5E618] hover:bg-[#F5E618]/90"
-          data-testid="camera-btn"
+          onClick={() => startCall('audio')}
+          className="rounded-full w-10 h-10 p-0 bg-green-500 hover:bg-green-600 text-white"
+          data-testid="audio-call-btn"
         >
-          <Camera size={20} className="text-black" />
+          <Phone size={20} />
+        </Button>
+        <Button
+          onClick={() => startCall('video')}
+          className="rounded-full w-10 h-10 p-0 bg-blue-500 hover:bg-blue-600 text-white"
+          data-testid="video-call-btn"
+        >
+          <Video size={20} />
         </Button>
       </div>
 
