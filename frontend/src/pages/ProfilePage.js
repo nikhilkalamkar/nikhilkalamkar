@@ -78,6 +78,23 @@ export default function ProfilePage() {
           
           <Card className="glass-effect border-border/50">
             <CardHeader>
+              <CardTitle className="font-heading">Content</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button
+                data-testid="my-stories-button"
+                onClick={() => navigate('/my-stories')}
+                variant="outline"
+                className="w-full justify-start"
+              >
+                <Sparkles className="w-5 h-5 mr-2" />
+                My Stories & Promotions
+              </Button>
+            </CardContent>
+          </Card>
+          
+          <Card className="glass-effect border-border/50">
+            <CardHeader>
               <CardTitle className="font-heading">Privacy</CardTitle>
             </CardHeader>
             <CardContent>
