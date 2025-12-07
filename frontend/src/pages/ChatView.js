@@ -533,14 +533,27 @@ export default function ChatView() {
           </div>
         )}
         
-        <form onSubmit={sendMessage} className="flex items-center gap-3">
+        <form onSubmit={sendMessage} className="flex items-center gap-2">
+          <Button
+            type="button"
+            onClick={() => setDisappearingMode(!disappearingMode)}
+            className={`rounded-full w-10 h-10 p-0 ${
+              disappearingMode 
+                ? 'bg-orange-500 hover:bg-orange-600 text-white' 
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+            }`}
+            data-testid="disappearing-mode-btn"
+            title="Toggle disappearing messages"
+          >
+            <Timer size={18} />
+          </Button>
           <Button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="bg-gray-200 text-gray-700 rounded-full w-12 h-12 p-0 hover:bg-gray-300"
+            className="bg-gray-200 text-gray-700 rounded-full w-10 h-10 p-0 hover:bg-gray-300"
             data-testid="attach-image-btn"
           >
-            <ImageIcon size={20} />
+            <ImageIcon size={18} />
           </Button>
           <Input
             placeholder="Type a message..."
