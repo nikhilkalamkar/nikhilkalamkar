@@ -16,6 +16,7 @@ export default function CreateStoryDialog({ onStoryCreated }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [createdStoryId, setCreatedStoryId] = useState(null);
+  const [selectedTier, setSelectedTier] = useState('basic');
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   
   useEffect(() => {
