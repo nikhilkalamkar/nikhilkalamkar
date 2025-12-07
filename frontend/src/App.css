@@ -8,6 +8,15 @@
 }
 
 /* Hide "Made with Emergent" watermark */
-#emergent-badge {
-    display: none !important;
+#emergent-badge,
+a[id="emergent-badge"],
+a[href*="emergent"],
+div:has(> a#emergent-badge),
+[class*="badge"],
+[id*="badge"] {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    left: -9999px !important;
 }
