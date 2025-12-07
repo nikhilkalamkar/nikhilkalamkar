@@ -1,11 +1,56 @@
-import { useContext } from 'react';
-import { AuthContext } from '@/App';
+import { useContext, useState, useRef } from 'react';
+import { AuthContext, API } from '@/App';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Mail } from 'lucide-react';
+import { LogOut, User, Mail, Camera, Upload } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
+import axios from 'axios';
 
 export default function Profile() {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, token, login } = useContext(AuthContext);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const handlePhotoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64Image = reader.result;
+        
+        try {
+          const response = await axios.put(
+            `${API}/users/me/avatar?avatar_url=${encodeURIComponent(base64Image)}`,
+            {},
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          
+          login(token, response.data.user);
+          toast.success('Profile photo updated!');
+        } catch (error) {
+          toast.error('Failed to update profile photo');
+        } finally {
+          setUploading(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      toast.error('Failed to process image');
+      setUploading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pb-24 max-w-md mx-auto" data-testid="profile-page">
