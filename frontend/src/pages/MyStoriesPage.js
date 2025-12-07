@@ -4,11 +4,17 @@ import { useAuthStore } from '@/store/authStore';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, TrendingUp, Eye, DollarSign, Sparkles } from 'lucide-react';
+import { ArrowLeft, TrendingUp, Eye, DollarSign, Sparkles, Trash2, MoreVertical } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import FloatingNav from '@/components/FloatingNav';
 import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   AlertDialog,
   AlertDialogAction,
