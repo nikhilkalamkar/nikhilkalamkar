@@ -227,19 +227,26 @@ export default function Camera() {
             />
 
             {type === 'snap' && (
-              <select
-                value={selectedFriend}
-                onChange={(e) => setSelectedFriend(e.target.value)}
-                className="w-full h-12 rounded-xl border bg-gray-50 px-4 font-medium"
-                data-testid="friend-select"
-              >
-                <option value="">Select a friend</option>
-                {friends.map(friend => (
-                  <option key={friend.user_id} value={friend.user_id}>
-                    {friend.username}
-                  </option>
-                ))}
-              </select>
+              <>
+                <select
+                  value={selectedFriend}
+                  onChange={(e) => setSelectedFriend(e.target.value)}
+                  className="w-full h-12 rounded-xl border bg-gray-50 px-4 font-medium"
+                  data-testid="friend-select"
+                >
+                  <option value="">Select a friend</option>
+                  {friends.map(friend => (
+                    <option key={friend.user_id} value={friend.user_id}>
+                      {friend.username}
+                    </option>
+                  ))}
+                </select>
+                {friends.length === 0 && (
+                  <p className="text-sm text-orange-600 font-medium">
+                    ⚠️ You don't have any friends yet. Go to the Chats page to add friends first!
+                  </p>
+                )}
+              </>
             )}
 
             <Button
