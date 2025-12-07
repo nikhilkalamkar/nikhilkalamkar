@@ -718,11 +718,11 @@ agent_communication:
 backend:
   - task: "Message Deletion - Delete for Me"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -732,14 +732,44 @@ backend:
           2. Adds user_id to deleted_for array in message document
           3. Filtered messages in get_messages endpoint to exclude deleted messages
           4. User can delete any message (sent or received) from their view only
+      - working: true
+        agent: "testing"
+        comment: |
+          ✅ BACKEND TESTING PASSED - Delete for Me functionality working perfectly:
+          
+          API ENDPOINT VERIFICATION:
+          - DELETE /api/messages/{message_id}/delete-for-me returns HTTP 200 OK
+          - Endpoint properly adds user_id to message's deleted_for array
+          - Authorization working: users can delete any message in chats they participate in
+          - Proper error handling for non-existent messages (404) and unauthorized access (403)
+          
+          MESSAGE FILTERING VERIFICATION:
+          - GET /api/chats/{chat_id}/messages correctly filters out messages deleted by requesting user
+          - Messages remain visible to other users who haven't deleted them
+          - Filtering persists across multiple API calls (page reloads)
+          - Database integrity maintained: original message content preserved
+          
+          END-TO-END TESTING RESULTS:
+          - Created test users and established friendship
+          - User sent test message successfully
+          - Delete-for-me API call successful (HTTP 200)
+          - Message count reduced by 1 for deleting user (3→2 messages)
+          - Message count unchanged for other user (3 messages)
+          - Message filtering working correctly across user sessions
+          
+          COMPREHENSIVE VERIFICATION:
+          - Tested with multiple messages in chat
+          - Verified selective deletion (only specified message hidden)
+          - Confirmed other messages remain visible
+          - Backend logs show successful DELETE operations
 
   - task: "Message Deletion - Delete for Everyone"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -750,6 +780,42 @@ backend:
           3. Sets deleted_for_everyone flag and replaces content with "This message was deleted"
           4. Sends WebSocket event "message_deleted" to other participants
           5. Removes media_url if present
+      - working: true
+        agent: "testing"
+        comment: |
+          ✅ BACKEND TESTING PASSED - Delete for Everyone functionality working perfectly:
+          
+          API ENDPOINT VERIFICATION:
+          - DELETE /api/messages/{message_id}/delete-for-everyone returns HTTP 200 OK for sender
+          - Endpoint properly sets deleted_for_everyone=true and replaces content
+          - Media URLs properly removed when message deleted for everyone
+          - WebSocket events sent to other chat participants for real-time sync
+          
+          AUTHORIZATION TESTING:
+          - ✅ Message sender can delete their own messages for everyone (HTTP 200)
+          - ✅ Non-sender receives HTTP 403 Forbidden when attempting to delete others' messages
+          - ✅ Proper error handling for non-existent messages (HTTP 404)
+          - ✅ Chat participation validation working correctly
+          
+          MESSAGE CONTENT VERIFICATION:
+          - Both users see "This message was deleted" after deletion for everyone
+          - deleted_for_everyone flag correctly set to true in database
+          - Original message content replaced, media_url removed
+          - Message still appears in chat but with modified content
+          
+          END-TO-END TESTING RESULTS:
+          - Created 2 test users and established friendship with chat
+          - User 1 sent message, User 2 could see it normally
+          - User 1 deleted message for everyone (HTTP 200)
+          - Both User 1 and User 2 now see "This message was deleted"
+          - User 2 cannot delete User 1's messages for everyone (HTTP 403)
+          - All authorization checks working correctly
+          
+          COMPREHENSIVE VERIFICATION:
+          - Tested sender vs non-sender permissions
+          - Verified message content transformation
+          - Confirmed real-time sync capability via WebSocket events
+          - Backend logs show successful operations and proper authorization
 
 frontend:
   - task: "Message Deletion UI"
