@@ -407,12 +407,21 @@ async def send_message(chat_id: str, content: str = Form(""), message_type: str 
         else:
             actual_message_type = "media"
     
+    # Calculate expires_at based on chat's disappearing timer
+    disappearing_timer = chat.get('disappearing_timer', 86400)
+    if disappearing_timer == 0:
+        # Timer is off, use 30 days expiry
+        expires_at = datetime.now(timezone.utc) + timedelta(days=30)
+    else:
+        expires_at = datetime.now(timezone.utc) + timedelta(seconds=disappearing_timer)
+    
     message = Message(
         chat_id=chat_id,
         sender_id=user_id,
         content=content,
         message_type=actual_message_type,
-        media_url=media_url
+        media_url=media_url,
+        expires_at=expires_at
     )
     message_dict = message.model_dump()
     message_dict['created_at'] = message_dict['created_at'].isoformat()
