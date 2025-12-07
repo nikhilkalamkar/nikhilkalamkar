@@ -10,6 +10,9 @@ import { motion } from 'framer-motion';
 export default function Landing() {
   const { login } = useContext(AuthContext);
   const [isLogin, setIsLogin] = useState(true);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
   const [formData, setFormData] = useState({
     username: '',
     email: '',
