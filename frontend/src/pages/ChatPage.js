@@ -191,7 +191,7 @@ export default function ChatPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Block {chatData?.other_user?.username}?</AlertDialogTitle>
             <AlertDialogDescription>
-              You won't be able to send or receive messages from this user. They won't see your stories either.
+              You won&apos;t be able to send or receive messages from this user. They won&apos;t see your stories either.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
