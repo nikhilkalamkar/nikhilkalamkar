@@ -314,7 +314,9 @@ async def create_story(media: UploadFile = File(...), user_id: str = Depends(ver
     story_dict['expires_at'] = story_dict['expires_at'].isoformat()
     await db.stories.insert_one(story_dict)
     
-    return story_dict
+    # Remove _id field for response
+    response_dict = {k: v for k, v in story_dict.items() if k != '_id'}
+    return response_dict
 
 @api_router.get("/stories")
 async def get_stories(user_id: str = Depends(verify_token)):
