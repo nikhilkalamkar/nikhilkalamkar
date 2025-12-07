@@ -166,6 +166,57 @@ export default function Profile() {
           </div>
         </div>
 
+        <div className="bg-white rounded-2xl p-4 shadow-sm">
+          <button
+            onClick={() => setShowBlocked(!showBlocked)}
+            className="w-full flex items-center justify-between"
+            data-testid="blocked-users-toggle"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <Ban size={24} className="text-red-500" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm text-gray-500">Blocked Users</p>
+                <p className="font-bold">{user?.blocked_users?.length || 0} blocked</p>
+              </div>
+            </div>
+            <span className="text-gray-400">{showBlocked ? '▼' : '▶'}</span>
+          </button>
+
+          {showBlocked && (
+            <div className="mt-4 space-y-2">
+              {blockedUsers.length === 0 ? (
+                <p className="text-gray-400 text-sm text-center py-4">No blocked users</p>
+              ) : (
+                blockedUsers.map((blocked) => (
+                  <div key={blocked.user_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={blocked.avatar_url || 'https://images.unsplash.com/photo-1675526607070-f5cbd71dde92?w=200'}
+                        alt={blocked.username}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                      <div>
+                        <p className="font-bold">{blocked.username}</p>
+                        <p className="text-xs text-gray-500">{blocked.email}</p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => unblockUser(blocked.user_id)}
+                      className="bg-gray-200 text-gray-700 rounded-full h-9 px-4 text-sm font-bold hover:bg-gray-300"
+                      data-testid={`unblock-btn-${blocked.user_id}`}
+                    >
+                      <ShieldOff size={16} className="mr-1" />
+                      Unblock
+                    </Button>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+
         <Button
           onClick={logout}
           className="w-full bg-red-500 text-white font-bold rounded-full h-14 mt-6 hover:bg-red-600"
