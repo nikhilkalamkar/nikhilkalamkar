@@ -513,11 +513,45 @@ async def send_message(message_data: MessageCreate, current_user_id: str = Depen
         "recipient_id": message_data.recipient_id,
         "text": message_data.text,
         "image_url": message_data.image_url,
+        "disappearing": message_data.disappearing,
+        "viewed": False,
+        "disappear_after_seconds": message_data.disappear_after_seconds if message_data.disappearing else None,
+        "viewed_at": None,
+        "expires_at": None,
         "created_at": now.isoformat()
     }
     
     await db.messages.insert_one(message_doc)
     return Message(**message_doc)
+
+@api_router.put("/messages/{message_id}/view")
+async def mark_message_viewed(message_id: str, current_user_id: str = Depends(get_current_user)):
+    message = await db.messages.find_one(
+        {"message_id": message_id, "recipient_id": current_user_id},
+        {"_id": 0}
+    )
+    
+    if not message:
+        raise HTTPException(status_code=404, detail="Message not found")
+    
+    now = datetime.now(timezone.utc)
+    update_data = {
+        "viewed": True,
+        "viewed_at": now.isoformat()
+    }
+    
+    # Set expiration time for disappearing messages
+    if message.get("disappearing"):
+        disappear_seconds = message.get("disappear_after_seconds", 10)
+        expires_at = now + timedelta(seconds=disappear_seconds)
+        update_data["expires_at"] = expires_at.isoformat()
+    
+    await db.messages.update_one(
+        {"message_id": message_id},
+        {"$set": update_data}
+    )
+    
+    return {"message": "Message marked as viewed", "expires_at": update_data.get("expires_at")}
 
 @api_router.get("/messages/{friend_id}", response_model=List[Message])
 async def get_messages(friend_id: str, current_user_id: str = Depends(get_current_user)):
