@@ -201,17 +201,17 @@ export default function Landing() {
       >
         <div className="text-center mb-8">
           <motion.div 
-            className="inline-flex items-center justify-center w-20 h-20 bg-[#F5E618] rounded-3xl mb-4 shadow-lg"
+            className="inline-flex items-center justify-center w-20 h-20 bg-blue-600 rounded-3xl mb-4 shadow-lg"
             whileHover={{ scale: 1.05, rotate: 5 }}
           >
-            <Camera size={40} className="text-black" strokeWidth={2.5} />
+            <Camera size={40} className="text-white" strokeWidth={2.5} />
           </motion.div>
           <h1 
             className="text-5xl font-bold mb-2" 
             style={{ fontFamily: 'Outfit, sans-serif' }}
             data-testid="app-title"
           >
-            SnapVibe
+            ishukart
           </h1>
           <p className="text-gray-600 font-medium">Share moments that disappear</p>
         </div>
