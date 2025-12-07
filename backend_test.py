@@ -252,20 +252,29 @@ class SnapCloneAPITester:
             
         chat_id = response[0]['chat_id']
         
-        # Send text message
-        message_data = {
+        # Send text message using form data
+        import requests
+        url = f"{self.base_url}/chats/{chat_id}/messages"
+        headers = {'Authorization': f'Bearer {self.token}'}
+        data = {
             "content": "Hello, this is a test message!",
             "message_type": "text"
         }
         
-        success, _ = self.run_test(
-            "Send Text Message",
-            "POST",
-            f"chats/{chat_id}/messages",
-            200,
-            data=message_data,
-            headers={'Content-Type': 'application/x-www-form-urlencoded'}
-        )
+        try:
+            response = requests.post(url, data=data, headers=headers, timeout=10)
+            success = response.status_code == 200
+            details = f"Status: {response.status_code}"
+            if not success:
+                try:
+                    error_data = response.json()
+                    details += f", Error: {error_data.get('detail', 'Unknown error')}"
+                except:
+                    details += f", Response: {response.text[:100]}"
+            self.log_test("Send Text Message", success, details)
+        except Exception as e:
+            self.log_test("Send Text Message", False, f"Exception: {str(e)}")
+            success = False
         
         if success:
             # Get messages
