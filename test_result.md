@@ -428,8 +428,10 @@ metadata:
   run_ui: true
 
 test_plan:
-  current_focus: []
-  stuck_tasks: []
+  current_focus:
+    - "Media Display Console Logging Debug"
+  stuck_tasks:
+    - "Media Display Console Logging Debug"
   test_all: false
   test_priority: "high_first"
 
