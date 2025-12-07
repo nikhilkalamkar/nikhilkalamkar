@@ -288,10 +288,13 @@ async def send_message(chat_id: str, content: str = Form(...), message_type: str
         {"$set": {"last_message": content[:50], "last_message_time": datetime.now(timezone.utc).isoformat()}}
     )
     
-    other_user = [p for p in chat['participants'] if p != user_id][0]
-    await manager.send_personal_message({"type": "new_message", "data": message_dict}, other_user)
+    # Remove _id field for response
+    response_dict = {k: v for k, v in message_dict.items() if k != '_id'}
     
-    return message_dict
+    other_user = [p for p in chat['participants'] if p != user_id][0]
+    await manager.send_personal_message({"type": "new_message", "data": response_dict}, other_user)
+    
+    return response_dict
 
 @api_router.post("/stories")
 async def create_story(media: UploadFile = File(...), user_id: str = Depends(verify_token)):
