@@ -182,14 +182,22 @@ export default function HomePage() {
             <div className="flex gap-4 pb-2">
               <CreateStoryDialog onStoryCreated={loadStories} />
               
-              {Object.values(groupedStories).map((group, index) => (
-                <StoryRing
-                  key={group.user.user_id}
-                  user={group.user}
-                  stories={group.stories}
-                  index={index}
-                />
-              ))}
+              {Object.values(groupedStories)
+                .sort((a, b) => {
+                  // Show current user's stories first
+                  if (a.user.user_id === user?.user_id) return -1;
+                  if (b.user.user_id === user?.user_id) return 1;
+                  return 0;
+                })
+                .map((group, index) => (
+                  <StoryRing
+                    key={group.user.user_id}
+                    user={group.user}
+                    stories={group.stories}
+                    index={index}
+                  />
+                ))
+              }
             </div>
           </ScrollArea>
           
