@@ -471,10 +471,10 @@ export default function ChatView() {
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <p className="font-bold mb-2">📱 How to Enable Permissions:</p>
               <ol className="list-decimal list-inside space-y-2 text-sm">
-                <li>Look for the 🔒 lock icon in your browser's address bar</li>
+                <li>Look for the 🔒 lock icon in your browser&apos;s address bar</li>
                 <li>Click on it to open site settings</li>
-                <li>Find "Camera" and "Microphone" permissions</li>
-                <li>Change from "Block" to "Allow"</li>
+                <li>Find &quot;Camera&quot; and &quot;Microphone&quot; permissions</li>
+                <li>Change from &quot;Block&quot; to &quot;Allow&quot;</li>
                 <li>Refresh the page and try calling again</li>
               </ol>
             </div>
