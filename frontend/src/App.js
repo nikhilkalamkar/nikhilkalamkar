@@ -35,6 +35,7 @@ function App() {
           <Route path="/" element={<PrivateRoute><HomePage /></PrivateRoute>} />
           <Route path="/chat/:chatId" element={<PrivateRoute><ChatPage /></PrivateRoute>} />
           <Route path="/story/:storyId" element={<PrivateRoute><StoryViewPage /></PrivateRoute>} />
+          <Route path="/stories/user/:userId" element={<PrivateRoute><StoryViewerPage /></PrivateRoute>} />
           <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
           <Route path="/admin" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
           <Route path="/blocked-users" element={<PrivateRoute><BlockedUsersPage /></PrivateRoute>} />
