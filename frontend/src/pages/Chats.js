@@ -171,12 +171,12 @@ export default function Chats() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                className="h-12 rounded-xl flex-1"
+                className="h-12 rounded-xl flex-1 bg-white border-2 border-gray-200 px-4"
                 data-testid="search-users-input"
               />
               <Button
                 onClick={handleSearch}
-                className="bg-[#F5E618] text-black rounded-full h-12 px-6"
+                className="bg-blue-600 text-white rounded-full h-12 w-12 p-0 hover:bg-blue-700"
                 data-testid="search-btn"
               >
                 <Search size={20} />
