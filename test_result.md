@@ -106,11 +106,11 @@ user_problem_statement: "Build a Snapchat clone called 'ishukart' with real-time
 backend:
   - task: "Disappearing Messages Timer Setting"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -122,14 +122,25 @@ backend:
           4. Timer options: 5 seconds, 1 minute, 1 hour, 24 hours, or off (0 = 30 days)
           5. Added MongoDB TTL index on expires_at field for automatic message deletion
           6. WebSocket event 'timer_updated' to sync timer changes between users
+      - working: true
+        agent: "testing"
+        comment: |
+          ✅ BACKEND TESTING PASSED - Timer API fully functional:
+          - PUT /api/chats/{chat_id}/timer endpoint working correctly
+          - All valid timer values (5, 60, 3600, 86400, 0) accepted with 200 OK responses
+          - All invalid timer values (10, 30, 7200, -1, 999999) properly rejected with 400 Bad Request
+          - API correctly returns updated timer_seconds in response
+          - Message expiry calculation working: messages get correct expires_at timestamp based on chat timer
+          - Verified 5-second timer produces expires_at exactly 5 seconds from creation (0.0s difference)
+          - WebSocket timer_updated events sent to other chat participants when timer changes
           
   - task: "TTL Index for Automatic Message Deletion"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -138,6 +149,16 @@ backend:
           1. messages.expires_at with expireAfterSeconds=0
           2. stories.expires_at with expireAfterSeconds=0
           Modified startup function to drop and recreate indexes to avoid conflicts
+      - working: true
+        agent: "testing"
+        comment: |
+          ✅ BACKEND TESTING PASSED - TTL Auto-deletion working perfectly:
+          - TTL indexes successfully created on messages.expires_at with expireAfterSeconds=0
+          - Messages automatically deleted by MongoDB after expiry time
+          - Tested with 5-second timer: message visible immediately after sending
+          - Message automatically deleted after 10 seconds (allowing for MongoDB TTL processing time)
+          - Auto-deletion mechanism functioning as expected
+          - No manual cleanup required - MongoDB handles expiry automatically
 
 frontend:
   - task: "Disappearing Messages Timer UI"
