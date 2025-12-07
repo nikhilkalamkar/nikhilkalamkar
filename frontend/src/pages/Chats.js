@@ -114,25 +114,34 @@ export default function Chats() {
         <div className="px-6 py-4 bg-yellow-50 border-b">
           <h2 className="font-bold mb-3">Friend Requests</h2>
           {friendRequests.map(request => (
-            <div key={request.request_id} className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
+            <div key={request.request_id} className="flex items-center justify-between mb-3 gap-3">
+              <div className="flex items-center gap-3 flex-1">
                 <img
                   src={request.sender_avatar || 'https://images.unsplash.com/photo-1675526607070-f5cbd71dde92?w=200'}
                   alt={request.sender_username}
                   className="w-12 h-12 rounded-full object-cover"
                 />
-                <div>
+                <div className="flex-1">
                   <p className="font-bold">{request.sender_username}</p>
                   <p className="text-xs text-gray-500">wants to be friends</p>
                 </div>
               </div>
-              <Button
-                onClick={() => acceptFriendRequest(request.request_id)}
-                className="bg-[#F5E618] text-black rounded-full h-9 px-4 text-sm font-bold"
-                data-testid={`accept-request-btn-${request.request_id}`}
-              >
-                Accept
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => acceptFriendRequest(request.request_id)}
+                  className="bg-[#F5E618] text-black rounded-full h-9 px-4 text-sm font-bold hover:bg-[#F5E618]/90"
+                  data-testid={`accept-request-btn-${request.request_id}`}
+                >
+                  Accept
+                </Button>
+                <Button
+                  onClick={() => declineFriendRequest(request.request_id)}
+                  className="bg-gray-200 text-gray-700 rounded-full h-9 px-4 text-sm font-bold hover:bg-gray-300"
+                  data-testid={`decline-request-btn-${request.request_id}`}
+                >
+                  Decline
+                </Button>
+              </div>
             </div>
           ))}
         </div>
