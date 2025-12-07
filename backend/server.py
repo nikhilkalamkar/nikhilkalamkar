@@ -40,6 +40,13 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+class PasswordResetRequest(BaseModel):
+    email: EmailStr
+
+class PasswordReset(BaseModel):
+    email: EmailStr
+    new_password: str
+
 class User(BaseModel):
     model_config = ConfigDict(extra="ignore")
     user_id: str
