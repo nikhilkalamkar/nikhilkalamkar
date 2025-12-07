@@ -331,16 +331,61 @@ async def decline_friend_request(request_id: str, current_user_id: str = Depends
 async def get_friends(current_user_id: str = Depends(get_current_user)):
     user = await db.users.find_one({"user_id": current_user_id}, {"_id": 0})
     friend_ids = user.get("friends", [])
+    blocked_users = user.get("blocked_users", [])
     
     if not friend_ids:
         return []
     
+    # Filter out blocked users
+    active_friend_ids = [fid for fid in friend_ids if fid not in blocked_users]
+    
+    if not active_friend_ids:
+        return []
+    
     friends = await db.users.find(
-        {"user_id": {"$in": friend_ids}},
+        {"user_id": {"$in": active_friend_ids}},
         {"_id": 0, "password": 0}
     ).to_list(100)
     
     return [User(**f) for f in friends]
+
+@api_router.post("/friends/block/{user_id}")
+async def block_user(user_id: str, current_user_id: str = Depends(get_current_user)):
+    if user_id == current_user_id:
+        raise HTTPException(status_code=400, detail="Cannot block yourself")
+    
+    # Add to blocked list
+    await db.users.update_one(
+        {"user_id": current_user_id},
+        {"$addToSet": {"blocked_users": user_id}}
+    )
+    
+    return {"message": "User blocked successfully"}
+
+@api_router.post("/friends/unblock/{user_id}")
+async def unblock_user(user_id: str, current_user_id: str = Depends(get_current_user)):
+    # Remove from blocked list
+    await db.users.update_one(
+        {"user_id": current_user_id},
+        {"$pull": {"blocked_users": user_id}}
+    )
+    
+    return {"message": "User unblocked successfully"}
+
+@api_router.get("/friends/blocked")
+async def get_blocked_users(current_user_id: str = Depends(get_current_user)):
+    user = await db.users.find_one({"user_id": current_user_id}, {"_id": 0})
+    blocked_ids = user.get("blocked_users", [])
+    
+    if not blocked_ids:
+        return []
+    
+    blocked_users = await db.users.find(
+        {"user_id": {"$in": blocked_ids}},
+        {"_id": 0, "password": 0}
+    ).to_list(100)
+    
+    return [User(**u) for u in blocked_users]
 
 @api_router.post("/snaps", response_model=Snap)
 async def send_snap(snap_data: SnapCreate, current_user_id: str = Depends(get_current_user)):
