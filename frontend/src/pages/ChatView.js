@@ -107,18 +107,40 @@ export default function ChatView() {
     e.preventDefault();
     if (!newMessage.trim() && !selectedImage) return;
 
+    // Create optimistic message (show immediately)
+    const optimisticMessage = {
+      message_id: 'temp-' + Date.now(),
+      sender_id: user.user_id,
+      sender_username: user.username,
+      recipient_id: friendId,
+      text: newMessage || null,
+      image_url: selectedImage || null,
+      disappearing: disappearingMode,
+      disappear_after_seconds: disappearTime,
+      viewed: false,
+      created_at: new Date().toISOString(),
+      sending: true // Flag to show it's being sent
+    };
+
+    // Add to messages immediately (optimistic update)
+    setMessages(prev => [...prev, optimisticMessage]);
+
+    // Clear input immediately for better UX
+    const messageText = newMessage;
+    const messageImage = selectedImage;
+    setNewMessage('');
+    clearImage();
+
+    // Scroll to bottom
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+
     try {
-      console.log('Sending message:', { 
-        hasText: !!newMessage, 
-        hasImage: !!selectedImage,
-        disappearing: disappearingMode,
-        imageSize: selectedImage ? selectedImage.length : 0 
-      });
-      
       const response = await axios.post(`${API}/messages`, {
         recipient_id: friendId,
-        text: newMessage || null,
-        image_url: selectedImage || null,
+        text: messageText || null,
+        image_url: messageImage || null,
         disappearing: disappearingMode,
         disappear_after_seconds: disappearTime
       }, {
@@ -126,18 +148,31 @@ export default function ChatView() {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        timeout: 30000
+        timeout: 10000 // Reduced timeout for faster error detection
       });
       
-      console.log('Message sent successfully:', response.data);
-      setNewMessage('');
-      clearImage();
+      // Replace optimistic message with real one
+      setMessages(prev => prev.map(msg => 
+        msg.message_id === optimisticMessage.message_id ? response.data : msg
+      ));
+
+      // Fetch fresh messages to ensure sync
       fetchMessages();
-      toast.success(disappearingMode ? 'Disappearing message sent!' : 'Message sent!');
     } catch (error) {
       console.error('Failed to send message:', error.response?.data || error.message);
+      
+      // Remove failed message from UI
+      setMessages(prev => prev.filter(msg => msg.message_id !== optimisticMessage.message_id));
+      
+      // Restore input
+      setNewMessage(messageText);
+      if (messageImage) {
+        setSelectedImage(messageImage);
+        setImagePreview(messageImage);
+      }
+      
       const errorMsg = error.response?.data?.detail || error.message || 'Failed to send message';
-      toast.error(errorMsg);
+      toast.error(errorMsg + ' - Message restored to input');
     }
   };
 
