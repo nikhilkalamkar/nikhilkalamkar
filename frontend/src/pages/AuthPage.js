@@ -302,15 +302,17 @@ export default function AuthPage() {
               </form>
             )}
             
-            <div className="mt-6 text-center">
-              <button
-                data-testid="toggle-auth-mode"
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors"
-              >
-                {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
-              </button>
-            </div>
+            {!showForgotPassword && (
+              <div className="mt-6 text-center">
+                <button
+                  data-testid="toggle-auth-mode"
+                  onClick={() => setIsLogin(!isLogin)}
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
+                </button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </motion.div>
