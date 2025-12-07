@@ -92,7 +92,8 @@ class Story(BaseModel):
 
 class MessageCreate(BaseModel):
     recipient_id: str
-    text: str
+    text: Optional[str] = None
+    image_url: Optional[str] = None
 
 class Message(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -100,7 +101,8 @@ class Message(BaseModel):
     sender_id: str
     sender_username: str
     recipient_id: str
-    text: str
+    text: Optional[str] = None
+    image_url: Optional[str] = None
     created_at: str
 
 class FriendRequest(BaseModel):
