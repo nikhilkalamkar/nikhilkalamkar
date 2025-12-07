@@ -1,72 +1,411 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
 from pathlib import Path
-from pydantic import BaseModel, Field, ConfigDict
-from typing import List
-import uuid
-from datetime import datetime, timezone
-
+from pydantic import BaseModel, Field, ConfigDict, EmailStr
+from typing import List, Optional
+from datetime import datetime, timezone, timedelta
+from passlib.context import CryptContext
+from jose import jwt, JWTError
+import secrets
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Create the main app without a prefix
 app = FastAPI()
-
-# Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+SECRET_KEY = os.environ.get('SECRET_KEY', secrets.token_urlsafe(32))
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
-# Define Models
-class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore")  # Ignore MongoDB's _id field
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+security = HTTPBearer()
+
+class UserCreate(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
+    avatar_url: Optional[str] = None
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class User(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    user_id: str
+    username: str
+    email: EmailStr
+    avatar_url: Optional[str] = None
+    friends: List[str] = []
+    created_at: str
+
+class SnapCreate(BaseModel):
+    recipient_id: str
+    image_url: str
+    text: Optional[str] = None
+
+class Snap(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    snap_id: str
+    sender_id: str
+    sender_username: str
+    sender_avatar: Optional[str]
+    recipient_id: str
+    image_url: str
+    text: Optional[str]
+    viewed: bool
+    created_at: str
+    expires_at: str
+
+class StoryCreate(BaseModel):
+    image_url: str
+    text: Optional[str] = None
+
+class Story(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    story_id: str
+    user_id: str
+    username: str
+    user_avatar: Optional[str]
+    image_url: str
+    text: Optional[str]
+    created_at: str
+    expires_at: str
+    views: List[str] = []
+
+class MessageCreate(BaseModel):
+    recipient_id: str
+    text: str
+
+class Message(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    message_id: str
+    sender_id: str
+    sender_username: str
+    recipient_id: str
+    text: str
+    created_at: str
+
+class FriendRequest(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    request_id: str
+    sender_id: str
+    sender_username: str
+    sender_avatar: Optional[str]
+    recipient_id: str
+    status: str
+    created_at: str
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise HTTPException(status_code=401, detail="Invalid authentication")
+        return user_id
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid authentication")
+
+@api_router.post("/auth/register")
+async def register(user_data: UserCreate):
+    existing_user = await db.users.find_one({"email": user_data.email}, {"_id": 0})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
     
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-class StatusCheckCreate(BaseModel):
-    client_name: str
-
-# Add your routes to the router instead of directly to app
-@api_router.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.model_dump()
-    status_obj = StatusCheck(**status_dict)
+    existing_username = await db.users.find_one({"username": user_data.username}, {"_id": 0})
+    if existing_username:
+        raise HTTPException(status_code=400, detail="Username already taken")
     
-    # Convert to dict and serialize datetime to ISO string for MongoDB
-    doc = status_obj.model_dump()
-    doc['timestamp'] = doc['timestamp'].isoformat()
+    hashed_password = pwd_context.hash(user_data.password)
+    user_id = secrets.token_urlsafe(16)
     
-    _ = await db.status_checks.insert_one(doc)
-    return status_obj
+    user_doc = {
+        "user_id": user_id,
+        "username": user_data.username,
+        "email": user_data.email,
+        "password": hashed_password,
+        "avatar_url": user_data.avatar_url or "https://images.unsplash.com/photo-1675526607070-f5cbd71dde92?w=200",
+        "friends": [],
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.users.insert_one(user_doc)
+    
+    token = create_access_token({"sub": user_id})
+    return {"token": token, "user": User(**user_doc)}
 
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    # Exclude MongoDB's _id field from the query results
-    status_checks = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
+@api_router.post("/auth/login")
+async def login(credentials: UserLogin):
+    user = await db.users.find_one({"email": credentials.email}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
     
-    # Convert ISO string timestamps back to datetime objects
-    for check in status_checks:
-        if isinstance(check['timestamp'], str):
-            check['timestamp'] = datetime.fromisoformat(check['timestamp'])
+    if not pwd_context.verify(credentials.password, user["password"]):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
     
-    return status_checks
+    token = create_access_token({"sub": user["user_id"]})
+    return {"token": token, "user": User(**user)}
 
-# Include the router in the main app
+@api_router.get("/users/me", response_model=User)
+async def get_me(current_user_id: str = Depends(get_current_user)):
+    user = await db.users.find_one({"user_id": current_user_id}, {"_id": 0, "password": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return User(**user)
+
+@api_router.get("/users/search")
+async def search_users(q: str, current_user_id: str = Depends(get_current_user)):
+    users = await db.users.find(
+        {
+            "user_id": {"$ne": current_user_id},
+            "$or": [
+                {"username": {"$regex": q, "$options": "i"}},
+                {"email": {"$regex": q, "$options": "i"}}
+            ]
+        },
+        {"_id": 0, "password": 0}
+    ).limit(20).to_list(20)
+    return [User(**u) for u in users]
+
+@api_router.post("/friends/request")
+async def send_friend_request(recipient_id: str, current_user_id: str = Depends(get_current_user)):
+    if recipient_id == current_user_id:
+        raise HTTPException(status_code=400, detail="Cannot send friend request to yourself")
+    
+    recipient = await db.users.find_one({"user_id": recipient_id}, {"_id": 0})
+    if not recipient:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    existing_request = await db.friend_requests.find_one({
+        "sender_id": current_user_id,
+        "recipient_id": recipient_id,
+        "status": "pending"
+    }, {"_id": 0})
+    
+    if existing_request:
+        raise HTTPException(status_code=400, detail="Friend request already sent")
+    
+    sender = await db.users.find_one({"user_id": current_user_id}, {"_id": 0})
+    if recipient_id in sender.get("friends", []):
+        raise HTTPException(status_code=400, detail="Already friends")
+    
+    request_id = secrets.token_urlsafe(16)
+    request_doc = {
+        "request_id": request_id,
+        "sender_id": current_user_id,
+        "sender_username": sender["username"],
+        "sender_avatar": sender.get("avatar_url"),
+        "recipient_id": recipient_id,
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.friend_requests.insert_one(request_doc)
+    return {"message": "Friend request sent", "request": FriendRequest(**request_doc)}
+
+@api_router.get("/friends/requests")
+async def get_friend_requests(current_user_id: str = Depends(get_current_user)):
+    requests = await db.friend_requests.find(
+        {"recipient_id": current_user_id, "status": "pending"},
+        {"_id": 0}
+    ).to_list(100)
+    return [FriendRequest(**r) for r in requests]
+
+@api_router.post("/friends/accept/{request_id}")
+async def accept_friend_request(request_id: str, current_user_id: str = Depends(get_current_user)):
+    request = await db.friend_requests.find_one(
+        {"request_id": request_id, "recipient_id": current_user_id},
+        {"_id": 0}
+    )
+    
+    if not request:
+        raise HTTPException(status_code=404, detail="Friend request not found")
+    
+    await db.friend_requests.update_one(
+        {"request_id": request_id},
+        {"$set": {"status": "accepted"}}
+    )
+    
+    await db.users.update_one(
+        {"user_id": current_user_id},
+        {"$addToSet": {"friends": request["sender_id"]}}
+    )
+    
+    await db.users.update_one(
+        {"user_id": request["sender_id"]},
+        {"$addToSet": {"friends": current_user_id}}
+    )
+    
+    return {"message": "Friend request accepted"}
+
+@api_router.get("/friends")
+async def get_friends(current_user_id: str = Depends(get_current_user)):
+    user = await db.users.find_one({"user_id": current_user_id}, {"_id": 0})
+    friend_ids = user.get("friends", [])
+    
+    if not friend_ids:
+        return []
+    
+    friends = await db.users.find(
+        {"user_id": {"$in": friend_ids}},
+        {"_id": 0, "password": 0}
+    ).to_list(100)
+    
+    return [User(**f) for f in friends]
+
+@api_router.post("/snaps", response_model=Snap)
+async def send_snap(snap_data: SnapCreate, current_user_id: str = Depends(get_current_user)):
+    sender = await db.users.find_one({"user_id": current_user_id}, {"_id": 0})
+    
+    snap_id = secrets.token_urlsafe(16)
+    now = datetime.now(timezone.utc)
+    expires_at = now + timedelta(hours=24)
+    
+    snap_doc = {
+        "snap_id": snap_id,
+        "sender_id": current_user_id,
+        "sender_username": sender["username"],
+        "sender_avatar": sender.get("avatar_url"),
+        "recipient_id": snap_data.recipient_id,
+        "image_url": snap_data.image_url,
+        "text": snap_data.text,
+        "viewed": False,
+        "created_at": now.isoformat(),
+        "expires_at": expires_at.isoformat()
+    }
+    
+    await db.snaps.insert_one(snap_doc)
+    return Snap(**snap_doc)
+
+@api_router.get("/snaps", response_model=List[Snap])
+async def get_snaps(current_user_id: str = Depends(get_current_user)):
+    now = datetime.now(timezone.utc).isoformat()
+    snaps = await db.snaps.find(
+        {
+            "recipient_id": current_user_id,
+            "viewed": False,
+            "expires_at": {"$gt": now}
+        },
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    return [Snap(**s) for s in snaps]
+
+@api_router.put("/snaps/{snap_id}/view")
+async def mark_snap_viewed(snap_id: str, current_user_id: str = Depends(get_current_user)):
+    result = await db.snaps.update_one(
+        {"snap_id": snap_id, "recipient_id": current_user_id},
+        {"$set": {"viewed": True}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Snap not found")
+    
+    return {"message": "Snap marked as viewed"}
+
+@api_router.post("/stories", response_model=Story)
+async def create_story(story_data: StoryCreate, current_user_id: str = Depends(get_current_user)):
+    user = await db.users.find_one({"user_id": current_user_id}, {"_id": 0})
+    
+    story_id = secrets.token_urlsafe(16)
+    now = datetime.now(timezone.utc)
+    expires_at = now + timedelta(hours=24)
+    
+    story_doc = {
+        "story_id": story_id,
+        "user_id": current_user_id,
+        "username": user["username"],
+        "user_avatar": user.get("avatar_url"),
+        "image_url": story_data.image_url,
+        "text": story_data.text,
+        "created_at": now.isoformat(),
+        "expires_at": expires_at.isoformat(),
+        "views": []
+    }
+    
+    await db.stories.insert_one(story_doc)
+    return Story(**story_doc)
+
+@api_router.get("/stories", response_model=List[Story])
+async def get_stories(current_user_id: str = Depends(get_current_user)):
+    user = await db.users.find_one({"user_id": current_user_id}, {"_id": 0})
+    friend_ids = user.get("friends", [])
+    friend_ids.append(current_user_id)
+    
+    now = datetime.now(timezone.utc).isoformat()
+    stories = await db.stories.find(
+        {
+            "user_id": {"$in": friend_ids},
+            "expires_at": {"$gt": now}
+        },
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    return [Story(**s) for s in stories]
+
+@api_router.put("/stories/{story_id}/view")
+async def mark_story_viewed(story_id: str, current_user_id: str = Depends(get_current_user)):
+    result = await db.stories.update_one(
+        {"story_id": story_id},
+        {"$addToSet": {"views": current_user_id}}
+    )
+    
+    if result.modified_count == 0:
+        return {"message": "Story already viewed"}
+    
+    return {"message": "Story view recorded"}
+
+@api_router.post("/messages", response_model=Message)
+async def send_message(message_data: MessageCreate, current_user_id: str = Depends(get_current_user)):
+    sender = await db.users.find_one({"user_id": current_user_id}, {"_id": 0})
+    
+    message_id = secrets.token_urlsafe(16)
+    now = datetime.now(timezone.utc)
+    
+    message_doc = {
+        "message_id": message_id,
+        "sender_id": current_user_id,
+        "sender_username": sender["username"],
+        "recipient_id": message_data.recipient_id,
+        "text": message_data.text,
+        "created_at": now.isoformat()
+    }
+    
+    await db.messages.insert_one(message_doc)
+    return Message(**message_doc)
+
+@api_router.get("/messages/{friend_id}", response_model=List[Message])
+async def get_messages(friend_id: str, current_user_id: str = Depends(get_current_user)):
+    messages = await db.messages.find(
+        {
+            "$or": [
+                {"sender_id": current_user_id, "recipient_id": friend_id},
+                {"sender_id": friend_id, "recipient_id": current_user_id}
+            ]
+        },
+        {"_id": 0}
+    ).sort("created_at", 1).to_list(500)
+    
+    return [Message(**m) for m in messages]
+
 app.include_router(api_router)
 
 app.add_middleware(
@@ -77,7 +416,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
