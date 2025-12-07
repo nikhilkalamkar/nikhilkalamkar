@@ -679,8 +679,38 @@ export default function ChatView() {
                     : 'bg-white text-black rounded-bl-sm shadow-sm'
                 } ${message.disappearing ? 'border-2 border-dashed border-orange-400' : ''} ${
                   message.sending ? 'opacity-70' : ''
-                }`}
+                } ${message.sender_id === user.user_id ? 'cursor-pointer' : ''}`}
                 data-testid={`message-${message.message_id}`}
+                onTouchStart={() => {
+                  if (message.sender_id === user.user_id) {
+                    const timer = setTimeout(() => handleLongPress(message), 500);
+                    message._longPressTimer = timer;
+                  }
+                }}
+                onTouchEnd={() => {
+                  if (message._longPressTimer) {
+                    clearTimeout(message._longPressTimer);
+                    delete message._longPressTimer;
+                  }
+                }}
+                onMouseDown={() => {
+                  if (message.sender_id === user.user_id) {
+                    const timer = setTimeout(() => handleLongPress(message), 500);
+                    message._longPressTimer = timer;
+                  }
+                }}
+                onMouseUp={() => {
+                  if (message._longPressTimer) {
+                    clearTimeout(message._longPressTimer);
+                    delete message._longPressTimer;
+                  }
+                }}
+                onMouseLeave={() => {
+                  if (message._longPressTimer) {
+                    clearTimeout(message._longPressTimer);
+                    delete message._longPressTimer;
+                  }
+                }}
               >
                 {message.disappearing && (
                   <div className={`px-3 py-1 flex items-center gap-2 text-xs font-bold ${
