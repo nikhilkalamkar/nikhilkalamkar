@@ -113,6 +113,38 @@ class BlockedUser(BaseModel):
     blocked_id: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+# Helper function to optimize images
+async def optimize_image(file_content: bytes, filename: str, max_size: int = 1920) -> bytes:
+    """Optimize image: resize if too large, compress, and convert to WebP if beneficial"""
+    try:
+        img = Image.open(iolib.BytesIO(file_content))
+        
+        # Convert RGBA to RGB if necessary
+        if img.mode in ('RGBA', 'LA', 'P'):
+            background = Image.new('RGB', img.size, (255, 255, 255))
+            if img.mode == 'P':
+                img = img.convert('RGBA')
+            background.paste(img, mask=img.split()[-1] if img.mode in ('RGBA', 'LA') else None)
+            img = background
+        elif img.mode != 'RGB':
+            img = img.convert('RGB')
+        
+        # Resize if too large
+        if img.width > max_size or img.height > max_size:
+            img.thumbnail((max_size, max_size), Image.Resampling.LANCZOS)
+        
+        # Save optimized image
+        output = iolib.BytesIO()
+        
+        # Use JPEG with quality 85 for good balance
+        img.save(output, format='JPEG', quality=85, optimize=True)
+        output.seek(0)
+        
+        return output.read()
+    except Exception as e:
+        logger.error(f"Image optimization failed: {e}")
+        return file_content  # Return original if optimization fails
+
 class PasswordResetRequest(BaseModel):
     email: EmailStr
 
