@@ -154,6 +154,7 @@ async def register(user_data: UserCreate):
         "password": hashed_password,
         "avatar_url": user_data.avatar_url or "https://images.unsplash.com/photo-1675526607070-f5cbd71dde92?w=200",
         "friends": [],
+        "blocked_users": [],
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
