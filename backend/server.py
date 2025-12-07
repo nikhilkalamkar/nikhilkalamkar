@@ -456,12 +456,24 @@ async def get_stories(user_id: str = Depends(verify_token)):
     return stories
 
 @api_router.post("/stories/{story_id}/promote")
-async def create_promotion_order(story_id: str, user_id: str = Depends(verify_token)):
+async def create_promotion_order(story_id: str, promotion_req: PromotionRequest, user_id: str = Depends(verify_token)):
     story = await db.stories.find_one({"story_id": story_id, "user_id": user_id})
     if not story:
         raise HTTPException(status_code=404, detail="Story not found")
     
-    amount = 50000
+    # Define promotion tiers
+    promotion_tiers = {
+        "basic": {"amount": 5000, "views": 10000, "name": "Basic (10k views)"},
+        "premium": {"amount": 10000, "views": 20000, "name": "Premium (20k views)"}
+    }
+    
+    tier = promotion_req.tier.lower()
+    if tier not in promotion_tiers:
+        raise HTTPException(status_code=400, detail="Invalid promotion tier")
+    
+    tier_info = promotion_tiers[tier]
+    amount = tier_info["amount"]
+    
     order = razorpay_client.order.create({"amount": amount, "currency": "INR", "payment_capture": 1})
     
     await db.story_promotions.insert_one({
@@ -469,11 +481,19 @@ async def create_promotion_order(story_id: str, user_id: str = Depends(verify_to
         "user_id": user_id,
         "order_id": order['id'],
         "amount": amount,
+        "tier": tier,
+        "target_views": tier_info["views"],
         "status": "pending",
         "created_at": datetime.now(timezone.utc).isoformat()
     })
     
-    return {"order_id": order['id'], "amount": amount, "key": os.getenv('RAZORPAY_KEY_ID')}
+    return {
+        "order_id": order['id'], 
+        "amount": amount, 
+        "key": os.getenv('RAZORPAY_KEY_ID'),
+        "tier": tier,
+        "tier_name": tier_info["name"]
+    }
 
 @api_router.post("/stories/{story_id}/promote/verify")
 async def verify_promotion(story_id: str, payment_id: str, order_id: str, signature: str, user_id: str = Depends(verify_token)):
