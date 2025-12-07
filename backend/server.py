@@ -370,6 +370,56 @@ async def update_disappearing_timer(chat_id: str, timer_seconds: int, user_id: s
     
     return {"message": "Timer updated", "timer_seconds": timer_seconds}
 
+@api_router.delete("/messages/{message_id}/delete-for-me")
+async def delete_message_for_me(message_id: str, user_id: str = Depends(verify_token)):
+    """Delete message for current user only"""
+    message = await db.messages.find_one({"message_id": message_id})
+    if not message:
+        raise HTTPException(status_code=404, detail="Message not found")
+    
+    # Check if user is part of the chat
+    chat = await db.chats.find_one({"chat_id": message['chat_id']})
+    if not chat or user_id not in chat['participants']:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Add user to deleted_for list
+    await db.messages.update_one(
+        {"message_id": message_id},
+        {"$addToSet": {"deleted_for": user_id}}
+    )
+    
+    return {"message": "Message deleted for you"}
+
+@api_router.delete("/messages/{message_id}/delete-for-everyone")
+async def delete_message_for_everyone(message_id: str, user_id: str = Depends(verify_token)):
+    """Delete message for everyone (only sender can do this)"""
+    message = await db.messages.find_one({"message_id": message_id})
+    if not message:
+        raise HTTPException(status_code=404, detail="Message not found")
+    
+    # Only sender can delete for everyone
+    if message['sender_id'] != user_id:
+        raise HTTPException(status_code=403, detail="You can only delete your own messages for everyone")
+    
+    # Mark as deleted for everyone
+    await db.messages.update_one(
+        {"message_id": message_id},
+        {"$set": {"deleted_for_everyone": True, "content": "This message was deleted", "media_url": None}}
+    )
+    
+    # Notify other participants via WebSocket
+    chat = await db.chats.find_one({"chat_id": message['chat_id']})
+    if chat:
+        for participant_id in chat['participants']:
+            if participant_id != user_id:
+                await manager.send_personal_message({
+                    "type": "message_deleted",
+                    "message_id": message_id,
+                    "chat_id": message['chat_id']
+                }, participant_id)
+    
+    return {"message": "Message deleted for everyone"}
+
 @api_router.post("/chats/{chat_id}/messages")
 async def send_message(chat_id: str, content: str = Form(""), message_type: str = Form("text"), media: Optional[UploadFile] = File(None), user_id: str = Depends(verify_token)):
     chat = await db.chats.find_one({"chat_id": chat_id})
