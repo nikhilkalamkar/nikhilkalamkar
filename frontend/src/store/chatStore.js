@@ -30,6 +30,17 @@ export const useChatStore = create((set, get) => ({
       // Timer update will be handled in ChatPage component
     });
     
+    socket.on('message_deleted', (data) => {
+      const { chat_id, message_id } = data;
+      const messages = get().messages[chat_id] || [];
+      const updatedMessages = messages.map(msg => 
+        msg.message_id === message_id 
+          ? { ...msg, deleted_for_everyone: true, content: 'This message was deleted', media_url: null }
+          : msg
+      );
+      set({ messages: { ...get().messages, [chat_id]: updatedMessages } });
+    });
+    
     set({ socket });
   },
   
