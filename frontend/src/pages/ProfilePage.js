@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,18 @@ export default function ProfilePage() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef(null);
+
+  // Fetch fresh user data when page loads
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  // Update bio when user data changes
+  useEffect(() => {
+    if (user?.bio) {
+      setBio(user.bio);
+    }
+  }, [user]);
   
   const handleLogout = () => {
     logout();
