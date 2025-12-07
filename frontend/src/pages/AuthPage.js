@@ -152,59 +152,155 @@ export default function AuthPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
+            {showForgotPassword ? (
+              <div className="space-y-4">
+                {!showResetForm ? (
+                  <form onSubmit={handleForgotPassword} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="reset-email">Email</Label>
+                      <Input
+                        id="reset-email"
+                        data-testid="reset-email-input"
+                        type="email"
+                        placeholder="you@example.com"
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        required
+                        className="h-12 bg-secondary border-transparent focus:border-primary"
+                      />
+                    </div>
+                    
+                    <Button
+                      type="submit"
+                      data-testid="request-reset-button"
+                      disabled={loading}
+                      className="w-full h-12 rounded-full font-bold uppercase tracking-wide neon-shadow hover:scale-105 transition-transform"
+                    >
+                      {loading ? 'Please wait...' : 'Get Reset Token'}
+                    </Button>
+                  </form>
+                ) : (
+                  <form onSubmit={handleResetPassword} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="reset-token">Reset Token</Label>
+                      <Input
+                        id="reset-token"
+                        data-testid="reset-token-input"
+                        placeholder="Enter the reset token"
+                        value={resetToken}
+                        onChange={(e) => setResetToken(e.target.value)}
+                        required
+                        className="h-12 bg-secondary border-transparent focus:border-primary"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="new-password">New Password</Label>
+                      <Input
+                        id="new-password"
+                        data-testid="new-password-input"
+                        type="password"
+                        placeholder="••••••••"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        required
+                        className="h-12 bg-secondary border-transparent focus:border-primary"
+                      />
+                    </div>
+                    
+                    <Button
+                      type="submit"
+                      data-testid="reset-password-button"
+                      disabled={loading}
+                      className="w-full h-12 rounded-full font-bold uppercase tracking-wide neon-shadow hover:scale-105 transition-transform"
+                    >
+                      {loading ? 'Please wait...' : 'Reset Password'}
+                    </Button>
+                  </form>
+                )}
+                
+                <Button
+                  data-testid="back-to-login-button"
+                  onClick={() => {
+                    setShowForgotPassword(false);
+                    setShowResetForm(false);
+                    setResetToken('');
+                    setResetEmail('');
+                    setNewPassword('');
+                  }}
+                  variant="ghost"
+                  className="w-full"
+                >
+                  Back to login
+                </Button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {!isLogin && (
+                  <div className="space-y-2">
+                    <Label htmlFor="username">Username</Label>
+                    <Input
+                      id="username"
+                      data-testid="username-input"
+                      placeholder="johndoe"
+                      value={formData.username}
+                      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                      required
+                      className="h-12 bg-secondary border-transparent focus:border-primary"
+                    />
+                  </div>
+                )}
+                
                 <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
+                  <Label htmlFor="email">Email</Label>
                   <Input
-                    id="username"
-                    data-testid="username-input"
-                    placeholder="johndoe"
-                    value={formData.username}
-                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    id="email"
+                    data-testid="email-input"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
                     className="h-12 bg-secondary border-transparent focus:border-primary"
                   />
                 </div>
-              )}
-              
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  data-testid="email-input"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                  className="h-12 bg-secondary border-transparent focus:border-primary"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  data-testid="password-input"
-                  type="password"
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  required
-                  className="h-12 bg-secondary border-transparent focus:border-primary"
-                />
-              </div>
-              
-              <Button
-                type="submit"
-                data-testid="submit-button"
-                disabled={loading}
-                className="w-full h-12 rounded-full font-bold uppercase tracking-wide neon-shadow hover:scale-105 transition-transform"
-              >
-                {loading ? 'Please wait...' : isLogin ? 'Sign in' : 'Create account'}
-              </Button>
-            </form>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Password</Label>
+                    {isLogin && (
+                      <button
+                        type="button"
+                        data-testid="forgot-password-link"
+                        onClick={() => setShowForgotPassword(true)}
+                        className="text-xs text-primary hover:underline"
+                      >
+                        Forgot password?
+                      </button>
+                    )}
+                  </div>
+                  <Input
+                    id="password"
+                    data-testid="password-input"
+                    type="password"
+                    placeholder="••••••••"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    required
+                    className="h-12 bg-secondary border-transparent focus:border-primary"
+                  />
+                </div>
+                
+                <Button
+                  type="submit"
+                  data-testid="submit-button"
+                  disabled={loading}
+                  className="w-full h-12 rounded-full font-bold uppercase tracking-wide neon-shadow hover:scale-105 transition-transform"
+                >
+                  {loading ? 'Please wait...' : isLogin ? 'Sign in' : 'Create account'}
+                </Button>
+              </form>
+            )}
             
             <div className="mt-6 text-center">
               <button
