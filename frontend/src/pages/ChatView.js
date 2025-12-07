@@ -243,6 +243,46 @@ export default function ChatView() {
 
   return (
     <div className="fixed inset-0 bg-gray-50 flex flex-col z-40" data-testid="chat-view-page">
+      <Dialog open={showPermissionHelp} onOpenChange={setShowPermissionHelp}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              Camera & Microphone Access
+            </DialogTitle>
+            <DialogDescription>
+              To make calls, you need to allow access to your camera and microphone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <p className="font-bold mb-2">📱 How to Enable Permissions:</p>
+              <ol className="list-decimal list-inside space-y-2 text-sm">
+                <li>Look for the 🔒 lock icon in your browser's address bar</li>
+                <li>Click on it to open site settings</li>
+                <li>Find "Camera" and "Microphone" permissions</li>
+                <li>Change from "Block" to "Allow"</li>
+                <li>Refresh the page and try calling again</li>
+              </ol>
+            </div>
+            
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="font-bold mb-2">💡 Tips:</p>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>Make sure your camera/mic are not being used by other apps</li>
+                <li>Check if your device has camera/microphone hardware</li>
+                <li>Some browsers require HTTPS for camera access</li>
+              </ul>
+            </div>
+
+            <Button
+              onClick={() => setShowPermissionHelp(false)}
+              className="w-full bg-[#F5E618] text-black font-bold rounded-full h-12"
+            >
+              Got it!
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       <div className="bg-white border-b px-4 py-4 flex items-center gap-3">
         <Button
           onClick={() => navigate('/chats')}
