@@ -181,14 +181,11 @@ async def login(credentials: UserLogin):
 async def forgot_password(request: PasswordResetRequest):
     user = await db.users.find_one({"email": request.email})
     if not user:
-        # Don't reveal if email exists for security
         return {"message": "If the email exists, a reset token has been generated"}
     
-    # Generate reset token
     reset_token = str(uuid.uuid4())
     expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
     
-    # Store reset token
     await db.password_resets.insert_one({
         "email": request.email,
         "reset_token": reset_token,
@@ -197,8 +194,6 @@ async def forgot_password(request: PasswordResetRequest):
         "created_at": datetime.now(timezone.utc).isoformat()
     })
     
-    # In production, send this token via email
-    # For now, return it in response (NOT SECURE - only for development)
     return {
         "message": "Reset token generated",
         "reset_token": reset_token,
@@ -207,7 +202,6 @@ async def forgot_password(request: PasswordResetRequest):
 
 @api_router.post("/auth/reset-password")
 async def reset_password(reset_data: PasswordReset):
-    # Find valid reset token
     reset_record = await db.password_resets.find_one({
         "email": reset_data.email,
         "reset_token": reset_data.reset_token,
@@ -217,19 +211,16 @@ async def reset_password(reset_data: PasswordReset):
     if not reset_record:
         raise HTTPException(status_code=400, detail="Invalid or expired reset token")
     
-    # Check if token expired
     expires_at = datetime.fromisoformat(reset_record['expires_at'])
     if datetime.now(timezone.utc) > expires_at:
         raise HTTPException(status_code=400, detail="Reset token has expired")
     
-    # Update user password
     hashed_password = bcrypt.hashpw(reset_data.new_password.encode('utf-8'), bcrypt.gensalt())
     await db.users.update_one(
         {"email": reset_data.email},
         {"$set": {"password_hash": hashed_password.decode('utf-8'), "updated_at": datetime.now(timezone.utc).isoformat()}}
     )
     
-    # Mark token as used
     await db.password_resets.update_one(
         {"_id": reset_record["_id"]},
         {"$set": {"used": True}}
@@ -246,9 +237,13 @@ async def get_current_user(user_id: str = Depends(verify_token)):
 
 @api_router.get("/users/search")
 async def search_users(q: str, user_id: str = Depends(verify_token)):
+    blocked = await db.blocked_users.find({"blocker_id": user_id}, {"_id": 0}).to_list(1000)
+    blocked_ids = [b['blocked_id'] for b in blocked]
+    
     users = await db.users.find(
         {"$and": [
             {"user_id": {"$ne": user_id}},
+            {"user_id": {"$nin": blocked_ids}},
             {"$or": [
                 {"username": {"$regex": q, "$options": "i"}},
                 {"email": {"$regex": q, "$options": "i"}}
@@ -260,6 +255,15 @@ async def search_users(q: str, user_id: str = Depends(verify_token)):
 
 @api_router.post("/friends/request")
 async def send_friend_request(receiver_id: str, user_id: str = Depends(verify_token)):
+    is_blocked = await db.blocked_users.find_one({
+        "$or": [
+            {"blocker_id": user_id, "blocked_id": receiver_id},
+            {"blocker_id": receiver_id, "blocked_id": user_id}
+        ]
+    })
+    if is_blocked:
+        raise HTTPException(status_code=403, detail="Cannot send request to this user")
+    
     existing = await db.friend_requests.find_one({"sender_id": user_id, "receiver_id": receiver_id, "status": "pending"})
     if existing:
         raise HTTPException(status_code=400, detail="Request already sent")
@@ -329,6 +333,16 @@ async def send_message(chat_id: str, content: str = Form(...), message_type: str
     if not chat or user_id not in chat['participants']:
         raise HTTPException(status_code=403, detail="Access denied")
     
+    other_user_id = [p for p in chat['participants'] if p != user_id][0]
+    is_blocked = await db.blocked_users.find_one({
+        "$or": [
+            {"blocker_id": user_id, "blocked_id": other_user_id},
+            {"blocker_id": other_user_id, "blocked_id": user_id}
+        ]
+    })
+    if is_blocked:
+        raise HTTPException(status_code=403, detail="Cannot send message to this user")
+    
     media_url = None
     if media:
         file_ext = media.filename.split('.')[-1]
@@ -356,7 +370,6 @@ async def send_message(chat_id: str, content: str = Form(...), message_type: str
         {"$set": {"last_message": content[:50], "last_message_time": datetime.now(timezone.utc).isoformat()}}
     )
     
-    # Remove _id field for response
     response_dict = {k: v for k, v in message_dict.items() if k != '_id'}
     
     other_user = [p for p in chat['participants'] if p != user_id][0]
@@ -382,15 +395,19 @@ async def create_story(media: UploadFile = File(...), user_id: str = Depends(ver
     story_dict['expires_at'] = story_dict['expires_at'].isoformat()
     await db.stories.insert_one(story_dict)
     
-    # Remove _id field for response
     response_dict = {k: v for k, v in story_dict.items() if k != '_id'}
     return response_dict
 
 @api_router.get("/stories")
 async def get_stories(user_id: str = Depends(verify_token)):
+    blocked = await db.blocked_users.find({"blocker_id": user_id}, {"_id": 0}).to_list(1000)
+    blocked_ids = [b['blocked_id'] for b in blocked]
+    
     friends = await db.friends.find({"$or": [{"user1": user_id}, {"user2": user_id}]}, {"_id": 0}).to_list(1000)
     friend_ids = [f['user2'] if f['user1'] == user_id else f['user1'] for f in friends]
     friend_ids.append(user_id)
+    
+    friend_ids = [fid for fid in friend_ids if fid not in blocked_ids]
     
     current_time = datetime.now(timezone.utc)
     stories = await db.stories.find(
@@ -442,13 +459,29 @@ async def verify_promotion(story_id: str, payment_id: str, order_id: str, signat
 
 @api_router.post("/block/{user_id_to_block}")
 async def block_user(user_id_to_block: str, user_id: str = Depends(verify_token)):
+    existing = await db.blocked_users.find_one({"blocker_id": user_id, "blocked_id": user_id_to_block})
+    if existing:
+        raise HTTPException(status_code=400, detail="User already blocked")
+    
     await db.blocked_users.insert_one({"blocker_id": user_id, "blocked_id": user_id_to_block, "created_at": datetime.now(timezone.utc).isoformat()})
     return {"message": "User blocked"}
 
 @api_router.delete("/block/{user_id_to_unblock}")
 async def unblock_user(user_id_to_unblock: str, user_id: str = Depends(verify_token)):
-    await db.blocked_users.delete_one({"blocker_id": user_id, "blocked_id": user_id_to_unblock})
+    result = await db.blocked_users.delete_one({"blocker_id": user_id, "blocked_id": user_id_to_unblock})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not blocked")
     return {"message": "User unblocked"}
+
+@api_router.get("/blocked-users")
+async def get_blocked_users(user_id: str = Depends(verify_token)):
+    blocked = await db.blocked_users.find({"blocker_id": user_id}, {"_id": 0}).to_list(1000)
+    blocked_users = []
+    for block in blocked:
+        user = await db.users.find_one({"user_id": block['blocked_id']}, {"_id": 0, "password_hash": 0})
+        if user:
+            blocked_users.append(user)
+    return blocked_users
 
 @api_router.get("/token/agora")
 async def get_agora_token(channel: str, user_id: str = Depends(verify_token)):
@@ -533,6 +566,7 @@ async def startup():
     await db.messages.create_index("expires_at")
     await db.stories.create_index("user_id")
     await db.stories.create_index("expires_at")
+    await db.blocked_users.create_index(["blocker_id", "blocked_id"], unique=True)
     logger.info("Database indexes created")
 
 @app.on_event("shutdown")
