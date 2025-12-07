@@ -237,20 +237,78 @@ export default function MyStoriesPage() {
       </div>
       
       <AlertDialog open={showPromoteDialog} onOpenChange={setShowPromoteDialog}>
-        <AlertDialogContent className="glass-effect">
+        <AlertDialogContent className="glass-effect max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-heading">Promote Story?</AlertDialogTitle>
+            <AlertDialogTitle className="font-heading text-xl">Promote Your Story</AlertDialogTitle>
             <AlertDialogDescription>
-              Your story will be shown to more people. Cost: ₹500
-              <br /><br />
-              <strong>Benefits:</strong>
-              <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>Increased visibility</li>
-                <li>Shown to wider audience</li>
-                <li>Priority placement</li>
-              </ul>
+              Choose a promotion plan to boost your story's visibility
             </AlertDialogDescription>
           </AlertDialogHeader>
+          
+          <div className="space-y-3 my-4">
+            <div
+              data-testid="tier-basic"
+              onClick={() => setSelectedTier('basic')}
+              className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                selectedTier === 'basic'
+                  ? 'border-primary bg-primary/10'
+                  : 'border-border hover:border-primary/50'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <h3 className="font-heading font-bold text-lg">Basic Plan</h3>
+                  <p className="text-sm text-muted-foreground">Perfect for starting out</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-primary">₹50</p>
+                  <p className="text-xs text-muted-foreground">per day</p>
+                </div>
+              </div>
+              <div className="space-y-1 text-sm">
+                <p className="flex items-center gap-2">
+                  <Eye className="w-4 h-4 text-primary" />
+                  <strong>10,000 views</strong>
+                </p>
+                <p className="text-muted-foreground">• Standard visibility boost</p>
+                <p className="text-muted-foreground">• 24-hour promotion</p>
+              </div>
+            </div>
+            
+            <div
+              data-testid="tier-premium"
+              onClick={() => setSelectedTier('premium')}
+              className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                selectedTier === 'premium'
+                  ? 'border-primary bg-primary/10'
+                  : 'border-border hover:border-primary/50'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <h3 className="font-heading font-bold text-lg flex items-center gap-2">
+                    Premium Plan
+                    <Badge className="bg-accent text-accent-foreground">Popular</Badge>
+                  </h3>
+                  <p className="text-sm text-muted-foreground">Maximum reach & engagement</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-primary">₹100</p>
+                  <p className="text-xs text-muted-foreground">per day</p>
+                </div>
+              </div>
+              <div className="space-y-1 text-sm">
+                <p className="flex items-center gap-2">
+                  <Eye className="w-4 h-4 text-primary" />
+                  <strong>20,000 views</strong>
+                </p>
+                <p className="text-muted-foreground">• Maximum visibility boost</p>
+                <p className="text-muted-foreground">• Priority placement</p>
+                <p className="text-muted-foreground">• 24-hour promotion</p>
+              </div>
+            </div>
+          </div>
+          
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
@@ -258,7 +316,7 @@ export default function MyStoriesPage() {
               onClick={handlePromote}
               className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              Proceed to Payment
+              Pay ₹{selectedTier === 'basic' ? '50' : '100'} & Promote
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
