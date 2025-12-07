@@ -37,6 +37,7 @@ export default function ChatPage() {
   const [chatData, setChatData] = useState(null);
   const [messageText, setMessageText] = useState('');
   const [selectedMedia, setSelectedMedia] = useState(null);
+  const [showBlockDialog, setShowBlockDialog] = useState(false);
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
   
