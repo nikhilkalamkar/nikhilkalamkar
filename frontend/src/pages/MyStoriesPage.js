@@ -223,8 +223,8 @@ export default function MyStoriesPage() {
                           className="w-full rounded-full text-xs h-8"
                           variant="outline"
                         >
-                          <DollarSign className="w-3 h-3 mr-1" />
-                          Promote ₹500
+                          <TrendingUp className="w-3 h-3 mr-1" />
+                          Promote Story
                         </Button>
                       )}
                     </CardContent>
