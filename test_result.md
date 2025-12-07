@@ -714,3 +714,89 @@ agent_communication:
       TESTING LIMITATION: Unable to perform full end-to-end UI testing due to authentication requirements, but all technical components verified working correctly.
       
       RECOMMENDATION: The image display functionality is now working correctly. Users should be able to upload and view images in chat messages without seeing blue question mark placeholders.
+
+backend:
+  - task: "Message Deletion - Delete for Me"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Implemented WhatsApp-style message deletion:
+          1. Added DELETE endpoint /api/messages/{message_id}/delete-for-me
+          2. Adds user_id to deleted_for array in message document
+          3. Filtered messages in get_messages endpoint to exclude deleted messages
+          4. User can delete any message (sent or received) from their view only
+
+  - task: "Message Deletion - Delete for Everyone"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Implemented permanent message deletion for sender:
+          1. Added DELETE endpoint /api/messages/{message_id}/delete-for-everyone
+          2. Only sender can delete their own messages for everyone
+          3. Sets deleted_for_everyone flag and replaces content with "This message was deleted"
+          4. Sends WebSocket event "message_deleted" to other participants
+          5. Removes media_url if present
+
+frontend:
+  - task: "Message Deletion UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/ChatPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Implemented delete message UI:
+          1. Added Trash2 icon button that appears on hover for each message
+          2. Shows delete dialog with two options:
+             - "Delete for Me" (available for all messages)
+             - "Delete for Everyone" (only for own messages)
+          3. Updates UI immediately after deletion
+          4. Shows "This message was deleted" for deleted messages
+          5. Handles WebSocket message_deleted events for real-time sync
+
+metadata:
+  test_sequence: 2
+
+test_plan:
+  current_focus:
+    - "Message Deletion - Delete for Me"
+    - "Message Deletion - Delete for Everyone"
+    - "Message Deletion UI"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Implemented WhatsApp-style message deletion feature.
+      
+      TEST SCENARIOS:
+      1. User can hover over any message and click trash icon
+      2. Dialog shows "Delete for Me" option for all messages
+      3. Dialog shows "Delete for Everyone" option ONLY for user's own messages
+      4. Delete for Me: Message disappears from user's chat only
+      5. Delete for Everyone: Message shows "This message was deleted" for both users
+      6. Real-time sync: When User A deletes for everyone, User B sees update immediately
+      7. Deleted messages persist after page reload
+      
+      Backend endpoints:
+      - DELETE /api/messages/{message_id}/delete-for-me
+      - DELETE /api/messages/{message_id}/delete-for-everyone
+      
+      Please test both deletion options with 2 users in a chat.
