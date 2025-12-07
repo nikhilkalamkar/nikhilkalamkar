@@ -228,12 +228,37 @@ export default function MyStoriesPage() {
                         />
                       )}
                       
-                      {story.is_promoted && (
-                        <Badge className="absolute top-2 right-2 bg-primary text-primary-foreground">
-                          <TrendingUp className="w-3 h-3 mr-1" />
-                          Promoted
-                        </Badge>
-                      )}
+                      <div className="absolute top-2 right-2 flex items-center gap-2">
+                        {story.is_promoted && (
+                          <Badge className="bg-primary text-primary-foreground">
+                            <TrendingUp className="w-3 h-3 mr-1" />
+                            Promoted
+                          </Badge>
+                        )}
+                        
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              data-testid={`story-menu-${story.story_id}`}
+                              size="icon"
+                              variant="secondary"
+                              className="h-8 w-8 rounded-full bg-black/60 hover:bg-black/80"
+                            >
+                              <MoreVertical className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="glass-effect">
+                            <DropdownMenuItem
+                              data-testid={`delete-story-${story.story_id}`}
+                              onClick={() => handleDeleteClick(story)}
+                              className="text-destructive focus:text-destructive"
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete Story
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </div>
                     
                     <CardContent className="p-3 space-y-2">
