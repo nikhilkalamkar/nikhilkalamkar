@@ -1408,9 +1408,15 @@ def main():
     tester = SnapCloneAPITester()
     
     try:
-        # Check if we should run only image tests
-        if len(sys.argv) > 1 and sys.argv[1] == "--image-only":
-            tester.run_image_tests_only()
+        # Check command line arguments for specific test types
+        if len(sys.argv) > 1:
+            if sys.argv[1] == "--image-only":
+                tester.run_image_tests_only()
+            elif sys.argv[1] == "--deletion-only":
+                tester.run_message_deletion_tests_only()
+            else:
+                print("Usage: python backend_test.py [--image-only|--deletion-only]")
+                return 1
         else:
             tester.run_all_tests()
             
