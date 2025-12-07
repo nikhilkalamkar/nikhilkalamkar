@@ -102,6 +102,22 @@ export default function ChatPage() {
     }
   };
   
+  const handleBlockUser = async () => {
+    const otherUserId = chatData?.other_user?.user_id;
+    if (!otherUserId) return;
+    
+    try {
+      await axios.post(`${API_URL}/block/${otherUserId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success(`${chatData.other_user.username} has been blocked`);
+      setShowBlockDialog(false);
+      navigate('/');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to block user');
+    }
+  };
+  
   const chatMessages = messages[chatId] || [];
   
   return (
