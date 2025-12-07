@@ -30,7 +30,7 @@ export default function ChatView() {
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [showPermissionHelp, setShowPermissionHelp] = useState(false);
   const [disappearingMode, setDisappearingMode] = useState(false);
-  const [disappearTime, setDisappearTime] = useState(10);
+  const [disappearTime, setDisappearTime] = useState(3);
   const [viewedMessages, setViewedMessages] = useState(new Set());
   const [messageCountdowns, setMessageCountdowns] = useState({});
   const messagesEndRef = useRef(null);
