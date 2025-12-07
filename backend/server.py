@@ -177,6 +177,66 @@ async def login(credentials: UserLogin):
     user_response = {k: v for k, v in user.items() if k not in ['password_hash', '_id']}
     return TokenResponse(access_token=token, user=user_response)
 
+@api_router.post("/auth/forgot-password")
+async def forgot_password(request: PasswordResetRequest):
+    user = await db.users.find_one({"email": request.email})
+    if not user:
+        # Don't reveal if email exists for security
+        return {"message": "If the email exists, a reset token has been generated"}
+    
+    # Generate reset token
+    reset_token = str(uuid.uuid4())
+    expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
+    
+    # Store reset token
+    await db.password_resets.insert_one({
+        "email": request.email,
+        "reset_token": reset_token,
+        "expires_at": expires_at.isoformat(),
+        "used": False,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    # In production, send this token via email
+    # For now, return it in response (NOT SECURE - only for development)
+    return {
+        "message": "Reset token generated",
+        "reset_token": reset_token,
+        "note": "In production, this would be sent via email"
+    }
+
+@api_router.post("/auth/reset-password")
+async def reset_password(reset_data: PasswordReset):
+    # Find valid reset token
+    reset_record = await db.password_resets.find_one({
+        "email": reset_data.email,
+        "reset_token": reset_data.reset_token,
+        "used": False
+    })
+    
+    if not reset_record:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+    
+    # Check if token expired
+    expires_at = datetime.fromisoformat(reset_record['expires_at'])
+    if datetime.now(timezone.utc) > expires_at:
+        raise HTTPException(status_code=400, detail="Reset token has expired")
+    
+    # Update user password
+    hashed_password = bcrypt.hashpw(reset_data.new_password.encode('utf-8'), bcrypt.gensalt())
+    await db.users.update_one(
+        {"email": reset_data.email},
+        {"$set": {"password_hash": hashed_password.decode('utf-8'), "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    # Mark token as used
+    await db.password_resets.update_one(
+        {"_id": reset_record["_id"]},
+        {"$set": {"used": True}}
+    )
+    
+    return {"message": "Password reset successfully"}
+
 @api_router.get("/users/me")
 async def get_current_user(user_id: str = Depends(verify_token)):
     user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "password_hash": 0})
