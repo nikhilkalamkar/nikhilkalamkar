@@ -737,6 +737,11 @@ async def get_media(filename: str, request: Request):
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="File not found")
     
+    # Get file stats for caching
+    file_stat = os.stat(file_path)
+    file_size = file_stat.st_size
+    last_modified = file_stat.st_mtime
+    
     # Determine proper media type based on file extension
     file_ext = filename.split('.')[-1].lower()
     media_type_map = {
@@ -754,6 +759,13 @@ async def get_media(filename: str, request: Request):
         'mkv': 'video/x-matroska',
     }
     media_type = media_type_map.get(file_ext, 'application/octet-stream')
+    
+    # Caching headers
+    headers = {
+        "Cache-Control": "public, max-age=31536000, immutable",  # 1 year cache
+        "Content-Length": str(file_size),
+        "Accept-Ranges": "bytes"
+    }
     
     # For HEAD requests, just return headers without content
     if request.method == "HEAD":
