@@ -32,15 +32,16 @@ export default function Profile() {
         
         try {
           const response = await axios.put(
-            `${API}/users/me/avatar?avatar_url=${encodeURIComponent(base64Image)}`,
-            {},
+            `${API}/users/me/avatar`,
+            { avatar_url: base64Image },
             { headers: { Authorization: `Bearer ${token}` } }
           );
           
           login(token, response.data.user);
           toast.success('Profile photo updated!');
         } catch (error) {
-          toast.error('Failed to update profile photo');
+          console.error('Avatar upload error:', error);
+          toast.error(error.response?.data?.detail || 'Failed to update profile photo');
         } finally {
           setUploading(false);
         }
