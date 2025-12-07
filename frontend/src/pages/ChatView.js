@@ -35,6 +35,8 @@ export default function ChatView() {
   const [messageCountdowns, setMessageCountdowns] = useState({});
   const [screenshotAttempt, setScreenshotAttempt] = useState(false);
   const [contentBlurred, setContentBlurred] = useState(false);
+  const [longPressMessage, setLongPressMessage] = useState(null);
+  const [showDeleteMenu, setShowDeleteMenu] = useState(false);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const localVideoRef = useRef(null);
