@@ -9,7 +9,15 @@ import axios from 'axios';
 export default function Profile() {
   const { user, logout, token, login } = useContext(AuthContext);
   const [uploading, setUploading] = useState(false);
+  const [blockedUsers, setBlockedUsers] = useState([]);
+  const [showBlocked, setShowBlocked] = useState(false);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (showBlocked) {
+      fetchBlockedUsers();
+    }
+  }, [showBlocked]);
 
   const handlePhotoClick = () => {
     fileInputRef.current?.click();
