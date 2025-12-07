@@ -621,8 +621,12 @@ async def get_agora_token(channel: str, user_id: str = Depends(verify_token)):
     token = RtcTokenBuilder.buildTokenWithUid(app_id, app_certificate, channel, uid, 1, expiration_time)
     return {"token": token, "uid": uid, "channel": channel}
 
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, WebSocket, WebSocketDisconnect, UploadFile, File, Form, Request
+from fastapi.responses import Response
+
 @api_router.get("/media/{filename}")
-async def get_media(filename: str):
+@api_router.head("/media/{filename}")
+async def get_media(filename: str, request: Request):
     file_path = f"/app/uploads/{filename}"
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="File not found")
@@ -644,6 +648,15 @@ async def get_media(filename: str):
         'mkv': 'video/x-matroska',
     }
     media_type = media_type_map.get(file_ext, 'application/octet-stream')
+    
+    # For HEAD requests, just return headers without content
+    if request.method == "HEAD":
+        file_size = os.path.getsize(file_path)
+        return Response(
+            content="",
+            media_type=media_type,
+            headers={"Content-Length": str(file_size)}
+        )
     
     async with aiofiles.open(file_path, 'rb') as f:
         content = await f.read()
