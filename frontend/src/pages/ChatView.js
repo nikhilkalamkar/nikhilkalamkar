@@ -161,6 +161,19 @@ export default function ChatView() {
     });
   }, [messages]);
 
+  const notifyScreenshot = async () => {
+    if (!friendId || !token) return;
+    
+    try {
+      await axios.post(`${API}/screenshot/${friendId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.warning('📸 Screenshot detected! Your friend will be notified.');
+    } catch (error) {
+      console.error('Failed to send screenshot notification:', error);
+    }
+  };
+
   useEffect(() => {
     // Detect screenshot (works on some browsers)
     const handleKeyDown = (e) => {
@@ -191,20 +204,7 @@ export default function ChatView() {
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [friendId, token]);
-
-  const notifyScreenshot = async () => {
-    if (!friendId || !token) return;
-    
-    try {
-      await axios.post(`${API}/screenshot/${friendId}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      toast.warning('📸 Screenshot detected! Your friend will be notified.');
-    } catch (error) {
-      console.error('Failed to send screenshot notification:', error);
-    }
-  };
+  }, [friendId, token, notifyScreenshot]);
 
   const startCall = async (type) => {
     try {
