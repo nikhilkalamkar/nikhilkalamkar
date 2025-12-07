@@ -246,6 +246,31 @@ export default function ChatView() {
     }
   }, [friendId, token]);
 
+  const handleDeleteMessage = async (messageId) => {
+    try {
+      await axios.delete(`${API}/messages/${messageId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Remove from local state immediately
+      setMessages(prev => prev.filter(msg => msg.message_id !== messageId));
+      setShowDeleteMenu(false);
+      setLongPressMessage(null);
+      toast.success('Message deleted');
+    } catch (error) {
+      console.error('Failed to delete message:', error);
+      toast.error(error.response?.data?.detail || 'Failed to delete message');
+    }
+  };
+
+  const handleLongPress = (message) => {
+    // Only allow deleting own messages
+    if (message.sender_id === user.user_id) {
+      setLongPressMessage(message);
+      setShowDeleteMenu(true);
+    }
+  };
+
   useEffect(() => {
     // Screenshot prevention system
     const handleScreenshotAttempt = () => {
