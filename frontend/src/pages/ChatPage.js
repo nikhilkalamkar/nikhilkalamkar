@@ -39,6 +39,8 @@ export default function ChatPage() {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [disappearTimer, setDisappearTimer] = useState(86400); // 24 hours default
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState(null);
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
   
