@@ -112,7 +112,14 @@ export default function ProfilePage() {
               <div className="flex flex-col items-center gap-4">
                 <div className="relative">
                   <Avatar className="w-24 h-24 ring-4 ring-primary/20">
-                    <AvatarImage src={previewUrl || user?.profile_picture} />
+                    <AvatarImage 
+                      src={
+                        previewUrl || 
+                        (user?.profile_picture?.startsWith('http') 
+                          ? user.profile_picture 
+                          : `${process.env.REACT_APP_BACKEND_URL}${user?.profile_picture}`)
+                      } 
+                    />
                     <AvatarFallback className="text-2xl">
                       {user?.username?.[0]?.toUpperCase()}
                     </AvatarFallback>
