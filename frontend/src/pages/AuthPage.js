@@ -39,6 +39,80 @@ export default function AuthPage() {
     }
   };
   
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    if (!resetEmail) {
+      toast.error('Please enter your email');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const API_URL = process.env.REACT_APP_BACKEND_URL + '/api';
+      const response = await fetch(`${API_URL}/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: resetEmail })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        toast.success('Reset token generated! Check the response below.');
+        if (data.reset_token) {
+          setResetToken(data.reset_token);
+          setShowResetForm(true);
+          toast.info(`Your reset token: ${data.reset_token}`, { duration: 10000 });
+        }
+      } else {
+        toast.error('Failed to generate reset token');
+      }
+    } catch (error) {
+      toast.error('Something went wrong');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (!resetToken || !newPassword) {
+      toast.error('Please fill all fields');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const API_URL = process.env.REACT_APP_BACKEND_URL + '/api';
+      const response = await fetch(`${API_URL}/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: resetEmail,
+          reset_token: resetToken,
+          new_password: newPassword
+        })
+      });
+      
+      if (response.ok) {
+        toast.success('Password reset successfully! You can now login.');
+        setShowForgotPassword(false);
+        setShowResetForm(false);
+        setResetToken('');
+        setResetEmail('');
+        setNewPassword('');
+        setIsLogin(true);
+      } else {
+        const data = await response.json();
+        toast.error(data.detail || 'Failed to reset password');
+      }
+    } catch (error) {
+      toast.error('Something went wrong');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   return (
     <div className="min-h-screen flex items-center justify-center p-4 noise-texture">
       <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent" />
