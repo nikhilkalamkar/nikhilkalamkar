@@ -295,7 +295,7 @@ export default function MyStoriesPage() {
           <AlertDialogHeader>
             <AlertDialogTitle className="font-heading text-xl">Promote Your Story</AlertDialogTitle>
             <AlertDialogDescription>
-              Choose a promotion plan to boost your story's visibility
+              Choose a promotion plan to boost your story&apos;s visibility
             </AlertDialogDescription>
           </AlertDialogHeader>
           
