@@ -41,7 +41,8 @@ export default function ChatView() {
   useEffect(() => {
     fetchFriend();
     fetchMessages();
-    const interval = setInterval(fetchMessages, 3000);
+    // Faster polling - every 1 second instead of 3
+    const interval = setInterval(fetchMessages, 1000);
     return () => clearInterval(interval);
   }, [friendId]);
 
