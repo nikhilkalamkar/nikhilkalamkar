@@ -5,7 +5,7 @@ import { useChatStore } from '@/store/chatStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, Send, Image, Video, Smile, Phone, VideoIcon, MoreVertical, Ban } from 'lucide-react';
+import { ArrowLeft, Send, Image, Video, Smile, Phone, VideoIcon, MoreVertical, Ban, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatTime } from '@/lib/utils';
 import axios from 'axios';
