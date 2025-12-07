@@ -251,6 +251,45 @@ export default function ProfilePage() {
               </div>
             </CardContent>
           </Card>
+
+          {friendsCount > 0 && (
+            <Card className="glass-effect border-border/50">
+              <CardHeader>
+                <CardTitle className="font-heading">Friends ({friendsCount})</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {friends.slice(0, 5).map((friend) => (
+                    <div key={friend.user_id} className="flex items-center gap-3">
+                      <Avatar className="w-10 h-10">
+                        <AvatarImage 
+                          src={
+                            friend.profile_picture?.startsWith('http') 
+                              ? friend.profile_picture 
+                              : `${process.env.REACT_APP_BACKEND_URL}${friend.profile_picture}`
+                          } 
+                        />
+                        <AvatarFallback>
+                          {friend.username?.[0]?.toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <p className="font-medium">{friend.username}</p>
+                        {friend.bio && (
+                          <p className="text-xs text-muted-foreground truncate">{friend.bio}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  {friendsCount > 5 && (
+                    <p className="text-xs text-muted-foreground text-center pt-2">
+                      +{friendsCount - 5} more friends
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
           
           <Card className="glass-effect border-border/50">
             <CardHeader>
