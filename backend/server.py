@@ -345,6 +345,29 @@ async def get_messages(chat_id: str, user_id: str = Depends(verify_token)):
     ).sort("created_at", 1).to_list(500)
     return messages
 
+@api_router.put("/chats/{chat_id}/timer")
+async def update_disappearing_timer(chat_id: str, timer_seconds: int, user_id: str = Depends(verify_token)):
+    chat = await db.chats.find_one({"chat_id": chat_id})
+    if not chat or user_id not in chat['participants']:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    if timer_seconds not in [5, 60, 3600, 86400, 0]:
+        raise HTTPException(status_code=400, detail="Invalid timer value")
+    
+    await db.chats.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"disappearing_timer": timer_seconds}}
+    )
+    
+    other_user_id = [p for p in chat['participants'] if p != user_id][0]
+    await manager.send_personal_message({
+        "type": "timer_updated",
+        "chat_id": chat_id,
+        "timer_seconds": timer_seconds
+    }, other_user_id)
+    
+    return {"message": "Timer updated", "timer_seconds": timer_seconds}
+
 @api_router.post("/chats/{chat_id}/messages")
 async def send_message(chat_id: str, content: str = Form(""), message_type: str = Form("text"), media: Optional[UploadFile] = File(None), user_id: str = Depends(verify_token)):
     chat = await db.chats.find_one({"chat_id": chat_id})
