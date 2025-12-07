@@ -396,6 +396,45 @@ async def get_blocked_users(current_user_id: str = Depends(get_current_user)):
     
     return [User(**u) for u in blocked_users]
 
+@api_router.post("/screenshot/{friend_id}")
+async def notify_screenshot(friend_id: str, current_user_id: str = Depends(get_current_user)):
+    user = await db.users.find_one({"user_id": current_user_id}, {"_id": 0})
+    friend = await db.users.find_one({"user_id": friend_id}, {"_id": 0})
+    
+    if not friend:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Check if friend has screenshot notifications enabled
+    if friend.get("screenshot_notifications", True):
+        # Send notification message
+        message_id = secrets.token_urlsafe(16)
+        now = datetime.now(timezone.utc)
+        
+        notification_doc = {
+            "message_id": message_id,
+            "sender_id": "system",
+            "sender_username": "SnapVibe",
+            "recipient_id": friend_id,
+            "text": f"📸 {user['username']} took a screenshot!",
+            "image_url": None,
+            "disappearing": False,
+            "viewed": False,
+            "created_at": now.isoformat()
+        }
+        
+        await db.messages.insert_one(notification_doc)
+    
+    return {"message": "Screenshot notification sent"}
+
+@api_router.put("/settings/screenshot-notifications")
+async def toggle_screenshot_notifications(enabled: bool, current_user_id: str = Depends(get_current_user)):
+    await db.users.update_one(
+        {"user_id": current_user_id},
+        {"$set": {"screenshot_notifications": enabled}}
+    )
+    
+    return {"message": f"Screenshot notifications {'enabled' if enabled else 'disabled'}"}
+
 @api_router.post("/snaps", response_model=Snap)
 async def send_snap(snap_data: SnapCreate, current_user_id: str = Depends(get_current_user)):
     sender = await db.users.find_one({"user_id": current_user_id}, {"_id": 0})
