@@ -1,10 +1,16 @@
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, LogOut, UserX, Sparkles } from 'lucide-react';
+import { ArrowLeft, LogOut, UserX, Sparkles, Edit2, Camera, Save, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
 import FloatingNav from '@/components/FloatingNav';
+import axios from 'axios';
+import { toast } from 'sonner';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL + '/api';
 
 export default function ProfilePage() {
   const { user, logout } = useAuthStore();
