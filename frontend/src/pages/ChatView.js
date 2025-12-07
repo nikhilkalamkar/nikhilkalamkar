@@ -125,6 +125,63 @@ export default function ChatView() {
     }
   };
 
+  const startCall = async (type) => {
+    try {
+      setCallType(type);
+      setCallActive(true);
+      
+      const constraints = {
+        audio: true,
+        video: type === 'video'
+      };
+      
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      
+      if (localVideoRef.current && type === 'video') {
+        localVideoRef.current.srcObject = stream;
+      }
+      
+      toast.success(`${type === 'video' ? 'Video' : 'Audio'} call started`);
+    } catch (error) {
+      console.error('Failed to start call:', error);
+      toast.error('Failed to access camera/microphone');
+      setCallActive(false);
+    }
+  };
+
+  const endCall = () => {
+    if (localVideoRef.current?.srcObject) {
+      const tracks = localVideoRef.current.srcObject.getTracks();
+      tracks.forEach(track => track.stop());
+      localVideoRef.current.srcObject = null;
+    }
+    setCallActive(false);
+    setCallType(null);
+    setIsMuted(false);
+    setIsVideoOff(false);
+    toast.info('Call ended');
+  };
+
+  const toggleMute = () => {
+    if (localVideoRef.current?.srcObject) {
+      const audioTracks = localVideoRef.current.srcObject.getAudioTracks();
+      audioTracks.forEach(track => {
+        track.enabled = !track.enabled;
+      });
+      setIsMuted(!isMuted);
+    }
+  };
+
+  const toggleVideo = () => {
+    if (localVideoRef.current?.srcObject) {
+      const videoTracks = localVideoRef.current.srcObject.getVideoTracks();
+      videoTracks.forEach(track => {
+        track.enabled = !track.enabled;
+      });
+      setIsVideoOff(!isVideoOff);
+    }
+  };
+
   if (!friend) {
     return (
       <div className="min-h-screen flex items-center justify-center">
