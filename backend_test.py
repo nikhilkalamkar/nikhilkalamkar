@@ -651,6 +651,325 @@ class SnapCloneAPITester:
         self.log_test("Disappearing Messages E2E Flow", overall_success, details)
         return overall_success
 
+    def create_real_test_image(self, filename="test_real_image.png"):
+        """Create a real PNG image file for testing"""
+        import io
+        
+        # Create a simple 1x1 PNG image (minimal valid PNG)
+        png_data = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\tpHYs\x00\x00\x0b\x13\x00\x00\x0b\x13\x01\x00\x9a\x9c\x18\x00\x00\x00\nIDATx\x9cc```\x00\x00\x00\x04\x00\x01\xdd\x8d\xb4\x1c\x00\x00\x00\x00IEND\xaeB`\x82'
+        return io.BytesIO(png_data)
+
+    def test_image_upload_end_to_end(self):
+        """Test complete image upload and display flow"""
+        print("\n📸 Testing Image Upload End-to-End Flow...")
+        
+        # Step 1: Create two users and make them friends
+        timestamp = int(time.time())
+        user1_data = {
+            "username": f"imageuser1_{timestamp}",
+            "email": f"imageuser1_{timestamp}@example.com",
+            "password": "TestPass123!"
+        }
+        
+        user2_data = {
+            "username": f"imageuser2_{timestamp}",
+            "email": f"imageuser2_{timestamp}@example.com", 
+            "password": "TestPass123!"
+        }
+        
+        # Register User 1
+        success, response = self.run_test(
+            "Register Image Test User 1",
+            "POST",
+            "auth/register",
+            200,
+            data=user1_data
+        )
+        
+        if not success:
+            self.log_test("Image Upload E2E", False, "Failed to register user 1")
+            return False
+            
+        user1_token = response['access_token']
+        user1_id = response['user']['user_id']
+        
+        # Register User 2
+        success, response = self.run_test(
+            "Register Image Test User 2",
+            "POST",
+            "auth/register",
+            200,
+            data=user2_data
+        )
+        
+        if not success:
+            self.log_test("Image Upload E2E", False, "Failed to register user 2")
+            return False
+            
+        user2_token = response['access_token']
+        user2_id = response['user']['user_id']
+        
+        # User 1 sends friend request to User 2
+        original_token = self.token
+        self.token = user1_token
+        
+        success, _ = self.run_test(
+            "Send Friend Request for Image Test",
+            "POST",
+            f"friends/request?receiver_id={user2_id}",
+            200
+        )
+        
+        if not success:
+            self.log_test("Image Upload E2E", False, "Failed to send friend request")
+            return False
+        
+        # User 2 accepts friend request
+        self.token = user2_token
+        
+        success, response = self.run_test(
+            "Get Friend Requests for Image Test",
+            "GET",
+            "friends/requests",
+            200
+        )
+        
+        if not success or len(response) == 0:
+            self.log_test("Image Upload E2E", False, "No friend requests found")
+            return False
+            
+        request_id = response[0]['request_id']
+        
+        success, response = self.run_test(
+            "Accept Friend Request for Image Test",
+            "POST",
+            f"friends/accept/{request_id}",
+            200
+        )
+        
+        if not success:
+            self.log_test("Image Upload E2E", False, "Failed to accept friend request")
+            return False
+            
+        chat_id = response.get('chat_id')
+        if not chat_id:
+            self.log_test("Image Upload E2E", False, "No chat_id returned from friend accept")
+            return False
+        
+        # Step 2: User 1 uploads a real image
+        self.token = user1_token
+        
+        # Check uploads directory before upload
+        import os
+        files_before = os.listdir('/app/uploads/') if os.path.exists('/app/uploads/') else []
+        print(f"    Files in /app/uploads/ before upload: {files_before}")
+        
+        # Create and upload real image
+        image_file = self.create_real_test_image()
+        url = f"{self.base_url}/chats/{chat_id}/messages"
+        headers = {'Authorization': f'Bearer {user1_token}'}
+        
+        files = {'media': ('test_image.png', image_file, 'image/png')}
+        data = {
+            'content': 'Here is a test image!',
+            'message_type': 'image'
+        }
+        
+        try:
+            response = requests.post(url, data=data, files=files, headers=headers, timeout=15)
+            upload_success = response.status_code == 200
+            
+            if upload_success:
+                message_data = response.json()
+                media_url = message_data.get('media_url')
+                message_id = message_data.get('message_id')
+                message_type = message_data.get('message_type')
+                
+                details = f"Status: {response.status_code}, media_url: {media_url}, type: {message_type}"
+                self.log_test("Upload Real Image", True, details)
+                
+                # Step 3: Verify file was created in /app/uploads/
+                files_after = os.listdir('/app/uploads/') if os.path.exists('/app/uploads/') else []
+                new_files = [f for f in files_after if f not in files_before]
+                
+                if new_files:
+                    uploaded_filename = new_files[0]
+                    file_path = f"/app/uploads/{uploaded_filename}"
+                    file_exists = os.path.exists(file_path)
+                    file_size = os.path.getsize(file_path) if file_exists else 0
+                    
+                    self.log_test("Image File Created", file_exists, f"File: {uploaded_filename}, Size: {file_size} bytes")
+                    
+                    # Step 4: Test media endpoint directly
+                    if media_url:
+                        media_filename = media_url.split('/')[-1]
+                        media_response = requests.get(f"{self.base_url}/media/{media_filename}", timeout=10)
+                        media_success = media_response.status_code == 200
+                        content_type = media_response.headers.get('content-type', 'unknown')
+                        
+                        self.log_test("Media Endpoint Serves Image", media_success, 
+                                    f"Status: {media_response.status_code}, Content-Type: {content_type}")
+                        
+                        # Step 5: User 2 retrieves messages to see if image is visible
+                        self.token = user2_token
+                        
+                        success, messages_response = self.run_test(
+                            "User 2 Get Messages with Image",
+                            "GET",
+                            f"chats/{chat_id}/messages",
+                            200
+                        )
+                        
+                        if success:
+                            # Find the image message
+                            image_message = None
+                            for msg in messages_response:
+                                if msg.get('message_id') == message_id:
+                                    image_message = msg
+                                    break
+                            
+                            if image_message:
+                                has_media_url = bool(image_message.get('media_url'))
+                                correct_type = image_message.get('message_type') == 'image'
+                                
+                                self.log_test("User 2 Sees Image Message", has_media_url and correct_type,
+                                            f"media_url present: {has_media_url}, type: {image_message.get('message_type')}")
+                                
+                                # Step 6: User 2 tries to access the image directly
+                                if has_media_url:
+                                    user2_media_url = image_message['media_url']
+                                    if user2_media_url.startswith('/api/media/'):
+                                        filename = user2_media_url.split('/')[-1]
+                                        user2_media_response = requests.get(f"{self.base_url}/media/{filename}", timeout=10)
+                                        user2_media_success = user2_media_response.status_code == 200
+                                        
+                                        self.log_test("User 2 Can Access Image", user2_media_success,
+                                                    f"Status: {user2_media_response.status_code}")
+                                        
+                                        # Overall success
+                                        overall_success = (upload_success and file_exists and 
+                                                         media_success and has_media_url and 
+                                                         correct_type and user2_media_success)
+                                        
+                                        self.log_test("Image Upload E2E Flow", overall_success,
+                                                    f"All steps completed successfully: {overall_success}")
+                                        
+                                        # Restore original token
+                                        self.token = original_token
+                                        return overall_success
+                else:
+                    self.log_test("Image File Created", False, "No new files found in /app/uploads/")
+            else:
+                try:
+                    error_data = response.json()
+                    details = f"Status: {response.status_code}, Error: {error_data.get('detail', 'Unknown error')}"
+                except:
+                    details = f"Status: {response.status_code}, Response: {response.text[:100]}"
+                self.log_test("Upload Real Image", False, details)
+                
+        except Exception as e:
+            self.log_test("Upload Real Image", False, f"Exception: {str(e)}")
+        
+        # Restore original token
+        self.token = original_token
+        self.log_test("Image Upload E2E Flow", False, "Failed during image upload process")
+        return False
+
+    def test_media_endpoint_directly(self):
+        """Test media endpoint with existing files"""
+        print("\n🖼️ Testing Media Endpoint with Existing Files...")
+        
+        import os
+        if not os.path.exists('/app/uploads/'):
+            self.log_test("Media Endpoint Test", False, "/app/uploads/ directory does not exist")
+            return False
+        
+        files = os.listdir('/app/uploads/')
+        if not files:
+            self.log_test("Media Endpoint Test", False, "No files in /app/uploads/ directory")
+            return False
+        
+        success_count = 0
+        for filename in files:
+            try:
+                response = requests.get(f"{self.base_url}/media/{filename}", timeout=10)
+                success = response.status_code == 200
+                content_type = response.headers.get('content-type', 'unknown')
+                
+                details = f"Status: {response.status_code}, Content-Type: {content_type}"
+                self.log_test(f"Serve Media File: {filename}", success, details)
+                
+                if success:
+                    success_count += 1
+                    
+            except Exception as e:
+                self.log_test(f"Serve Media File: {filename}", False, f"Exception: {str(e)}")
+        
+        overall_success = success_count == len(files)
+        self.log_test("All Media Files Accessible", overall_success, f"{success_count}/{len(files)} files served successfully")
+        return overall_success
+
+    def check_database_media_messages(self):
+        """Check database for existing media messages"""
+        print("\n🗄️ Checking Database for Media Messages...")
+        
+        # This would require direct database access, which we don't have in the API
+        # Instead, let's check through the API by getting all chats and messages
+        
+        if not self.token:
+            self.log_test("Database Media Check", False, "No authentication token available")
+            return False
+        
+        try:
+            # Get all chats
+            success, chats_response = self.run_test(
+                "Get All Chats for Media Check",
+                "GET",
+                "chats",
+                200
+            )
+            
+            if not success:
+                return False
+            
+            media_messages_found = 0
+            total_messages = 0
+            
+            for chat in chats_response:
+                chat_id = chat['chat_id']
+                
+                # Get messages for this chat
+                success, messages_response = self.run_test(
+                    f"Get Messages for Chat {chat_id[:8]}...",
+                    "GET", 
+                    f"chats/{chat_id}/messages",
+                    200
+                )
+                
+                if success:
+                    for message in messages_response:
+                        total_messages += 1
+                        if message.get('media_url') and message.get('message_type') in ['image', 'video', 'media']:
+                            media_messages_found += 1
+                            
+                            # Check if the media file actually exists
+                            media_url = message.get('media_url')
+                            if media_url and media_url.startswith('/api/media/'):
+                                filename = media_url.split('/')[-1]
+                                file_path = f"/app/uploads/{filename}"
+                                file_exists = os.path.exists(file_path)
+                                
+                                status = "EXISTS" if file_exists else "MISSING"
+                                print(f"    Media message: {message.get('message_id', 'unknown')[:8]}... -> {filename} [{status}]")
+            
+            self.log_test("Database Media Messages Check", True, 
+                        f"Found {media_messages_found} media messages out of {total_messages} total messages")
+            return True
+            
+        except Exception as e:
+            self.log_test("Database Media Check", False, f"Exception: {str(e)}")
+            return False
+
     def run_all_tests(self):
         """Run comprehensive test suite"""
         print("🚀 Starting SnapClone API Tests...")
