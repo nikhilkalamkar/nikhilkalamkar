@@ -133,6 +133,12 @@ export default function ChatView() {
 
   const startCall = async (type) => {
     try {
+      // Check if browser supports getUserMedia
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        toast.error('Your browser does not support camera/microphone access');
+        return;
+      }
+
       setCallType(type);
       setCallActive(true);
       
@@ -141,17 +147,37 @@ export default function ChatView() {
         video: type === 'video'
       };
       
+      toast.info(`Requesting ${type === 'video' ? 'camera & microphone' : 'microphone'} access...`);
+      
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       
       if (localVideoRef.current && type === 'video') {
         localVideoRef.current.srcObject = stream;
       }
       
+      // Store stream for audio-only calls
+      if (type === 'audio' && localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
+      }
+      
       toast.success(`${type === 'video' ? 'Video' : 'Audio'} call started`);
     } catch (error) {
       console.error('Failed to start call:', error);
-      toast.error('Failed to access camera/microphone');
       setCallActive(false);
+      setCallType(null);
+      
+      // Handle different error types
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        toast.error('Camera/microphone access denied. Please allow access in your browser settings.', {
+          duration: 5000
+        });
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+        toast.error('No camera or microphone found on your device');
+      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+        toast.error('Camera/microphone is already in use by another application');
+      } else {
+        toast.error('Failed to access camera/microphone. Please check your device and browser settings.');
+      }
     }
   };
 
