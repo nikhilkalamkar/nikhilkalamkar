@@ -159,6 +159,24 @@ export default function ChatView() {
         markAsViewed(msg.message_id);
       }
     });
+
+    // Auto-delete expired disappearing messages
+    const checkExpiredMessages = () => {
+      const now = new Date().toISOString();
+      const hasExpired = messages.some(msg => {
+        if (msg.disappearing && msg.expires_at) {
+          return msg.expires_at < now;
+        }
+        return false;
+      });
+
+      if (hasExpired) {
+        fetchMessages(); // Refresh to remove expired messages
+      }
+    };
+
+    const interval = setInterval(checkExpiredMessages, 1000); // Check every second
+    return () => clearInterval(interval);
   }, [messages]);
 
   const notifyScreenshot = useCallback(async () => {
