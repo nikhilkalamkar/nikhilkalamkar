@@ -232,16 +232,17 @@ export default function CreateStoryDialog({ onStoryCreated }) {
               
               {!createdStoryId && (
                 <Button
-                data-testid="cancel-upload-button"
-                onClick={() => {
-                  setSelectedFile(null);
-                  setCreatedStoryId(null);
-                }}
-                variant="ghost"
-                className="w-full"
-              >
-                Cancel
-              </Button>
+                  data-testid="cancel-upload-button"
+                  onClick={() => {
+                    setSelectedFile(null);
+                    setCreatedStoryId(null);
+                  }}
+                  variant="ghost"
+                  className="w-full"
+                >
+                  Cancel
+                </Button>
+              )}
             </div>
           )}
         </div>
