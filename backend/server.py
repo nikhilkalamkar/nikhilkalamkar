@@ -205,11 +205,14 @@ async def get_me(current_user_id: str = Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="User not found")
     return User(**user)
 
+class AvatarUpdate(BaseModel):
+    avatar_url: str
+
 @api_router.put("/users/me/avatar")
-async def update_avatar(avatar_url: str, current_user_id: str = Depends(get_current_user)):
+async def update_avatar(avatar_data: AvatarUpdate, current_user_id: str = Depends(get_current_user)):
     result = await db.users.update_one(
         {"user_id": current_user_id},
-        {"$set": {"avatar_url": avatar_url}}
+        {"$set": {"avatar_url": avatar_data.avatar_url}}
     )
     
     if result.modified_count == 0:
