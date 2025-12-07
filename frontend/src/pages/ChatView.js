@@ -617,6 +617,17 @@ export default function ChatView() {
         </div>
       )}
 
+      {screenshotAttempt && (
+        <div className="fixed inset-0 bg-red-500/90 z-50 flex flex-col items-center justify-center">
+          <div className="text-center text-white">
+            <div className="text-6xl mb-4">🚫</div>
+            <h2 className="text-3xl font-bold mb-2">Screenshot Blocked!</h2>
+            <p className="text-xl mb-4">This content is protected</p>
+            <p className="text-lg opacity-80">Your friend has been notified</p>
+          </div>
+        </div>
+      )}
+
       <div className={`flex-1 overflow-y-auto px-4 py-6 max-w-md mx-auto w-full transition-all duration-300 ${
         contentBlurred ? 'blur-lg select-none pointer-events-none' : ''
       }`}>
