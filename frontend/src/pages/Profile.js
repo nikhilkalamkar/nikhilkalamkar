@@ -185,6 +185,26 @@ export default function Profile() {
         </div>
 
         <div className="bg-white rounded-2xl p-4 shadow-sm">
+          <h3 className="font-bold text-lg mb-3">Privacy Settings</h3>
+          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                {screenshotNotifications ? <Bell size={20} className="text-blue-600" /> : <BellOff size={20} className="text-gray-400" />}
+              </div>
+              <div>
+                <p className="font-bold">Screenshot Notifications</p>
+                <p className="text-xs text-gray-500">Get notified when someone screenshots</p>
+              </div>
+            </div>
+            <Switch
+              checked={screenshotNotifications}
+              onCheckedChange={toggleScreenshotNotifications}
+              data-testid="screenshot-notifications-toggle"
+            />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-4 shadow-sm">
           <button
             onClick={() => setShowBlocked(!showBlocked)}
             className="w-full flex items-center justify-between"
