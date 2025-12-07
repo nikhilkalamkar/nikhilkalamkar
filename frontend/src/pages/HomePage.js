@@ -110,7 +110,7 @@ export default function HomePage() {
       <div className="max-w-md mx-auto">
         <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border px-4 py-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-heading font-black tracking-tight">SnapClone</h1>
+            <h1 className="text-2xl font-heading font-black tracking-tight">ishukart</h1>
             <div className="flex items-center gap-2">
               {user?.email === 'admin@snapclone.com' && (
                 <Button
