@@ -27,7 +27,7 @@ export default function AdminPage() {
   const navigate = useNavigate();
   
   useEffect(() => {
-    if (user?.email !== 'admin@snapclone.com') {
+    if (user?.email !== 'admin@ishukart.com') {
       navigate('/');
       return;
     }
