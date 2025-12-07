@@ -428,6 +428,28 @@ async def create_story(media: UploadFile = File(...), user_id: str = Depends(ver
     response_dict = {k: v for k, v in story_dict.items() if k != '_id'}
     return response_dict
 
+@api_router.delete("/stories/{story_id}")
+async def delete_story(story_id: str, user_id: str = Depends(verify_token)):
+    story = await db.stories.find_one({"story_id": story_id, "user_id": user_id})
+    if not story:
+        raise HTTPException(status_code=404, detail="Story not found or access denied")
+    
+    result = await db.stories.delete_one({"story_id": story_id, "user_id": user_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Story not found")
+    
+    await db.story_promotions.delete_many({"story_id": story_id})
+    
+    if story.get('media_url'):
+        file_path = f"/tmp/{story['media_url'].split('/')[-1]}"
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except:
+                pass
+    
+    return {"message": "Story deleted successfully"}
+
 @api_router.get("/stories")
 async def get_stories(user_id: str = Depends(verify_token)):
     blocked = await db.blocked_users.find({"blocker_id": user_id}, {"_id": 0}).to_list(1000)
