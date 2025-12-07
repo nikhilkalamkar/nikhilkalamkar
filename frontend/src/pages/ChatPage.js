@@ -79,6 +79,9 @@ export default function ChatPage() {
       });
       const chat = response.data.find(c => c.chat_id === chatId);
       setChatData(chat);
+      if (chat?.disappearing_timer !== undefined) {
+        setDisappearTimer(chat.disappearing_timer);
+      }
     } catch (error) {
       console.error('Failed to load chat:', error);
     }
