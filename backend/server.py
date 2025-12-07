@@ -769,17 +769,18 @@ async def get_media(filename: str, request: Request):
     
     # For HEAD requests, just return headers without content
     if request.method == "HEAD":
-        file_size = os.path.getsize(file_path)
         return Response(
             content="",
             media_type=media_type,
-            headers={"Content-Length": str(file_size)}
+            headers=headers
         )
     
-    async with aiofiles.open(file_path, 'rb') as f:
-        content = await f.read()
-    
-    return StreamingResponse(io.BytesIO(content), media_type=media_type)
+    # Use FileResponse for better performance with caching
+    return FileResponse(
+        path=file_path,
+        media_type=media_type,
+        headers=headers
+    )
 
 @app.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: str):
