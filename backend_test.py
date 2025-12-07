@@ -991,6 +991,18 @@ class SnapCloneAPITester:
         self.test_friend_request_flow()
         self.test_chat_functionality()
         
+        # CRITICAL: Image Upload Testing (User's Main Concern)
+        print("\n" + "="*50)
+        print("🚨 CRITICAL IMAGE UPLOAD TESTING")
+        print("="*50)
+        
+        # Check existing media files and database state
+        self.check_database_media_messages()
+        self.test_media_endpoint_directly()
+        
+        # Test complete image upload flow
+        self.test_image_upload_end_to_end()
+        
         # Disappearing Messages Feature Testing
         self.test_disappearing_messages_end_to_end()
         
@@ -1004,6 +1016,25 @@ class SnapCloneAPITester:
         # Admin functionality
         self.test_admin_login()
         self.test_admin_functionality()
+        
+        return True
+
+    def run_image_tests_only(self):
+        """Run only image-related tests for focused debugging"""
+        print("📸 Starting Image Upload Focused Tests...")
+        print("=" * 50)
+        
+        # Quick auth setup
+        if not self.test_user_registration():
+            print("❌ Registration failed - stopping tests")
+            return False
+            
+        # Check existing state
+        self.check_database_media_messages()
+        self.test_media_endpoint_directly()
+        
+        # Main image upload test
+        self.test_image_upload_end_to_end()
         
         return True
 
