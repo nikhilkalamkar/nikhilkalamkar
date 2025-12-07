@@ -543,15 +543,23 @@ async def send_message(chat_id: str, content: str = Form(""), message_type: str 
 
 @api_router.post("/stories")
 async def create_story(media: UploadFile = File(...), user_id: str = Depends(verify_token)):
-    file_ext = media.filename.split('.')[-1]
-    file_name = f"{uuid.uuid4()}.{file_ext}"
+    file_ext = media.filename.split('.')[-1].lower()
+    content = await media.read()
+    
+    media_type = "video" if file_ext in ['mp4', 'mov', 'avi', 'webm', 'mkv'] else "image"
+    
+    # Optimize image files
+    if media_type == "image":
+        content = await optimize_image(content, media.filename)
+        file_name = f"{uuid.uuid4()}.jpg"  # Save as JPEG after optimization
+    else:
+        file_name = f"{uuid.uuid4()}.{file_ext}"
+    
     file_path = f"/app/uploads/{file_name}"
     async with aiofiles.open(file_path, 'wb') as f:
-        content = await media.read()
         await f.write(content)
     
     media_url = f"/api/media/{file_name}"
-    media_type = "video" if file_ext in ['mp4', 'mov', 'avi'] else "image"
     
     story = Story(user_id=user_id, media_url=media_url, media_type=media_type)
     story_dict = story.model_dump()
