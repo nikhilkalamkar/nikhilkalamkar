@@ -275,7 +275,7 @@ export default function Landing() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#F5E618] text-black font-bold rounded-full h-12 hover:scale-105 transition-transform shadow-lg"
+              className="w-full bg-blue-600 text-white font-bold rounded-full h-12 hover:scale-105 transition-transform shadow-lg hover:bg-blue-700"
               data-testid="auth-submit-btn"
             >
               {loading ? 'Loading...' : isLogin ? 'Login' : 'Sign Up'}
