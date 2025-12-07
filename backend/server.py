@@ -628,7 +628,7 @@ async def get_all_users(user_id: str = Depends(verify_token)):
 @api_router.delete("/admin/users/{delete_user_id}")
 async def delete_user(delete_user_id: str, user_id: str = Depends(verify_token)):
     admin_user = await db.users.find_one({"user_id": user_id})
-    if not admin_user or admin_user.get('email') != 'admin@snapclone.com':
+    if not admin_user or admin_user.get('email') != 'admin@ishukart.com':
         raise HTTPException(status_code=403, detail="Admin access required")
     
     await db.users.delete_one({"user_id": delete_user_id})
