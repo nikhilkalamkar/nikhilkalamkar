@@ -209,6 +209,27 @@ frontend:
           
           TESTING LIMITATION: Unable to perform live UI testing due to authentication requirements, but code implementation is complete and follows all specified requirements.
 
+  - task: "Image Display in Chat Messages"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/ChatPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Fixed image display issues in chat messages:
+          1. Updated media endpoint (/api/media/{filename}) to return correct Content-Type headers (image/jpeg, image/png, video/mp4, etc.)
+          2. Changed media storage from /tmp/ to /app/uploads/ for persistence
+          3. Image rendering logic in ChatPage.js (lines 303-316) constructs proper URLs using REACT_APP_BACKEND_URL
+          4. Media URL construction: message.media_url.startsWith('http') ? message.media_url : `${process.env.REACT_APP_BACKEND_URL}${message.media_url}`
+          5. Backend media endpoint returns proper StreamingResponse with correct media_type based on file extension
+          
+          ISSUE REPORTED: User reported images showing as blue question mark placeholders instead of rendering properly
+          EXPECTED: Images should display as actual images in chat bubbles, not as blue question mark icons
+
   - task: "WebSocket Timer Sync"
     implemented: true
     working: true
