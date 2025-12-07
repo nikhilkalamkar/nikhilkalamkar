@@ -691,11 +691,11 @@ async def startup():
     await db.users.create_index("email", unique=True)
     await db.chats.create_index("chat_id", unique=True)
     await db.messages.create_index("chat_id")
-    await db.messages.create_index("expires_at")
+    await db.messages.create_index("expires_at", expireAfterSeconds=0)
     await db.stories.create_index("user_id")
-    await db.stories.create_index("expires_at")
+    await db.stories.create_index("expires_at", expireAfterSeconds=0)
     await db.blocked_users.create_index(["blocker_id", "blocked_id"], unique=True)
-    logger.info("Database indexes created")
+    logger.info("Database indexes created with TTL")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
