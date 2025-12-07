@@ -238,7 +238,10 @@ export default function CreateStoryDialog({ onStoryCreated }) {
               ) : (
                 <>
                   <div className="space-y-3 py-2">
-                    <p className="text-sm font-semibold text-center">Promote Your Stories?</p>
+                    <div className="text-center space-y-1">
+                      <p className="text-sm font-semibold">Promote Your Stories?</p>
+                      <p className="text-xs text-muted-foreground">Reach more people beyond your friends</p>
+                    </div>
                     
                     <div className="grid grid-cols-1 gap-2">
                       <button
