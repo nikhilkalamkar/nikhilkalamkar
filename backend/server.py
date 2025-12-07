@@ -54,6 +54,7 @@ class User(BaseModel):
     email: EmailStr
     avatar_url: Optional[str] = None
     friends: List[str] = []
+    blocked_users: List[str] = []
     created_at: str
 
 class SnapCreate(BaseModel):
