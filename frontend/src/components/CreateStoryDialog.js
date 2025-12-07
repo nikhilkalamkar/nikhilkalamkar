@@ -57,7 +57,7 @@ export default function CreateStoryDialog({ onStoryCreated }) {
       });
       
       setCreatedStoryId(response.data.story_id);
-      toast.success('Story created! Choose a promotion plan below to boost visibility.');
+      toast.success('Story uploaded! Choose to publish free or promote for more reach.');
       onStoryCreated();
     } catch (error) {
       toast.error('Failed to create story');
