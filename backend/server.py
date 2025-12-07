@@ -314,10 +314,16 @@ async def get_friend_requests(user_id: str = Depends(verify_token)):
 @api_router.get("/chats")
 async def get_chats(user_id: str = Depends(verify_token)):
     chats = await db.chats.find({"participants": user_id}, {"_id": 0}).to_list(100)
-    for chat in chats:
-        other_id = [p for p in chat['participants'] if p != user_id][0]
-        other_user = await db.users.find_one({"user_id": other_id}, {"_id": 0, "password_hash": 0})
-        chat['other_user'] = other_user
+    
+    if chats:
+        other_ids = [[p for p in chat['participants'] if p != user_id][0] for chat in chats]
+        other_users = await db.users.find({"user_id": {"$in": other_ids}}, {"_id": 0, "password_hash": 0}).to_list(len(other_ids))
+        user_map = {u['user_id']: u for u in other_users}
+        
+        for chat in chats:
+            other_id = [p for p in chat['participants'] if p != user_id][0]
+            chat['other_user'] = user_map.get(other_id)
+    
     return chats
 
 @api_router.get("/chats/{chat_id}/messages")
