@@ -78,9 +78,21 @@ export default function ChatPage() {
   const handleSend = async () => {
     if (!messageText.trim() && !selectedMedia) return;
     
-    await sendMessage(chatId, messageText, selectedMedia ? 'media' : 'text', selectedMedia, token);
-    setMessageText('');
-    setSelectedMedia(null);
+    const result = await sendMessage(
+      chatId, 
+      messageText || (selectedMedia ? 'Media' : ''), 
+      selectedMedia ? 'media' : 'text', 
+      selectedMedia, 
+      token
+    );
+    
+    if (result?.success) {
+      setMessageText('');
+      setSelectedMedia(null);
+      toast.success('Message sent');
+    } else {
+      toast.error(result?.error || 'Failed to send message');
+    }
   };
   
   const handleMediaSelect = (e, type) => {
