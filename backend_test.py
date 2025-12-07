@@ -1019,6 +1019,328 @@ class SnapCloneAPITester:
         
         return True
 
+    def test_message_deletion_delete_for_me(self):
+        """Test delete for me functionality"""
+        print("\n🗑️ Testing Message Deletion - Delete for Me...")
+        
+        # Get a chat to test with
+        success, response = self.run_test(
+            "Get Chats for Delete Test",
+            "GET", 
+            "chats",
+            200
+        )
+        
+        if not success or len(response) == 0:
+            self.log_test("Delete for Me Test", False, "No chats available for testing")
+            return False
+            
+        chat_id = response[0]['chat_id']
+        
+        # Send a test message first
+        message_url = f"{self.base_url}/chats/{chat_id}/messages"
+        message_headers = {'Authorization': f'Bearer {self.token}'}
+        message_data = {
+            "content": "Test message for delete-for-me",
+            "message_type": "text"
+        }
+        
+        try:
+            response = requests.post(message_url, data=message_data, headers=message_headers, timeout=10)
+            if response.status_code != 200:
+                self.log_test("Delete for Me Test", False, f"Failed to send test message: {response.status_code}")
+                return False
+                
+            sent_message = response.json()
+            message_id = sent_message.get('message_id')
+            
+            if not message_id:
+                self.log_test("Delete for Me Test", False, "No message_id in response")
+                return False
+            
+            # Verify message exists before deletion
+            get_url = f"{self.base_url}/chats/{chat_id}/messages"
+            response = requests.get(get_url, headers=message_headers, timeout=10)
+            
+            if response.status_code != 200:
+                self.log_test("Delete for Me Test", False, "Failed to get messages before deletion")
+                return False
+                
+            messages_before = response.json()
+            message_found_before = any(msg.get('message_id') == message_id for msg in messages_before)
+            
+            if not message_found_before:
+                self.log_test("Delete for Me Test", False, "Test message not found before deletion")
+                return False
+            
+            self.log_test("Message Exists Before Deletion", True, f"Message {message_id[:8]}... found")
+            
+            # Now delete the message for current user
+            delete_url = f"{self.base_url}/messages/{message_id}/delete-for-me"
+            delete_response = requests.delete(delete_url, headers=message_headers, timeout=10)
+            
+            delete_success = delete_response.status_code == 200
+            delete_details = f"Status: {delete_response.status_code}"
+            
+            if not delete_success:
+                try:
+                    error_data = delete_response.json()
+                    delete_details += f", Error: {error_data.get('detail', 'Unknown error')}"
+                except:
+                    delete_details += f", Response: {delete_response.text[:100]}"
+            
+            self.log_test("Delete Message for Me API", delete_success, delete_details)
+            
+            if delete_success:
+                # Verify message is no longer visible to current user
+                response = requests.get(get_url, headers=message_headers, timeout=10)
+                
+                if response.status_code == 200:
+                    messages_after = response.json()
+                    message_found_after = any(msg.get('message_id') == message_id for msg in messages_after)
+                    
+                    success = not message_found_after
+                    details = "Message hidden from current user" if success else "Message still visible to current user"
+                    self.log_test("Message Hidden After Delete for Me", success, details)
+                    return success
+                else:
+                    self.log_test("Delete for Me Test", False, "Failed to get messages after deletion")
+                    return False
+            
+            return delete_success
+            
+        except Exception as e:
+            self.log_test("Delete for Me Test", False, f"Exception: {str(e)}")
+            return False
+
+    def test_message_deletion_delete_for_everyone(self):
+        """Test delete for everyone functionality"""
+        print("\n🗑️ Testing Message Deletion - Delete for Everyone...")
+        
+        # Create two users and establish friendship for proper testing
+        timestamp = int(time.time())
+        user1_data = {
+            "username": f"deleteuser1_{timestamp}",
+            "email": f"deleteuser1_{timestamp}@example.com",
+            "password": "TestPass123!"
+        }
+        
+        user2_data = {
+            "username": f"deleteuser2_{timestamp}",
+            "email": f"deleteuser2_{timestamp}@example.com", 
+            "password": "TestPass123!"
+        }
+        
+        # Register User 1 (sender)
+        success, response = self.run_test(
+            "Register Delete Test User 1",
+            "POST",
+            "auth/register",
+            200,
+            data=user1_data
+        )
+        
+        if not success:
+            self.log_test("Delete for Everyone Test", False, "Failed to register user 1")
+            return False
+            
+        user1_token = response['access_token']
+        user1_id = response['user']['user_id']
+        
+        # Register User 2 (receiver)
+        success, response = self.run_test(
+            "Register Delete Test User 2",
+            "POST",
+            "auth/register",
+            200,
+            data=user2_data
+        )
+        
+        if not success:
+            self.log_test("Delete for Everyone Test", False, "Failed to register user 2")
+            return False
+            
+        user2_token = response['access_token']
+        user2_id = response['user']['user_id']
+        
+        # Establish friendship
+        original_token = self.token
+        self.token = user1_token
+        
+        # User 1 sends friend request
+        success, _ = self.run_test(
+            "Send Friend Request for Delete Test",
+            "POST",
+            f"friends/request?receiver_id={user2_id}",
+            200
+        )
+        
+        if not success:
+            self.log_test("Delete for Everyone Test", False, "Failed to send friend request")
+            return False
+        
+        # User 2 accepts friend request
+        self.token = user2_token
+        
+        success, response = self.run_test(
+            "Get Friend Requests for Delete Test",
+            "GET",
+            "friends/requests",
+            200
+        )
+        
+        if not success or len(response) == 0:
+            self.log_test("Delete for Everyone Test", False, "No friend requests found")
+            return False
+            
+        request_id = response[0]['request_id']
+        
+        success, response = self.run_test(
+            "Accept Friend Request for Delete Test",
+            "POST",
+            f"friends/accept/{request_id}",
+            200
+        )
+        
+        if not success:
+            self.log_test("Delete for Everyone Test", False, "Failed to accept friend request")
+            return False
+            
+        chat_id = response.get('chat_id')
+        if not chat_id:
+            self.log_test("Delete for Everyone Test", False, "No chat_id returned")
+            return False
+        
+        # User 1 sends a message
+        self.token = user1_token
+        
+        message_url = f"{self.base_url}/chats/{chat_id}/messages"
+        message_headers = {'Authorization': f'Bearer {user1_token}'}
+        message_data = {
+            "content": "Test message for delete-for-everyone",
+            "message_type": "text"
+        }
+        
+        try:
+            response = requests.post(message_url, data=message_data, headers=message_headers, timeout=10)
+            if response.status_code != 200:
+                self.log_test("Delete for Everyone Test", False, f"Failed to send test message: {response.status_code}")
+                return False
+                
+            sent_message = response.json()
+            message_id = sent_message.get('message_id')
+            
+            if not message_id:
+                self.log_test("Delete for Everyone Test", False, "No message_id in response")
+                return False
+            
+            # Test 1: User 1 (sender) deletes for everyone - should succeed
+            delete_url = f"{self.base_url}/messages/{message_id}/delete-for-everyone"
+            delete_response = requests.delete(delete_url, headers=message_headers, timeout=10)
+            
+            delete_success = delete_response.status_code == 200
+            delete_details = f"Status: {delete_response.status_code}"
+            
+            if not delete_success:
+                try:
+                    error_data = delete_response.json()
+                    delete_details += f", Error: {error_data.get('detail', 'Unknown error')}"
+                except:
+                    delete_details += f", Response: {delete_response.text[:100]}"
+            
+            self.log_test("Sender Delete for Everyone API", delete_success, delete_details)
+            
+            if delete_success:
+                # Verify message shows "This message was deleted" for both users
+                
+                # Check for User 1 (sender)
+                get_url = f"{self.base_url}/chats/{chat_id}/messages"
+                response = requests.get(get_url, headers={'Authorization': f'Bearer {user1_token}'}, timeout=10)
+                
+                if response.status_code == 200:
+                    messages_user1 = response.json()
+                    deleted_message_user1 = None
+                    for msg in messages_user1:
+                        if msg.get('message_id') == message_id:
+                            deleted_message_user1 = msg
+                            break
+                    
+                    if deleted_message_user1:
+                        content_changed = deleted_message_user1.get('content') == "This message was deleted"
+                        deleted_flag = deleted_message_user1.get('deleted_for_everyone', False)
+                        
+                        self.log_test("User 1 Sees Deleted Message", content_changed and deleted_flag,
+                                    f"Content: '{deleted_message_user1.get('content')}', Flag: {deleted_flag}")
+                    else:
+                        self.log_test("User 1 Sees Deleted Message", False, "Message not found")
+                
+                # Check for User 2 (receiver)
+                response = requests.get(get_url, headers={'Authorization': f'Bearer {user2_token}'}, timeout=10)
+                
+                if response.status_code == 200:
+                    messages_user2 = response.json()
+                    deleted_message_user2 = None
+                    for msg in messages_user2:
+                        if msg.get('message_id') == message_id:
+                            deleted_message_user2 = msg
+                            break
+                    
+                    if deleted_message_user2:
+                        content_changed = deleted_message_user2.get('content') == "This message was deleted"
+                        deleted_flag = deleted_message_user2.get('deleted_for_everyone', False)
+                        
+                        self.log_test("User 2 Sees Deleted Message", content_changed and deleted_flag,
+                                    f"Content: '{deleted_message_user2.get('content')}', Flag: {deleted_flag}")
+                    else:
+                        self.log_test("User 2 Sees Deleted Message", False, "Message not found")
+            
+            # Test 2: Send another message and test authorization (User 2 tries to delete User 1's message)
+            message_data2 = {
+                "content": "Another test message for authorization test",
+                "message_type": "text"
+            }
+            
+            response = requests.post(message_url, data=message_data2, headers=message_headers, timeout=10)
+            if response.status_code == 200:
+                sent_message2 = response.json()
+                message_id2 = sent_message2.get('message_id')
+                
+                if message_id2:
+                    # User 2 tries to delete User 1's message for everyone (should fail)
+                    delete_url2 = f"{self.base_url}/messages/{message_id2}/delete-for-everyone"
+                    user2_headers = {'Authorization': f'Bearer {user2_token}'}
+                    delete_response2 = requests.delete(delete_url2, headers=user2_headers, timeout=10)
+                    
+                    auth_test_success = delete_response2.status_code == 403
+                    auth_details = f"Status: {delete_response2.status_code} (expected 403)"
+                    
+                    self.log_test("Authorization Check - Non-sender Cannot Delete", auth_test_success, auth_details)
+            
+            # Restore original token
+            self.token = original_token
+            return delete_success
+            
+        except Exception as e:
+            self.log_test("Delete for Everyone Test", False, f"Exception: {str(e)}")
+            self.token = original_token
+            return False
+
+    def test_message_deletion_comprehensive(self):
+        """Test comprehensive message deletion scenarios"""
+        print("\n🗑️ Testing Message Deletion - Comprehensive Scenarios...")
+        
+        # Test both deletion types
+        delete_for_me_success = self.test_message_deletion_delete_for_me()
+        delete_for_everyone_success = self.test_message_deletion_delete_for_everyone()
+        
+        overall_success = delete_for_me_success and delete_for_everyone_success
+        
+        details = f"Delete for Me: {'✅' if delete_for_me_success else '❌'}, " + \
+                 f"Delete for Everyone: {'✅' if delete_for_everyone_success else '❌'}"
+        
+        self.log_test("Message Deletion Comprehensive Test", overall_success, details)
+        return overall_success
+
     def run_image_tests_only(self):
         """Run only image-related tests for focused debugging"""
         print("📸 Starting Image Upload Focused Tests...")
@@ -1035,6 +1357,26 @@ class SnapCloneAPITester:
         
         # Main image upload test
         self.test_image_upload_end_to_end()
+        
+        return True
+
+    def run_message_deletion_tests_only(self):
+        """Run only message deletion tests for focused testing"""
+        print("🗑️ Starting Message Deletion Focused Tests...")
+        print("=" * 50)
+        
+        # Quick auth setup
+        if not self.test_user_registration():
+            print("❌ Registration failed - stopping tests")
+            return False
+            
+        # Ensure we have a chat for testing
+        if not self.test_friend_request_flow():
+            print("❌ Friend request flow failed - needed for deletion tests")
+            return False
+        
+        # Main message deletion tests
+        self.test_message_deletion_comprehensive()
         
         return True
 
