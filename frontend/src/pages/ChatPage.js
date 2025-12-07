@@ -307,6 +307,12 @@ export default function ChatPage() {
                         src={message.media_url.startsWith('http') ? message.media_url : `${process.env.REACT_APP_BACKEND_URL}${message.media_url}`}
                         alt="Message media"
                         className="rounded-lg max-w-full"
+                        onError={(e) => {
+                          console.error('Image failed to load:', e.target.src);
+                          console.log('REACT_APP_BACKEND_URL:', process.env.REACT_APP_BACKEND_URL);
+                          console.log('media_url:', message.media_url);
+                        }}
+                        onLoad={() => console.log('Image loaded successfully:', message.media_url)}
                       />
                     ) : message.message_type === 'video' ? (
                       <video controls className="rounded-lg max-w-full">
