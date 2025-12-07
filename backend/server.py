@@ -621,9 +621,6 @@ async def get_agora_token(channel: str, user_id: str = Depends(verify_token)):
     token = RtcTokenBuilder.buildTokenWithUid(app_id, app_certificate, channel, uid, 1, expiration_time)
     return {"token": token, "uid": uid, "channel": channel}
 
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, WebSocket, WebSocketDisconnect, UploadFile, File, Form, Request
-from fastapi.responses import Response
-
 @api_router.get("/media/{filename}")
 @api_router.head("/media/{filename}")
 async def get_media(filename: str, request: Request):
