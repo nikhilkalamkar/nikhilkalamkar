@@ -76,7 +76,7 @@ export default function CreateStoryDialog({ onStoryCreated }) {
     try {
       const response = await axios.post(
         `${API_URL}/stories/${createdStoryId}/promote`,
-        {},
+        { tier: selectedTier },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
