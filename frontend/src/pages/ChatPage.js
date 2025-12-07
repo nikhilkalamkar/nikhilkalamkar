@@ -378,7 +378,9 @@ export default function ChatPage() {
                     This message was deleted
                   </p>
                 ) : (
-                  <p className="break-words">{message.content}</p>
+                  message.content && message.content !== "Media" && (
+                    <p className="break-words">{message.content}</p>
+                  )
                 )}
                 <p className={`text-xs mt-1 font-mono ${isSent ? 'text-black/60' : 'text-white/60'}`}>
                   {formatTime(message.created_at)}
