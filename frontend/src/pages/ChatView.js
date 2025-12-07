@@ -224,6 +224,74 @@ export default function ChatView() {
         </Button>
       </div>
 
+      {callActive && (
+        <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col items-center justify-center">
+          <div className="text-center mb-8">
+            <img
+              src={friend.avatar_url || 'https://images.unsplash.com/photo-1675526607070-f5cbd71dde92?w=200'}
+              alt={friend.username}
+              className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-white"
+            />
+            <h2 className="text-white text-2xl font-bold mb-2">{friend.username}</h2>
+            <p className="text-gray-300">{callType === 'video' ? 'Video Call' : 'Audio Call'}</p>
+          </div>
+
+          {callType === 'video' && (
+            <div className="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden mb-8">
+              <video
+                ref={remoteVideoRef}
+                autoPlay
+                playsInline
+                className="w-full h-full object-cover"
+              />
+              <video
+                ref={localVideoRef}
+                autoPlay
+                playsInline
+                muted
+                className="absolute bottom-4 right-4 w-32 h-24 object-cover rounded-lg border-2 border-white"
+              />
+            </div>
+          )}
+
+          {callType === 'audio' && (
+            <div className="w-32 h-32 bg-green-500 rounded-full flex items-center justify-center mb-8 animate-pulse">
+              <Phone size={64} className="text-white" />
+            </div>
+          )}
+
+          <div className="flex gap-4">
+            {callType === 'video' && (
+              <Button
+                onClick={toggleVideo}
+                className={`rounded-full w-14 h-14 p-0 ${
+                  isVideoOff ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
+                } text-white`}
+                data-testid="toggle-video-btn"
+              >
+                {isVideoOff ? <VideoOff size={24} /> : <Video size={24} />}
+              </Button>
+            )}
+            <Button
+              onClick={toggleMute}
+              className={`rounded-full w-14 h-14 p-0 ${
+                isMuted ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
+              } text-white`}
+              data-testid="toggle-mute-btn"
+            >
+              {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
+            </Button>
+            <Button
+              onClick={endCall}
+              className="rounded-full w-14 h-14 p-0 bg-red-500 hover:bg-red-600 text-white"
+              data-testid="end-call-btn"
+            >
+              <PhoneOff size={24} />
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="flex-1 overflow-y-auto px-4 py-6 max-w-md mx-auto w-full">
         {messages.length === 0 ? (
           <div className="text-center py-20">
