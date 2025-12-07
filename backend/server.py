@@ -413,7 +413,7 @@ async def notify_screenshot(friend_id: str, current_user_id: str = Depends(get_c
         notification_doc = {
             "message_id": message_id,
             "sender_id": "system",
-            "sender_username": "SnapVibe",
+            "sender_username": "ishukart",
             "recipient_id": friend_id,
             "text": f"📸 {user['username']} took a screenshot!",
             "image_url": None,
