@@ -494,10 +494,19 @@ async def send_message(chat_id: str, content: str = Form(""), message_type: str 
             # Optimize image
             content_file = await optimize_image(content_file, media.filename)
             file_name = f"{uuid.uuid4()}.jpg"  # Save as JPEG after optimization
-        elif file_ext in video_extensions:
             actual_message_type = "video"
+            file_name = f"{uuid.uuid4()}.{file_ext}"
         else:
             actual_message_type = "media"
+            file_name = f"{uuid.uuid4()}.{file_ext}"
+        
+        # Save the file
+        file_path = f"/app/uploads/{file_name}"
+        async with aiofiles.open(file_path, 'wb') as f:
+            await f.write(content_file)
+        
+        # Store relative path for API, frontend will construct full URL
+        media_url = f"/api/media/{file_name}"
     
     # Calculate expires_at based on chat's disappearing timer
     disappearing_timer = chat.get('disappearing_timer', 86400)
