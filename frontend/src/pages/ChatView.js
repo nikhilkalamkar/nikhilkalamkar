@@ -601,10 +601,11 @@ export default function ChatView() {
                 {!message.text && message.image_url && (
                   <div className="px-4 py-2" />
                 )}
-                <p className={`text-xs px-4 pb-2 ${
+                <p className={`text-xs px-4 pb-2 flex items-center gap-1 ${
                   message.sender_id === user.user_id ? 'text-black/60' : 'text-gray-500'
                 }`}>
                   {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {message.sending && <span className="ml-2">⏱️ Sending...</span>}
                 </p>
               </div>
             </motion.div>
