@@ -54,6 +54,15 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-24 max-w-md mx-auto" data-testid="profile-page">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileSelect}
+        className="hidden"
+        data-testid="photo-input"
+      />
+      
       <div className="px-6 pt-6 pb-8 bg-gradient-to-br from-yellow-50 via-pink-50 to-purple-50">
         <h1 className="text-4xl font-bold mb-8" style={{ fontFamily: 'Outfit, sans-serif' }}>
           Profile
@@ -65,15 +74,32 @@ export default function Profile() {
           className="text-center"
         >
           <div className="inline-block relative mb-4">
-            <img
-              src={user?.avatar_url || 'https://images.unsplash.com/photo-1675526607070-f5cbd71dde92?w=200'}
-              alt={user?.username}
-              className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
-            />
-            <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-[#F5E618] rounded-full border-4 border-white" />
+            <button
+              onClick={handlePhotoClick}
+              disabled={uploading}
+              className="relative group cursor-pointer"
+              data-testid="change-photo-btn"
+            >
+              <img
+                src={user?.avatar_url || 'https://images.unsplash.com/photo-1675526607070-f5cbd71dde92?w=200'}
+                alt={user?.username}
+                className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg transition-opacity group-hover:opacity-70"
+              />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                {uploading ? (
+                  <div className="animate-spin rounded-full h-8 w-8 border-4 border-white border-t-transparent" />
+                ) : (
+                  <Camera size={32} className="text-white drop-shadow-lg" />
+                )}
+              </div>
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-[#F5E618] rounded-full border-4 border-white flex items-center justify-center">
+                <Upload size={14} className="text-black" />
+              </div>
+            </button>
           </div>
           <h2 className="text-2xl font-bold mb-1">{user?.username}</h2>
           <p className="text-gray-600">{user?.email}</p>
+          <p className="text-sm text-gray-500 mt-2">Click photo to change</p>
         </motion.div>
       </div>
 
