@@ -222,15 +222,43 @@ export default function StoryViewerPage() {
           </div>
         </div>
         
-        <Button
-          data-testid="close-story-button"
-          onClick={handleClose}
-          variant="ghost"
-          size="icon"
-          className="rounded-full bg-black/50 text-white hover:bg-black/70"
-        >
-          <X className="w-6 h-6" />
-        </Button>
+        <div className="flex items-center gap-2">
+          {/* Show delete/menu button only for own stories */}
+          {currentStory?.user_id === currentUser?.user_id && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  data-testid="story-menu-button"
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full bg-black/50 text-white hover:bg-black/70"
+                >
+                  <MoreVertical className="w-5 h-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="glass-effect">
+                <DropdownMenuItem
+                  data-testid="delete-story-option"
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="text-destructive focus:text-destructive cursor-pointer"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete Story
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          
+          <Button
+            data-testid="close-story-button"
+            onClick={handleClose}
+            variant="ghost"
+            size="icon"
+            className="rounded-full bg-black/50 text-white hover:bg-black/70"
+          >
+            <X className="w-6 h-6" />
+          </Button>
+        </div>
       </div>
       
       {/* Story content */}
