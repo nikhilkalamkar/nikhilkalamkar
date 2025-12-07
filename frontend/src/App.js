@@ -96,24 +96,7 @@ function App() {
     <AuthContext.Provider value={{ user, token, login, logout }}>
       <BrowserRouter>
         <div className="App">
-          {!user ? (
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          ) : (
-            <>
-              <Routes>
-                <Route path="/" element={<Camera />} />
-                <Route path="/stories" element={<Stories />} />
-                <Route path="/chats" element={<Chats />} />
-                <Route path="/chat/:friendId" element={<ChatView />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
-              <BottomNav />
-            </>
-          )}
+          <AppContent user={user} token={token} login={login} logout={logout} />
           <Toaster position="top-center" />
         </div>
       </BrowserRouter>
