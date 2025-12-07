@@ -86,8 +86,13 @@ class Story(BaseModel):
     media_url: str
     media_type: str = "image"
     is_promoted: bool = False
+    promotion_tier: Optional[str] = None
+    promotion_views: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     expires_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc) + timedelta(hours=24))
+
+class PromotionRequest(BaseModel):
+    tier: str
 
 class FriendRequest(BaseModel):
     model_config = ConfigDict(extra="ignore")
