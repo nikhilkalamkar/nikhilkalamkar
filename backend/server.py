@@ -55,6 +55,7 @@ class User(BaseModel):
     avatar_url: Optional[str] = None
     friends: List[str] = []
     blocked_users: List[str] = []
+    screenshot_notifications: bool = True
     created_at: str
 
 class SnapCreate(BaseModel):
