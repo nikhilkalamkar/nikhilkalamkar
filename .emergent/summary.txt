@@ -1,0 +1,192 @@
+<analysis>original_problem_statement:
+The user wants to build a full-stack application that is a clone of Snapchat.
+
+**PRODUCT REQUIREMENTS:**
+- **Core Features:**
+    - Real-time chat with text, pictures, and videos.
+    - User search functionality.
+    - Accept/decline chat requests.
+    - Block/unblock other users.
+- **Story System:**
+    - Add stories (media that disappears).
+    - Promote stories via payments.
+    - Option for multiple story uploads.
+    - Option to delete stories.
+- **Messaging Features:**
+    - Messages should auto-delete after 24 hours.
+    - Disappearing messages with a timer.
+    - Show message status (sent, received).
+    - Notify users if a screenshot of the chat is taken.
+    - Send emojis in chat.
+- **Advanced Features:**
+    - Audio and video call integration.
+- **Payments:**
+    - Razorpay integration for story promotion.
+- **Admin Panel:**
+    - A dashboard for the team to manage the application's users.
+- **Branding:**
+    - The application should be named ishukart.
+
+**User's preferred language**: English
+
+**what currently exists?**
+A full-stack Snapchat clone application named ishukart built with a FastAPI backend, React frontend, and MongoDB database. The application includes user authentication (signup, login, forgot password), real-time chat with media sharing, a complete story system (creation, multi-upload, deletion, and tiered-price promotion via Razorpay), user blocking/unblocking, and a basic admin panel for user management. The UI has a modern dark theme.
+
+**Last working item**:
+-   **Last item agent was working**: The user requested to add a disappearing messages feature. The agent started by viewing the  file to understand the context but was interrupted by an identical follow-up message from the user before any implementation could begin.
+-   **Status**: NOT STARTED
+-   **Agent Testing Done**: N
+-   **Which testing method agent to use?**: both (This is a new feature requiring backend logic for timers and frontend UI for setting the timer).
+-   **User Testing Done**: N
+
+**All Pending/In progress Issue list**:
+-   **Issue 1: Implement Disappearing Messages (P0)**
+    -   **Description**: The user wants to add an option in the chat to enable disappearing messages with a user-selectable timer.
+    -   **Attempted fixes**: None. The agent only viewed  to gather context.
+    -   **Next debug checklist**:
+        1.  **Backend ():**
+            -   Modify the  schema to include an  field.
+            -   Modify the  schema to store the disappearing message timer setting for each chat.
+            -   Update the  socket event to set the  field based on the chat's setting.
+            -   Implement a background job or a TTL index in MongoDB to automatically delete expired messages.
+        2.  **Frontend ():**
+            -   Add a UI element (e.g., a dropdown in the chat header) to select the timer for disappearing messages (e.g., 5 seconds, 1 minute, 1 hour, 24 hours, off).
+            -   Update the chat state store () to manage this setting.
+            -   Emit a socket event to update the setting on the backend.
+    -   **Why fix this issue and what will be achieved with the fix?**: This is a core feature requested by the user to mimic Snapchat's functionality, enhancing user privacy.
+    -   **Status**: NOT STARTED
+    -   **Is recurring issue?**: N
+    -   **Should Test frontend/backend/both after fix?**: both
+    -   **Blocked on other issue**: None
+
+**In progress Task List**:
+There are no tasks currently in progress.
+
+**Upcoming and Future Tasks**
+-   **Upcoming Tasks:**
+    -   **(P1) Implement Chat Request System:** Create a system for users to send, accept, and decline chat requests before they can message each other. This will require backend endpoints and frontend UI.
+    -   **(P1) Implement User Search:** Add a feature for users to search for other people on the platform to start a chat.
+    -   **(P2) Add Chat Message Status:** Implement UI indicators to show if a message is , , or .
+    -   **(P2) Add Emoji Picker to Chat:** Integrate an emoji picker in the chat input field.
+-   **Future Tasks:**
+    -   **(P2) Implement Audio/Video Calls:** Integrate the planned Agora SDK for one-on-one audio and video calls within the chat.
+    -   **(P3) Implement Screenshot Notification:** Add a feature to detect when a screenshot is taken in a chat and notify the other user.
+    -   **(P3) Enhance Admin Panel:** Add more features to the admin dashboard, such as analytics, content moderation, and user activity logs.
+
+**Completed work in this session**
+-   **Application Branding:** Renamed the app to ishukart and removed Made with Emergent branding.
+-   **User Authentication:** Implemented signup, login, and a secure Forgot Password feature.
+-   **Story System:**
+    -   Created a full story feature allowing users to upload multiple stories.
+    -   Implemented a tiered story promotion system (, , ) with Razorpay integration.
+    -   Created a My Stories page for users to view and delete their own stories.
+    -   Developed an Instagram-style story viewer for one-by-one story progression.
+    -   Fixed a bug where a user's own stories were not appearing on the homepage.
+-   **Chat Functionality:**
+    -   Enabled sending and receiving text and media (images/videos).
+    -   Fixed a bug preventing images from being sent without text.
+    -   Fixed a bug where sent media appeared as Media text instead of rendering the actual image/video.
+-   **User Management:** Implemented block/unblock functionality with a Blocked Users management page.
+-   **Performance Optimization:** Fixed N+1 query issues in the backend to improve performance.
+-   **Bug Fixes:** Resolved a critical syntax error in  that was crashing the frontend.
+
+**Earlier issues found/mentioned but not fixed**
+None. All reported issues were addressed.
+
+**Known issue recurrence from previous fork**
+None. This is the first summary.
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Backend**: FastAPI, Python, Socket.IO for real-time chat.
+-   **Frontend**: React, Zustand for state management, Tailwind CSS for styling, Shadcn/UI for components.
+-   **Database**: MongoDB.
+-   **Architecture**: Monolithic repository with separate  and  directories. Real-time communication is handled via WebSockets.
+
+**key DB schema**
+-   **users**: 
+-   **stories**: 
+-   **chats**: 
+-   **messages**: 
+
+**changes in tech stack**
+None.
+
+**All files of reference**
+-   : Contains all backend logic, API endpoints, and WebSocket handlers. Was heavily modified to add all features.
+-   : The main UI for chat. Needs modification for the disappearing messages feature.
+-   : The main dashboard, shows story rings and chat list.
+-   : Custom component for displaying stories one by one.
+-   : Handles single/multiple story creation and promotion.
+-   : Allows users to manage their own stories.
+-   : Contains all frontend routes.
+-   : Zustand store for managing chat state.
+-   : Updated to change the application title to ishukart.
+
+**Areas that need refactoring**:
+-   The file  has grown very large and contains all API routes, WebSocket logic, and database models. It could be refactored into a more modular structure with routers and separate model files for better maintainability.
+
+**key api endpoints**
+-   **Auth**: , , 
+-   **Users**: , , , 
+-   **Friends**: ,  (and related for accept/deny)
+-   **Stories**: , , 
+-   **Chat**: , 
+-   **Media**: 
+-   **Admin**: , 
+-   **WebSocket Events**: , , , 
+
+**Critical Info for New Agent**
+-   The application has been rebranded to **ishukart**. All references to SnapClone have been replaced.
+-   The admin user credentials are . The password was set during initial tests but can be reset using the Forgot Password feature.
+-   **Agora** was selected for audio/video calls but has **not** been implemented yet.
+-   **Razorpay** is integrated for story promotions with tiered pricing. It currently uses test keys.
+-   Backend N+1 query issues were resolved for better performance.
+-   The user wants to see their own story ring on the homepage after uploading, which was fixed. The ring should appear first in the list.
+
+**documents created in this job**
+None.
+
+**Last 10 User Messages and any pending user messages**
+1.  **I try to show all story step by step but never show one by one...**: User reported that stories were not showing one-by-one. (COMPLETED - Implemented an Instagram-style story viewer).
+2.  **Call Deployer Agent and Run Health Check...**: User requested a deployment readiness check. (COMPLETED).
+3.  **I meed to my admin dashboard details**: User asked for details about the admin panel. (COMPLETED - Agent provided a summary).
+4.  **Change app name ishukart**: User requested to rebrand the app. (COMPLETED).
+5.  **I need to add disapearing msg option**: User requested the disappearing messages feature. (PENDING - This is the current task).
+6.  **I need to add disappearing msg function**: User repeated the request for disappearing messages. (PENDING - This is the current task).
+7.  **I need to add disapearing msg option (with image)**: User requested the disappearing messages feature. (PENDING)
+8.  **I need to add disappearing msg function (with image)**: User repeated the request. (PENDING)
+9.  **I need to add disappearing msg option (with image)**: User requested the disappearing messages feature. (PENDING)
+10. **I need to add disappearing msg function (with image)**: User repeated the request for the disappearing messages feature. **This is the last and currently pending user request.**
+
+**Project Health Check:**
+-   **Functional**: The core application is functional.
+-   **Broken**: No part of the implemented application is currently broken.
+-   **Mocked**: Razorpay and the planned Agora integration rely on test keys/credentials and are not production-ready from a business perspective.
+
+**3rd Party Integrations**
+-   **Razorpay**: Integrated for payment processing for story promotions. Requires a user-provided API key for production.
+-   **Agora**: Planned for audio/video calls but not yet integrated.
+
+**Testing status**
+-   **Testing agent used after significant changes**: YES
+-   **Troubleshoot agent used after agent stuck in loop**: NO
+-   **Test files created**: None by the main agent.
+-   **Known regressions**: None.
+
+**Credentials to test flow:**
+-   **Admin User**:
+    -   Email: 
+    -   Password: A default password was used during tests. Use the Forgot Password feature to set a new one if needed.
+-   **Test Users**: Can be created through the signup page.
+
+**What agent forgot to execute**
+Based on the original problem statement, the following features were requested but have not been implemented yet:
+-   Accept/decline chat request system.
+-   Message status indicators (sent, received).
+-   Notification for chat screenshots.
+-   Audio and video call integration (planned but not started).
+-   A feature to search for people to chat with.
+-   The ability to send emojis in chat.</analysis>
