@@ -81,6 +81,18 @@ export default function Chats() {
     }
   };
 
+  const declineFriendRequest = async (requestId) => {
+    try {
+      await axios.post(`${API}/friends/decline/${requestId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Friend request declined');
+      fetchFriendRequests();
+    } catch (error) {
+      toast.error('Failed to decline request');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pb-24 max-w-md mx-auto" data-testid="chats-page">
       <div className="px-6 pt-6 pb-4 bg-white border-b">
