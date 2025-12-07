@@ -474,7 +474,7 @@ async def delete_story(story_id: str, user_id: str = Depends(verify_token)):
     await db.story_promotions.delete_many({"story_id": story_id})
     
     if story.get('media_url'):
-        file_path = f"/tmp/{story['media_url'].split('/')[-1]}"
+        file_path = f"/app/uploads/{story['media_url'].split('/')[-1]}"
         if os.path.exists(file_path):
             try:
                 os.remove(file_path)
