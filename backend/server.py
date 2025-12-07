@@ -77,6 +77,7 @@ class Chat(BaseModel):
     participants: List[str]
     last_message: Optional[str] = None
     last_message_time: Optional[datetime] = None
+    disappearing_timer: int = 86400  # Default 24 hours in seconds
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Story(BaseModel):
