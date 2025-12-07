@@ -57,6 +57,12 @@ export default function ChatView() {
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image too large. Please select an image under 5MB');
+        return;
+      }
+      
       if (file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onloadend = () => {
