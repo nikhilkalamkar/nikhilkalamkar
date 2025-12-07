@@ -58,6 +58,22 @@ export default function ChatPage() {
   }, [chatId, token]);
   
   useEffect(() => {
+    const socket = useChatStore.getState().socket;
+    if (socket) {
+      const handleTimerUpdate = (data) => {
+        if (data.chat_id === chatId) {
+          setDisappearTimer(data.timer_seconds);
+          const label = timerOptions.find(opt => opt.value === data.timer_seconds)?.label || 'Unknown';
+          toast.info(`Timer changed to: ${label}`);
+        }
+      };
+      
+      socket.on('timer_updated', handleTimerUpdate);
+      return () => socket.off('timer_updated', handleTimerUpdate);
+    }
+  }, [chatId]);
+  
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages[chatId]]);
   
