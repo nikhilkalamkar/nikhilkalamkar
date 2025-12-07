@@ -3,7 +3,7 @@ import { useAuthStore } from '@/store/authStore';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Upload, DollarSign } from 'lucide-react';
+import { Plus, Upload, DollarSign, X, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
@@ -13,9 +13,9 @@ const API_URL = process.env.REACT_APP_BACKEND_URL + '/api';
 export default function CreateStoryDialog({ onStoryCreated }) {
   const { token } = useAuthStore();
   const [open, setOpen] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [createdStoryId, setCreatedStoryId] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadingIndex, setUploadingIndex] = useState(null);
+  const [uploadedStories, setUploadedStories] = useState([]);
   const [selectedTier, setSelectedTier] = useState('free');
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   
@@ -27,26 +27,38 @@ export default function CreateStoryDialog({ onStoryCreated }) {
     document.body.appendChild(script);
     
     return () => {
-      document.body.removeChild(script);
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
     };
   }, []);
   
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { 'image/*': [], 'video/*': [] },
-    maxFiles: 1,
+    multiple: true,
     onDrop: (acceptedFiles) => {
       if (acceptedFiles.length > 0) {
-        setSelectedFile(acceptedFiles[0]);
+        setSelectedFiles(acceptedFiles);
       }
     },
   });
   
-  const handleUpload = async () => {
-    if (!selectedFile) return;
-    
-    setUploading(true);
+  const removeFile = (index) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+  
+  const handleUploadAll = async () => {
+    for (let i = 0; i < selectedFiles.length; i++) {
+      setUploadingIndex(i);
+      await uploadSingleStory(selectedFiles[i], i);
+    }
+    setUploadingIndex(null);
+    toast.success(`${selectedFiles.length} ${selectedFiles.length === 1 ? 'story' : 'stories'} uploaded!`);
+  };
+  
+  const uploadSingleStory = async (file, index) => {
     const formData = new FormData();
-    formData.append('media', selectedFile);
+    formData.append('media', file);
     
     try {
       const response = await axios.post(`${API_URL}/stories`, formData, {
@@ -56,25 +68,24 @@ export default function CreateStoryDialog({ onStoryCreated }) {
         },
       });
       
-      setCreatedStoryId(response.data.story_id);
-      toast.success('Story uploaded! Choose to publish free or promote for more reach.');
+      setUploadedStories(prev => [...prev, response.data.story_id]);
       onStoryCreated();
+      return response.data.story_id;
     } catch (error) {
-      toast.error('Failed to create story');
-    } finally {
-      setUploading(false);
+      toast.error(`Failed to upload story ${index + 1}`);
+      return null;
     }
   };
   
-  const handlePromote = async () => {
-    if (!createdStoryId || !razorpayLoaded) {
+  const handlePromote = async (storyId) => {
+    if (!razorpayLoaded) {
       toast.error('Payment system loading...');
       return;
     }
     
     try {
       const response = await axios.post(
-        `${API_URL}/stories/${createdStoryId}/promote`,
+        `${API_URL}/stories/${storyId}/promote`,
         { tier: selectedTier },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -89,7 +100,7 @@ export default function CreateStoryDialog({ onStoryCreated }) {
         handler: async (paymentResponse) => {
           try {
             await axios.post(
-              `${API_URL}/stories/${createdStoryId}/promote/verify`,
+              `${API_URL}/stories/${storyId}/promote/verify`,
               {
                 payment_id: paymentResponse.razorpay_payment_id,
                 order_id: paymentResponse.razorpay_order_id,
@@ -98,8 +109,7 @@ export default function CreateStoryDialog({ onStoryCreated }) {
               { headers: { Authorization: `Bearer ${token}` } }
             );
             toast.success('Story promoted successfully!');
-            setOpen(false);
-            setCreatedStoryId(null);
+            onStoryCreated();
           } catch (error) {
             toast.error('Payment verification failed');
           }
@@ -118,6 +128,16 @@ export default function CreateStoryDialog({ onStoryCreated }) {
     }
   };
   
+  const handleFinish = () => {
+    setOpen(false);
+    setSelectedFiles([]);
+    setUploadedStories([]);
+    setUploadingIndex(null);
+    if (uploadedStories.length > 0) {
+      toast.success('Stories published! Visible to your friends.');
+    }
+  };
+  
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -133,13 +153,13 @@ export default function CreateStoryDialog({ onStoryCreated }) {
           <span className="text-xs">Add Story</span>
         </motion.div>
       </DialogTrigger>
-      <DialogContent className="glass-effect">
+      <DialogContent className="glass-effect max-w-md">
         <DialogHeader>
           <DialogTitle className="font-heading">Create Story</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
-          {!selectedFile ? (
+          {selectedFiles.length === 0 ? (
             <div
               {...getRootProps()}
               data-testid="dropzone"
@@ -150,32 +170,75 @@ export default function CreateStoryDialog({ onStoryCreated }) {
               <input {...getInputProps()} />
               <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
               <p className="text-muted-foreground">
-                {isDragActive ? 'Drop the file here' : 'Drag & drop or click to select'}
+                {isDragActive ? 'Drop the files here' : 'Drag & drop or click to select'}
               </p>
-              <p className="text-xs text-muted-foreground mt-2">Images or videos only</p>
+              <p className="text-xs text-muted-foreground mt-2">Images or videos • Multiple files supported</p>
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="bg-secondary rounded-xl p-4">
-                <p className="text-sm truncate">{selectedFile.name}</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                </p>
+              <div className="max-h-64 overflow-y-auto space-y-2">
+                {selectedFiles.map((file, index) => (
+                  <div key={index} className="flex items-center gap-3 bg-secondary rounded-xl p-3">
+                    {file.type.startsWith('image/') ? (
+                      <img 
+                        src={URL.createObjectURL(file)} 
+                        alt="Preview" 
+                        className="h-12 w-12 object-cover rounded-lg"
+                      />
+                    ) : (
+                      <video 
+                        src={URL.createObjectURL(file)} 
+                        className="h-12 w-12 object-cover rounded-lg"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{file.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    </div>
+                    {uploadingIndex === index ? (
+                      <div className="text-primary">Uploading...</div>
+                    ) : uploadedStories.length > index ? (
+                      <CheckCircle className="w-5 h-5 text-primary" />
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => removeFile(index)}
+                        className="rounded-full h-8 w-8 p-0"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
               </div>
               
-              <Button
-                data-testid="upload-story-button"
-                onClick={handleUpload}
-                disabled={uploading}
-                className="w-full rounded-full h-12 font-bold uppercase tracking-wide neon-shadow"
-              >
-                {uploading ? 'Uploading...' : 'Upload Story'}
-              </Button>
-              
-              {createdStoryId && (
+              {uploadedStories.length === 0 ? (
+                <>
+                  <Button
+                    data-testid="upload-stories-button"
+                    onClick={handleUploadAll}
+                    disabled={uploadingIndex !== null}
+                    className="w-full rounded-full h-12 font-bold uppercase tracking-wide neon-shadow"
+                  >
+                    {uploadingIndex !== null ? `Uploading ${uploadingIndex + 1}/${selectedFiles.length}...` : `Upload ${selectedFiles.length} ${selectedFiles.length === 1 ? 'Story' : 'Stories'}`}
+                  </Button>
+                  
+                  <Button
+                    data-testid="cancel-upload-button"
+                    onClick={() => setSelectedFiles([])}}
+                    variant="ghost"
+                    className="w-full"
+                  >
+                    Cancel
+                  </Button>
+                </>
+              ) : (
                 <>
                   <div className="space-y-3 py-2">
-                    <p className="text-sm font-semibold text-center">Choose Publishing Option:</p>
+                    <p className="text-sm font-semibold text-center">Promote Your Stories?</p>
                     
                     <div className="grid grid-cols-1 gap-2">
                       <button
@@ -189,7 +252,7 @@ export default function CreateStoryDialog({ onStoryCreated }) {
                       >
                         <div className="flex items-center justify-between">
                           <div className="text-left">
-                            <p className="font-bold text-base">Publish Free</p>
+                            <p className="font-bold text-base">Keep Free</p>
                             <p className="text-xs text-muted-foreground">Share with friends only</p>
                           </div>
                           <div className="text-right">
@@ -209,7 +272,7 @@ export default function CreateStoryDialog({ onStoryCreated }) {
                           }`}
                         >
                           <p className="text-xs text-muted-foreground">Basic</p>
-                          <p className="font-bold">₹50</p>
+                          <p className="font-bold">₹50 each</p>
                           <p className="text-xs text-muted-foreground">10k views</p>
                         </button>
                         <button
@@ -222,7 +285,7 @@ export default function CreateStoryDialog({ onStoryCreated }) {
                           }`}
                         >
                           <p className="text-xs text-muted-foreground">Premium</p>
-                          <p className="font-bold">₹100</p>
+                          <p className="font-bold">₹100 each</p>
                           <p className="text-xs text-muted-foreground">20k views</p>
                         </button>
                       </div>
@@ -231,42 +294,42 @@ export default function CreateStoryDialog({ onStoryCreated }) {
                   
                   {selectedTier === 'free' ? (
                     <Button
-                      data-testid="publish-free-button"
-                      onClick={() => {
-                        setOpen(false);
-                        setSelectedFile(null);
-                        setCreatedStoryId(null);
-                        toast.success('Story published! Visible to your friends.');
-                      }}
+                      data-testid="finish-button"
+                      onClick={handleFinish}
                       className="w-full rounded-full h-12 font-bold uppercase tracking-wide neon-shadow"
                     >
-                      Publish Story
+                      Finish & Publish
                     </Button>
                   ) : (
-                    <Button
-                      data-testid="promote-story-button"
-                      onClick={handlePromote}
-                      className="w-full rounded-full h-12 font-bold uppercase tracking-wide neon-shadow"
-                    >
-                      <DollarSign className="w-5 h-5 mr-2" />
-                      Promote Story (₹{selectedTier === 'basic' ? '50' : '100'})
-                    </Button>
+                    <>
+                      <p className="text-sm text-center text-muted-foreground">
+                        Total: ₹{(selectedTier === 'basic' ? 50 : 100) * uploadedStories.length} for {uploadedStories.length} {uploadedStories.length === 1 ? 'story' : 'stories'}
+                      </p>
+                      <div className="space-y-2">
+                        {uploadedStories.map((storyId, index) => (
+                          <Button
+                            key={storyId}
+                            data-testid={`promote-story-${index}-button`}
+                            onClick={() => handlePromote(storyId)}
+                            variant="outline"
+                            className="w-full rounded-full"
+                          >
+                            <DollarSign className="w-4 h-4 mr-2" />
+                            Promote Story {index + 1} (₹{selectedTier === 'basic' ? '50' : '100'})
+                          </Button>
+                        ))}
+                      </div>
+                      <Button
+                        data-testid="skip-promotion-button"
+                        onClick={handleFinish}
+                        variant="ghost"
+                        className="w-full"
+                      >
+                        Skip & Publish Free
+                      </Button>
+                    </>
                   )}
                 </>
-              )}
-              
-              {!createdStoryId && (
-                <Button
-                  data-testid="cancel-upload-button"
-                  onClick={() => {
-                    setSelectedFile(null);
-                    setCreatedStoryId(null);
-                  }}
-                  variant="ghost"
-                  className="w-full"
-                >
-                  Cancel
-                </Button>
               )}
             </div>
           )}
