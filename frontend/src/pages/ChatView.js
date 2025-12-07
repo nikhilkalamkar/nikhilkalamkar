@@ -597,10 +597,11 @@ export default function ChatView() {
               className="text-xs bg-white border border-orange-300 rounded px-2 py-1"
               data-testid="disappear-time-select"
             >
+              <option value={1}>1s (instant)</option>
+              <option value={3}>3s</option>
               <option value={5}>5s</option>
               <option value={10}>10s</option>
               <option value={30}>30s</option>
-              <option value={60}>1min</option>
             </select>
           </div>
         )}
