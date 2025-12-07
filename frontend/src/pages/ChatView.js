@@ -161,7 +161,7 @@ export default function ChatView() {
     });
   }, [messages]);
 
-  const notifyScreenshot = async () => {
+  const notifyScreenshot = useCallback(async () => {
     if (!friendId || !token) return;
     
     try {
@@ -172,7 +172,7 @@ export default function ChatView() {
     } catch (error) {
       console.error('Failed to send screenshot notification:', error);
     }
-  };
+  }, [friendId, token]);
 
   useEffect(() => {
     // Detect screenshot (works on some browsers)
