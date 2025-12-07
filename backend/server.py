@@ -864,6 +864,49 @@ async def startup():
     
     await db.blocked_users.create_index(["blocker_id", "blocked_id"], unique=True)
     logger.info("Database indexes created with TTL")
+    
+    # Clean up orphaned media references (files that don't exist on disk)
+    # This helps when deploying to new environments where uploads/ directory is empty
+    try:
+        # Ensure uploads directory exists
+        os.makedirs("/app/uploads", exist_ok=True)
+        
+        # Get all media URLs from messages and stories
+        messages_with_media = await db.messages.find(
+            {"media_url": {"$exists": True, "$ne": None}},
+            {"media_url": 1}
+        ).to_list(None)
+        
+        stories_with_media = await db.stories.find(
+            {"media_url": {"$exists": True}},
+            {"media_url": 1}
+        ).to_list(None)
+        
+        # Check which files don't exist and clean them up
+        cleaned_messages = 0
+        cleaned_stories = 0
+        
+        for msg in messages_with_media:
+            filename = msg['media_url'].split('/')[-1]
+            if not os.path.exists(f"/app/uploads/{filename}"):
+                # Set media_url to None for missing files
+                await db.messages.update_one(
+                    {"_id": msg["_id"]},
+                    {"$set": {"media_url": None}}
+                )
+                cleaned_messages += 1
+        
+        for story in stories_with_media:
+            filename = story['media_url'].split('/')[-1]
+            if not os.path.exists(f"/app/uploads/{filename}"):
+                # Delete stories with missing media
+                await db.stories.delete_one({"_id": story["_id"]})
+                cleaned_stories += 1
+        
+        if cleaned_messages > 0 or cleaned_stories > 0:
+            logger.info(f"Cleaned up {cleaned_messages} messages and {cleaned_stories} stories with missing media files")
+    except Exception as e:
+        logger.warning(f"Media cleanup failed: {e}")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
