@@ -114,6 +114,15 @@ export default function Camera() {
 
   return (
     <div className="fixed inset-0 bg-black flex flex-col z-40" data-testid="camera-page">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*,video/*"
+        onChange={handleFileSelect}
+        className="hidden"
+        data-testid="file-input"
+      />
+      
       <div className="flex-1 flex items-center justify-center relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800">
           <div className="absolute inset-0 opacity-20">
@@ -133,14 +142,24 @@ export default function Camera() {
               Ready to Snap?
             </h2>
             <p className="text-gray-300 mb-8">Capture a moment or share a story</p>
-            <Button
-              onClick={handleCapture}
-              className="bg-[#F5E618] text-black font-bold rounded-full h-14 px-8 hover:scale-105 transition-transform shadow-2xl"
-              data-testid="capture-btn"
-            >
-              <ImageIcon className="mr-2" size={20} />
-              Choose Photo
-            </Button>
+            <div className="flex gap-3 justify-center">
+              <Button
+                onClick={handleCapture}
+                className="bg-[#F5E618] text-black font-bold rounded-full h-14 px-8 hover:scale-105 transition-transform shadow-2xl"
+                data-testid="capture-btn"
+              >
+                <ImageIcon className="mr-2" size={20} />
+                Choose Photo
+              </Button>
+              <Button
+                onClick={handleUsePlaceholder}
+                className="bg-[#EC4899] text-white font-bold rounded-full h-14 px-8 hover:scale-105 transition-transform shadow-2xl"
+                data-testid="placeholder-btn"
+              >
+                <Upload className="mr-2" size={20} />
+                Use Demo
+              </Button>
+            </div>
           </motion.div>
         </div>
       </div>
