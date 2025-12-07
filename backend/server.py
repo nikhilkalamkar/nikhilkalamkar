@@ -614,6 +614,15 @@ async def get_messages(friend_id: str, current_user_id: str = Depends(get_curren
         {"_id": 0}
     ).sort("created_at", 1).to_list(500)
     
+    # Fix None values for old messages
+    for msg in messages:
+        if msg.get('disappear_after_seconds') is None:
+            msg['disappear_after_seconds'] = 10
+        if msg.get('disappearing') is None:
+            msg['disappearing'] = False
+        if msg.get('viewed') is None:
+            msg['viewed'] = False
+    
     return [Message(**m) for m in messages]
 
 app.include_router(api_router)
