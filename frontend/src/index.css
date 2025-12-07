@@ -81,4 +81,11 @@ code {
         border-top-color: inherit;
         border-bottom-color: inherit;
     }
+
+    /* Hide "Made with Emergent" watermark with maximum priority */
+    #emergent-badge {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
 }
