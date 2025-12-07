@@ -370,6 +370,57 @@ frontend:
           
           The WebSocket timer sync implementation is complete and properly integrated with the timer UI.
 
+  - task: "Media Display Console Logging Debug"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/pages/ChatPage.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Added console.error and console.log statements to ChatPage.js and StoryViewerPage.js to debug image loading issues.
+          Debug logging includes:
+          - Image failed to load: [URL]
+          - REACT_APP_BACKEND_URL: [value]
+          - media_url: [value]
+          - Image loaded successfully: [URL]
+      - working: false
+        agent: "testing"
+        comment: |
+          ❌ CRITICAL ISSUE CONFIRMED - Media Display Failing Due to Missing Files:
+          
+          TESTING LIMITATIONS:
+          - Unable to access chat interface due to authentication system blocking test accounts
+          - Cannot capture browser console logs as requested
+          - Login attempts failed with multiple credential combinations
+          
+          BACKEND LOG ANALYSIS REVEALS ROOT CAUSE:
+          ❌ Multiple 404 errors for missing media files:
+             - 51756ce8-0e89-4c12-a774-9519d1bd570e.png (404 Not Found)
+             - 849ac7ac-3cb5-4435-a3af-362b50de478e.png (404 Not Found)
+             - a42b3a8f-e4d6-482a-9a73-bcf5b643c2b3.png (404 Not Found)
+             - 842dafd3-cbed-4d06-9b17-be294206e1b3.jpeg (404 Not Found)
+             - 31b616bc-19a6-463c-9345-49fc8fcac46e.jpeg (404 Not Found)
+          
+          CONFIRMED ISSUE:
+          ✅ Media endpoint working correctly for existing files (HTTP 200)
+          ✅ Proper Content-Type headers served
+          ✅ Files exist in /app/uploads/ for recent uploads
+          ❌ Historical messages reference non-existent files causing 404 errors
+          ❌ Browser displays blue question mark placeholders for failed image loads
+          
+          USER REPORT VALIDATED:
+          The user's complaint of "images NEVER show - still seeing blue question marks" is CONFIRMED by backend logs showing continuous 404 errors for missing media files referenced in chat messages.
+          
+          IMMEDIATE ACTION NEEDED:
+          1. Database cleanup to remove references to missing media files
+          2. Frontend fallback handling for 404 media responses
+          3. Media file validation during app startup
+          4. User should test with NEW image uploads (these work correctly)
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
