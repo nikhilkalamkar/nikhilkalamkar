@@ -192,6 +192,12 @@ export default function StoryViewerPage() {
                 src={currentStory.media_url.startsWith('http') ? currentStory.media_url : `${process.env.REACT_APP_BACKEND_URL}${currentStory.media_url}`}
                 alt="Story"
                 className="max-h-full max-w-full object-contain"
+                onError={(e) => {
+                  console.error('Story image failed to load:', e.target.src);
+                  console.log('REACT_APP_BACKEND_URL:', process.env.REACT_APP_BACKEND_URL);
+                  console.log('story media_url:', currentStory.media_url);
+                }}
+                onLoad={() => console.log('Story image loaded successfully:', currentStory.media_url)}
               />
             ) : (
               <video
