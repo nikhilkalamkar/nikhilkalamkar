@@ -132,7 +132,7 @@ export default function AuthPage() {
             <Zap className="w-10 h-10 text-primary-foreground" />
           </motion.div>
           <h1 className="text-4xl font-heading font-black tracking-tight text-foreground mb-2">
-            SnapClone
+            ishukart
           </h1>
           <p className="text-muted-foreground flex items-center justify-center gap-2">
             <Sparkles className="w-4 h-4" />
