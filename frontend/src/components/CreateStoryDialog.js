@@ -67,7 +67,10 @@ export default function CreateStoryDialog({ onStoryCreated }) {
   };
   
   const handlePromote = async () => {
-    if (!createdStoryId) return;
+    if (!createdStoryId || !razorpayLoaded) {
+      toast.error('Payment system loading...');
+      return;
+    }
     
     try {
       const response = await axios.post(
@@ -104,10 +107,14 @@ export default function CreateStoryDialog({ onStoryCreated }) {
         theme: { color: '#CCFF00' },
       };
       
-      const razorpayInstance = new Razorpay(options);
-      razorpayInstance.open();
+      if (window.Razorpay) {
+        const razorpayInstance = new window.Razorpay(options);
+        razorpayInstance.open();
+      } else {
+        toast.error('Payment system not available');
+      }
     } catch (error) {
-      toast.error('Failed to initiate promotion');
+      toast.error(error.response?.data?.detail || 'Failed to initiate promotion');
     }
   };
   
