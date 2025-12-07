@@ -30,6 +30,18 @@ export default function StoryViewerPage() {
   useEffect(() => {
     if (stories.length > 0 && !isPaused) {
       startProgress();
+      
+      // Preload next story image for faster loading
+      if (currentIndex < stories.length - 1) {
+        const nextStory = stories[currentIndex + 1];
+        if (nextStory.media_type === 'image') {
+          const img = new Image();
+          const url = nextStory.media_url.startsWith('http') 
+            ? nextStory.media_url 
+            : `${process.env.REACT_APP_BACKEND_URL}${nextStory.media_url}`;
+          img.src = url;
+        }
+      }
     }
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
