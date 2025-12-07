@@ -345,7 +345,16 @@ async def get_messages(chat_id: str, user_id: str = Depends(verify_token)):
         {"chat_id": chat_id, "expires_at": {"$gt": current_time.isoformat()}},
         {"_id": 0}
     ).sort("created_at", 1).to_list(500)
-    return messages
+    
+    # Filter out messages deleted by current user
+    filtered_messages = []
+    for msg in messages:
+        # Skip if message was deleted for this user
+        if user_id in msg.get('deleted_for', []):
+            continue
+        filtered_messages.append(msg)
+    
+    return filtered_messages
 
 @api_router.put("/chats/{chat_id}/timer")
 async def update_disappearing_timer(chat_id: str, timer_seconds: int, user_id: str = Depends(verify_token)):
