@@ -143,10 +143,12 @@ export default function AuthPage() {
         <Card className="glass-effect border-border/50" data-testid="auth-card">
           <CardHeader>
             <CardTitle className="font-heading text-2xl">
-              {isLogin ? 'Welcome back' : 'Create account'}
+              {showForgotPassword ? 'Reset Password' : isLogin ? 'Welcome back' : 'Create account'}
             </CardTitle>
             <CardDescription>
-              {isLogin ? 'Sign in to your account' : 'Start sharing your stories'}
+              {showForgotPassword 
+                ? 'Enter your email to receive a reset token' 
+                : isLogin ? 'Sign in to your account' : 'Start sharing your stories'}
             </CardDescription>
           </CardHeader>
           <CardContent>
