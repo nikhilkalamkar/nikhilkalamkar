@@ -60,11 +60,11 @@ export const useChatStore = create((set, get) => ({
   sendMessage: async (chatId, content, messageType, media, token) => {
     try {
       const formData = new FormData();
-      formData.append('content', content);
+      formData.append('content', content || '');
       formData.append('message_type', messageType);
       if (media) formData.append('media', media);
       
-      await axios.post(`${API_URL}/chats/${chatId}/messages`, formData, {
+      const response = await axios.post(`${API_URL}/chats/${chatId}/messages`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
@@ -72,8 +72,10 @@ export const useChatStore = create((set, get) => ({
       });
       
       get().fetchMessages(chatId, token);
+      return { success: true };
     } catch (error) {
       console.error('Failed to send message:', error);
+      return { success: false, error: error.response?.data?.detail || 'Failed to send message' };
     }
   },
   
