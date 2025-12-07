@@ -76,6 +76,23 @@ export default function ProfilePage() {
             </CardContent>
           </Card>
           
+          <Card className="glass-effect border-border/50">
+            <CardHeader>
+              <CardTitle className="font-heading">Privacy</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Button
+                data-testid="blocked-users-button"
+                onClick={() => navigate('/blocked-users')}
+                variant="outline"
+                className="w-full justify-start"
+              >
+                <UserX className="w-5 h-5 mr-2" />
+                Blocked Users
+              </Button>
+            </CardContent>
+          </Card>
+          
           <Button
             data-testid="logout-button"
             onClick={handleLogout}
