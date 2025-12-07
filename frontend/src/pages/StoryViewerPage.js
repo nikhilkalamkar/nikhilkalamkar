@@ -132,6 +132,36 @@ export default function StoryViewerPage() {
   const handleClose = () => {
     navigate('/');
   };
+
+  const handleDeleteStory = async () => {
+    const currentStory = stories[currentIndex];
+    if (!currentStory) return;
+
+    try {
+      await axios.delete(`${API_URL}/stories/${currentStory.story_id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      toast.success('Story deleted successfully');
+      setShowDeleteDialog(false);
+      
+      // Remove story from list
+      const updatedStories = stories.filter((_, index) => index !== currentIndex);
+      
+      if (updatedStories.length === 0) {
+        // No more stories, go home
+        navigate('/');
+      } else {
+        // Update stories and adjust index
+        setStories(updatedStories);
+        if (currentIndex >= updatedStories.length) {
+          setCurrentIndex(updatedStories.length - 1);
+        }
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to delete story');
+    }
+  };
   
   const handleTap = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
