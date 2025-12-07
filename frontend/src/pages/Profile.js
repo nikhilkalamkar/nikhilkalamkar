@@ -1,10 +1,11 @@
 import { useContext, useState, useRef, useEffect } from 'react';
 import { AuthContext, API } from '@/App';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Mail, Camera, Upload, Ban, ShieldOff } from 'lucide-react';
+import { LogOut, User, Mail, Camera, Upload, Ban, ShieldOff, Bell, BellOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { Switch } from '@/components/ui/switch';
 
 export default function Profile() {
   const { user, logout, token, login } = useContext(AuthContext);
