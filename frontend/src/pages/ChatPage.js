@@ -161,7 +161,51 @@ export default function ChatPage() {
         >
           <VideoIcon className="w-5 h-5" />
         </Button>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              data-testid="chat-menu-button"
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+            >
+              <MoreVertical className="w-5 h-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="glass-effect">
+            <DropdownMenuItem
+              data-testid="block-user-option"
+              onClick={() => setShowBlockDialog(true)}
+              className="text-destructive focus:text-destructive"
+            >
+              <Ban className="w-4 h-4 mr-2" />
+              Block User
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </header>
+      
+      <AlertDialog open={showBlockDialog} onOpenChange={setShowBlockDialog}>
+        <AlertDialogContent className="glass-effect">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Block {chatData?.other_user?.username}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You won't be able to send or receive messages from this user. They won't see your stories either.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              data-testid="confirm-block-button"
+              onClick={handleBlockUser}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Block
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3" data-testid="messages-container">
         {chatMessages.map((message) => {
