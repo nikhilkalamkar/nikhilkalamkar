@@ -260,7 +260,11 @@ export default function ProfilePage() {
               <CardContent>
                 <div className="space-y-3">
                   {friends.slice(0, 5).map((friend) => (
-                    <div key={friend.user_id} className="flex items-center gap-3">
+                    <div 
+                      key={friend.user_id} 
+                      className="flex items-center gap-3 cursor-pointer hover:bg-accent/50 p-2 rounded-lg transition-colors"
+                      onClick={() => navigate(`/user/${friend.user_id}`)}
+                    >
                       <Avatar className="w-10 h-10">
                         <AvatarImage 
                           src={
