@@ -208,16 +208,30 @@ export default function CreateStoryDialog({ onStoryCreated }) {
                   <Button
                     data-testid="promote-story-button"
                     onClick={handlePromote}
-                    variant="outline"
-                    className="w-full rounded-full h-12 font-bold uppercase tracking-wide border-accent text-accent hover:bg-accent hover:text-accent-foreground"
+                    className="w-full rounded-full h-12 font-bold uppercase tracking-wide neon-shadow"
                   >
                     <DollarSign className="w-5 h-5 mr-2" />
                     Promote Story (₹{selectedTier === 'basic' ? '50' : '100'})
                   </Button>
+                  
+                  <Button
+                    data-testid="skip-promotion-button"
+                    onClick={() => {
+                      setOpen(false);
+                      setSelectedFile(null);
+                      setCreatedStoryId(null);
+                      toast.success('Story posted! Promote anytime from My Stories page.');
+                    }}
+                    variant="ghost"
+                    className="w-full"
+                  >
+                    Skip for Now
+                  </Button>
                 </>
               )}
               
-              <Button
+              {!createdStoryId && (
+                <Button
                 data-testid="cancel-upload-button"
                 onClick={() => {
                   setSelectedFile(null);
