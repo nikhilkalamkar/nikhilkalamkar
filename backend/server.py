@@ -517,10 +517,13 @@ async def send_message(chat_id: str, content: str = Form(""), message_type: str 
     else:
         expires_at = datetime.now(timezone.utc) + timedelta(seconds=disappearing_timer)
     
+    # If sending media without text, use appropriate placeholder
+    message_content = content if content else ("Media" if media_url else "")
+    
     message = Message(
         chat_id=chat_id,
         sender_id=user_id,
-        content=content,
+        content=message_content,
         message_type=actual_message_type,
         media_url=media_url,
         expires_at=expires_at
