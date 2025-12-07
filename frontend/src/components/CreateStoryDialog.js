@@ -174,58 +174,84 @@ export default function CreateStoryDialog({ onStoryCreated }) {
               
               {createdStoryId && (
                 <>
-                  <div className="space-y-2 py-2">
-                    <p className="text-sm font-semibold">Boost your story:</p>
-                    <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-3 py-2">
+                    <p className="text-sm font-semibold text-center">Choose Publishing Option:</p>
+                    
+                    <div className="grid grid-cols-1 gap-2">
                       <button
-                        onClick={() => setSelectedTier('basic')}
-                        className={`p-3 rounded-xl border-2 transition-all ${
-                          selectedTier === 'basic'
+                        data-testid="tier-free"
+                        onClick={() => setSelectedTier('free')}
+                        className={`p-4 rounded-xl border-2 transition-all ${
+                          selectedTier === 'free'
                             ? 'border-primary bg-primary/10'
                             : 'border-border hover:border-primary/50'
                         }`}
                       >
-                        <p className="text-xs text-muted-foreground">Basic</p>
-                        <p className="font-bold">₹50</p>
-                        <p className="text-xs text-muted-foreground">10k views</p>
+                        <div className="flex items-center justify-between">
+                          <div className="text-left">
+                            <p className="font-bold text-base">Publish Free</p>
+                            <p className="text-xs text-muted-foreground">Share with friends only</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-2xl font-bold text-primary">FREE</p>
+                          </div>
+                        </div>
                       </button>
-                      <button
-                        onClick={() => setSelectedTier('premium')}
-                        className={`p-3 rounded-xl border-2 transition-all ${
-                          selectedTier === 'premium'
-                            ? 'border-primary bg-primary/10'
-                            : 'border-border hover:border-primary/50'
-                        }`}
-                      >
-                        <p className="text-xs text-muted-foreground">Premium</p>
-                        <p className="font-bold">₹100</p>
-                        <p className="text-xs text-muted-foreground">20k views</p>
-                      </button>
+                      
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          data-testid="tier-basic"
+                          onClick={() => setSelectedTier('basic')}
+                          className={`p-3 rounded-xl border-2 transition-all ${
+                            selectedTier === 'basic'
+                              ? 'border-primary bg-primary/10'
+                              : 'border-border hover:border-primary/50'
+                          }`}
+                        >
+                          <p className="text-xs text-muted-foreground">Basic</p>
+                          <p className="font-bold">₹50</p>
+                          <p className="text-xs text-muted-foreground">10k views</p>
+                        </button>
+                        <button
+                          data-testid="tier-premium"
+                          onClick={() => setSelectedTier('premium')}
+                          className={`p-3 rounded-xl border-2 transition-all ${
+                            selectedTier === 'premium'
+                              ? 'border-primary bg-primary/10'
+                              : 'border-border hover:border-primary/50'
+                          }`}
+                        >
+                          <p className="text-xs text-muted-foreground">Premium</p>
+                          <p className="font-bold">₹100</p>
+                          <p className="text-xs text-muted-foreground">20k views</p>
+                        </button>
+                      </div>
                     </div>
                   </div>
                   
-                  <Button
-                    data-testid="promote-story-button"
-                    onClick={handlePromote}
-                    className="w-full rounded-full h-12 font-bold uppercase tracking-wide neon-shadow"
-                  >
-                    <DollarSign className="w-5 h-5 mr-2" />
-                    Promote Story (₹{selectedTier === 'basic' ? '50' : '100'})
-                  </Button>
-                  
-                  <Button
-                    data-testid="skip-promotion-button"
-                    onClick={() => {
-                      setOpen(false);
-                      setSelectedFile(null);
-                      setCreatedStoryId(null);
-                      toast.success('Story posted! Promote anytime from My Stories page.');
-                    }}
-                    variant="ghost"
-                    className="w-full"
-                  >
-                    Skip for Now
-                  </Button>
+                  {selectedTier === 'free' ? (
+                    <Button
+                      data-testid="publish-free-button"
+                      onClick={() => {
+                        setOpen(false);
+                        setSelectedFile(null);
+                        setCreatedStoryId(null);
+                        toast.success('Story published! Visible to your friends.');
+                      }}
+                      className="w-full rounded-full h-12 font-bold uppercase tracking-wide neon-shadow"
+                    >
+                      Publish Story
+                    </Button>
+                  ) : (
+                    <Button
+                      data-testid="promote-story-button"
+                      onClick={handlePromote}
+                      className="w-full rounded-full h-12 font-bold uppercase tracking-wide neon-shadow"
+                    >
+                      <DollarSign className="w-5 h-5 mr-2" />
+                      Promote Story (₹{selectedTier === 'basic' ? '50' : '100'})
+                    </Button>
+                  )}
                 </>
               )}
               
