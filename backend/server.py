@@ -109,7 +109,7 @@ class Message(BaseModel):
     image_url: Optional[str] = None
     disappearing: bool = False
     viewed: bool = False
-    disappear_after_seconds: int = 10
+    disappear_after_seconds: Optional[int] = 10
     viewed_at: Optional[str] = None
     expires_at: Optional[str] = None
     created_at: str
