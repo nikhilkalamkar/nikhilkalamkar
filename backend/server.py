@@ -340,7 +340,7 @@ async def get_messages(chat_id: str, user_id: str = Depends(verify_token)):
     return messages
 
 @api_router.post("/chats/{chat_id}/messages")
-async def send_message(chat_id: str, content: str = Form(...), message_type: str = Form("text"), media: Optional[UploadFile] = File(None), user_id: str = Depends(verify_token)):
+async def send_message(chat_id: str, content: str = Form(""), message_type: str = Form("text"), media: Optional[UploadFile] = File(None), user_id: str = Depends(verify_token)):
     chat = await db.chats.find_one({"chat_id": chat_id})
     if not chat or user_id not in chat['participants']:
         raise HTTPException(status_code=403, detail="Access denied")
