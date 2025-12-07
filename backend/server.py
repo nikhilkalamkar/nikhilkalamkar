@@ -70,6 +70,8 @@ class Message(BaseModel):
     is_screenshot: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     expires_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc) + timedelta(hours=24))
+    deleted_for_everyone: bool = False
+    deleted_for: List[str] = []  # List of user_ids who deleted this message for themselves
 
 class Chat(BaseModel):
     model_config = ConfigDict(extra="ignore")
