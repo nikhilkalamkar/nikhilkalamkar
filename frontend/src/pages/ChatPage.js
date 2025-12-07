@@ -264,15 +264,36 @@ export default function ChatPage() {
       
       <div className="border-t border-border p-4 bg-surface">
         {selectedMedia && (
-          <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
-            <span>{selectedMedia.name}</span>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => setSelectedMedia(null)}
-            >
-              Remove
-            </Button>
+          <div className="mb-3 relative">
+            <div className="flex items-center gap-2 p-3 bg-secondary rounded-xl">
+              {selectedMedia.type.startsWith('image/') ? (
+                <img 
+                  src={URL.createObjectURL(selectedMedia)} 
+                  alt="Preview" 
+                  className="h-20 w-20 object-cover rounded-lg"
+                />
+              ) : selectedMedia.type.startsWith('video/') ? (
+                <video 
+                  src={URL.createObjectURL(selectedMedia)} 
+                  className="h-20 w-20 object-cover rounded-lg"
+                />
+              ) : null}
+              <div className="flex-1">
+                <p className="text-sm font-medium">{selectedMedia.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {(selectedMedia.size / 1024).toFixed(2)} KB
+                </p>
+              </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setSelectedMedia(null)}
+                className="rounded-full"
+                data-testid="remove-media-button"
+              >
+                <ArrowLeft className="w-4 h-4 rotate-90" />
+              </Button>
+            </div>
           </div>
         )}
         
