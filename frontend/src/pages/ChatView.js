@@ -170,15 +170,20 @@ export default function ChatView() {
       
       // Handle different error types
       if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        toast.error('Camera/microphone access denied. Please allow access in your browser settings.', {
-          duration: 5000
+        setShowPermissionHelp(true);
+        toast.error('Camera/microphone access denied. Tap for help.', {
+          duration: 5000,
+          onClick: () => setShowPermissionHelp(true)
         });
       } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
         toast.error('No camera or microphone found on your device');
       } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
         toast.error('Camera/microphone is already in use by another application');
       } else {
-        toast.error('Failed to access camera/microphone. Please check your device and browser settings.');
+        setShowPermissionHelp(true);
+        toast.error('Failed to access camera/microphone. Tap for help.', {
+          onClick: () => setShowPermissionHelp(true)
+        });
       }
     }
   };
