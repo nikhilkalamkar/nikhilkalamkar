@@ -625,6 +625,29 @@ async def get_messages(friend_id: str, current_user_id: str = Depends(get_curren
     
     return [Message(**m) for m in messages]
 
+@api_router.delete("/messages/{message_id}")
+async def delete_message(message_id: str, current_user_id: str = Depends(get_current_user)):
+    # Find the message
+    message = await db.messages.find_one(
+        {"message_id": message_id},
+        {"_id": 0}
+    )
+    
+    if not message:
+        raise HTTPException(status_code=404, detail="Message not found")
+    
+    # Only sender can delete their own messages
+    if message["sender_id"] != current_user_id:
+        raise HTTPException(status_code=403, detail="You can only delete your own messages")
+    
+    # Delete the message
+    result = await db.messages.delete_one({"message_id": message_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Message not found")
+    
+    return {"message": "Message deleted successfully"}
+
 app.include_router(api_router)
 
 app.add_middleware(
