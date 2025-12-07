@@ -86,6 +86,112 @@ export default function Landing() {
     }
   };
 
+  if (showForgotPassword) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-yellow-50 via-pink-50 to-purple-50">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md"
+        >
+          <div className="text-center mb-8">
+            <motion.div 
+              className="inline-flex items-center justify-center w-20 h-20 bg-[#F5E618] rounded-3xl mb-4 shadow-lg"
+              whileHover={{ scale: 1.05, rotate: 5 }}
+            >
+              <Camera size={40} className="text-black" strokeWidth={2.5} />
+            </motion.div>
+            <h1 className="text-4xl font-bold mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              Forgot Password
+            </h1>
+            <p className="text-gray-600 font-medium">Enter your email to reset password</p>
+          </div>
+
+          <div className="bg-white rounded-3xl shadow-xl p-8">
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <Input
+                type="email"
+                placeholder="Email"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                required
+                className="h-12 rounded-xl bg-gray-50 border-transparent focus:border-black focus:bg-white transition-all"
+                data-testid="forgot-email-input"
+              />
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#F5E618] text-black font-bold rounded-full h-12 hover:scale-105 transition-transform shadow-lg"
+                data-testid="verify-email-btn"
+              >
+                {loading ? 'Verifying...' : 'Verify Email'}
+              </Button>
+              <Button
+                type="button"
+                onClick={() => setShowForgotPassword(false)}
+                className="w-full bg-gray-100 text-gray-700 font-bold rounded-full h-12 hover:bg-gray-200"
+                data-testid="back-to-login-btn"
+              >
+                Back to Login
+              </Button>
+            </form>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (showResetPassword) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-yellow-50 via-pink-50 to-purple-50">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md"
+        >
+          <div className="text-center mb-8">
+            <motion.div 
+              className="inline-flex items-center justify-center w-20 h-20 bg-[#F5E618] rounded-3xl mb-4 shadow-lg"
+              whileHover={{ scale: 1.05, rotate: 5 }}
+            >
+              <Camera size={40} className="text-black" strokeWidth={2.5} />
+            </motion.div>
+            <h1 className="text-4xl font-bold mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              Reset Password
+            </h1>
+            <p className="text-gray-600 font-medium">Enter your new password</p>
+          </div>
+
+          <div className="bg-white rounded-3xl shadow-xl p-8">
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <div className="text-sm text-gray-600 mb-4">
+                Resetting password for: <strong>{resetEmail}</strong>
+              </div>
+              <Input
+                type="password"
+                placeholder="New Password (min 6 characters)"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                required
+                minLength={6}
+                className="h-12 rounded-xl bg-gray-50 border-transparent focus:border-black focus:bg-white transition-all"
+                data-testid="new-password-input"
+              />
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#F5E618] text-black font-bold rounded-full h-12 hover:scale-105 transition-transform shadow-lg"
+                data-testid="reset-password-btn"
+              >
+                {loading ? 'Resetting...' : 'Reset Password'}
+              </Button>
+            </form>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-yellow-50 via-pink-50 to-purple-50">
       <motion.div 
