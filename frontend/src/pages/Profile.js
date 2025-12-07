@@ -1,7 +1,7 @@
-import { useContext, useState, useRef } from 'react';
+import { useContext, useState, useRef, useEffect } from 'react';
 import { AuthContext, API } from '@/App';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Mail, Camera, Upload } from 'lucide-react';
+import { LogOut, User, Mail, Camera, Upload, Ban, ShieldOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import axios from 'axios';
