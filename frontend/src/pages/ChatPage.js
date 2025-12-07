@@ -38,6 +38,8 @@ export default function ChatPage() {
   const [messageText, setMessageText] = useState('');
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [showBlockDialog, setShowBlockDialog] = useState(false);
+  const [disappearTimer, setDisappearTimer] = useState(86400); // 24 hours default
+  const [showTimerMenu, setShowTimerMenu] = useState(false);
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
   
