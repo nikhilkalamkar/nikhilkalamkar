@@ -277,6 +277,14 @@ async def get_current_user(user_id: str = Depends(verify_token)):
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+@api_router.get("/users/{target_user_id}")
+async def get_user_by_id(target_user_id: str, user_id: str = Depends(verify_token)):
+    """Get another user's profile"""
+    user = await db.users.find_one({"user_id": target_user_id}, {"_id": 0, "password_hash": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
 @api_router.put("/users/me")
 async def update_profile(
     bio: str = Form(None),
