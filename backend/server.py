@@ -368,31 +368,7 @@ async def update_profile(
     updated_user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "password_hash": 0})
     return updated_user
 
-@api_router.get("/users/search")
-async def search_users(q: str, user_id: str = Depends(verify_token)):
-    logger.info(f"Search request: user_id={user_id}, query='{q}'")
-    
-    blocked = await db.blocked_users.find({"blocker_id": user_id}, {"_id": 0}).to_list(1000)
-    blocked_ids = [b['blocked_id'] for b in blocked]
-    logger.info(f"Blocked users for {user_id}: {len(blocked_ids)}")
-    
-    search_query = {"$and": [
-        {"user_id": {"$ne": user_id}},
-        {"user_id": {"$nin": blocked_ids}},
-        {"$or": [
-            {"username": {"$regex": q, "$options": "i"}},
-            {"email": {"$regex": q, "$options": "i"}}
-        ]}
-    ]}
-    logger.info(f"MongoDB search query: {search_query}")
-    
-    users = await db.users.find(
-        search_query,
-        {"_id": 0, "password_hash": 0}
-    ).to_list(20)
-    
-    logger.info(f"Search results for '{q}': found {len(users)} users")
-    return users
+# Search endpoint moved above to fix routing conflict with /users/{target_user_id}
 
 @api_router.post("/friends/request")
 async def send_friend_request(receiver_id: str, user_id: str = Depends(verify_token)):
