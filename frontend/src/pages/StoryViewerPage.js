@@ -308,6 +308,29 @@ export default function StoryViewerPage() {
           </p>
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent className="glass-effect max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-heading text-xl">Delete Story?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this story? This action cannot be undone and the story will be removed immediately.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              data-testid="confirm-delete-story"
+              onClick={handleDeleteStory}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete Story
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
