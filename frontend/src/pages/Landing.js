@@ -280,6 +280,19 @@ export default function Landing() {
             >
               {loading ? 'Loading...' : isLogin ? 'Login' : 'Sign Up'}
             </Button>
+            
+            {isLogin && (
+              <div className="text-center mt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-sm text-gray-600 hover:text-black font-medium transition-colors"
+                  data-testid="forgot-password-link"
+                >
+                  Forgot Password?
+                </button>
+              </div>
+            )}
           </form>
         </div>
       </motion.div>
