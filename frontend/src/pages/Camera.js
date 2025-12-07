@@ -25,8 +25,32 @@ export default function Camera() {
   const [selectedFriend, setSelectedFriend] = useState('');
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState('snap');
+  const fileInputRef = useRef(null);
 
   const handleCapture = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const dataUrl = reader.result;
+          setSelectedImage(dataUrl);
+          setImageUrl(dataUrl);
+          fetchFriends();
+          setShowDialog(true);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        toast.error('Please select an image or video file');
+      }
+    }
+  };
+
+  const handleUsePlaceholder = () => {
     const randomImage = placeholderImages[Math.floor(Math.random() * placeholderImages.length)];
     setSelectedImage(randomImage);
     setImageUrl(randomImage);
