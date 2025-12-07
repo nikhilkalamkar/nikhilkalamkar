@@ -237,13 +237,13 @@ export default function ChatPage() {
                   <div className="mb-2">
                     {message.message_type === 'image' ? (
                       <img
-                        src={message.media_url}
+                        src={message.media_url.startsWith('http') ? message.media_url : `${process.env.REACT_APP_BACKEND_URL}${message.media_url}`}
                         alt="Message media"
                         className="rounded-lg max-w-full"
                       />
                     ) : message.message_type === 'video' ? (
                       <video controls className="rounded-lg max-w-full">
-                        <source src={message.media_url} />
+                        <source src={message.media_url.startsWith('http') ? message.media_url : `${process.env.REACT_APP_BACKEND_URL}${message.media_url}`} />
                       </video>
                     ) : null}
                   </div>
