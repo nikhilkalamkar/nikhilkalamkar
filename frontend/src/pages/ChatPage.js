@@ -202,6 +202,32 @@ export default function ChatPage() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
+              data-testid="timer-button"
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+            >
+              <Clock className="w-5 h-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="glass-effect">
+            {timerOptions.map((option) => (
+              <DropdownMenuItem
+                key={option.value}
+                data-testid={`timer-option-${option.value}`}
+                onClick={() => handleTimerChange(option.value)}
+                className={disappearTimer === option.value ? 'bg-accent' : ''}
+              >
+                {option.label}
+                {disappearTimer === option.value && ' ✓'}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
               data-testid="chat-menu-button"
               variant="ghost"
               size="icon"
