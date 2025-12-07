@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext, API } from '@/App';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Send, Camera, Image as ImageIcon, X } from 'lucide-react';
+import { ArrowLeft, Send, Camera, Image as ImageIcon, X, Phone, Video, PhoneOff, Mic, MicOff, VideoOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -17,8 +17,14 @@ export default function ChatView() {
   const [newMessage, setNewMessage] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
   const [imagePreview, setImagePreview] = useState('');
+  const [callActive, setCallActive] = useState(false);
+  const [callType, setCallType] = useState(null);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isVideoOff, setIsVideoOff] = useState(false);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
+  const localVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
 
   useEffect(() => {
     fetchFriend();
