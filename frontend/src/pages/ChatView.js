@@ -3,10 +3,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext, API } from '@/App';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Send, Camera, Image as ImageIcon, X, Phone, Video, PhoneOff, Mic, MicOff, VideoOff } from 'lucide-react';
+import { ArrowLeft, Send, Camera, Image as ImageIcon, X, Phone, Video, PhoneOff, Mic, MicOff, VideoOff, MoreVertical, Ban } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function ChatView() {
   const { friendId } = useParams();
