@@ -149,15 +149,28 @@ export default function ChatView() {
               className={`mb-3 flex ${message.sender_id === user.user_id ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[75%] rounded-2xl px-4 py-3 ${
+                className={`max-w-[75%] rounded-2xl overflow-hidden ${
                   message.sender_id === user.user_id
                     ? 'bg-[#F5E618] text-black rounded-br-sm'
                     : 'bg-white text-black rounded-bl-sm shadow-sm'
                 }`}
                 data-testid={`message-${message.message_id}`}
               >
-                <p className="font-medium">{message.text}</p>
-                <p className={`text-xs mt-1 ${
+                {message.image_url && (
+                  <img
+                    src={message.image_url}
+                    alt="Shared image"
+                    className="w-full max-w-xs object-cover cursor-pointer"
+                    onClick={() => window.open(message.image_url, '_blank')}
+                  />
+                )}
+                {message.text && (
+                  <p className="font-medium px-4 py-3">{message.text}</p>
+                )}
+                {!message.text && message.image_url && (
+                  <div className="px-4 py-2" />
+                )}
+                <p className={`text-xs px-4 pb-2 ${
                   message.sender_id === user.user_id ? 'text-black/60' : 'text-gray-500'
                 }`}>
                   {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
