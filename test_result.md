@@ -202,9 +202,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Disappearing Messages Timer Setting"
     - "Disappearing Messages Timer UI"
-    - "TTL Index for Automatic Message Deletion"
     - "WebSocket Timer Sync"
   stuck_tasks: []
   test_all: false
