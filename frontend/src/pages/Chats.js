@@ -162,6 +162,7 @@ export default function Chats() {
             <DialogTitle className="text-2xl font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>
               Add Friends
             </DialogTitle>
+            <DialogDescription>Search for friends by username or email to connect with them.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="flex gap-2">
