@@ -404,6 +404,257 @@ class SnapCloneAPITester:
         self.token = original_token
         return success
 
+    def test_disappearing_messages_timer_api(self):
+        """Test disappearing messages timer API endpoint"""
+        # First get a chat to test with
+        success, response = self.run_test(
+            "Get Chats for Timer Test",
+            "GET", 
+            "chats",
+            200
+        )
+        
+        if not success or len(response) == 0:
+            self.log_test("Disappearing Timer Test", False, "No chats available for testing")
+            return False
+            
+        chat_id = response[0]['chat_id']
+        
+        # Test valid timer values
+        valid_timers = [5, 60, 3600, 86400, 0]
+        timer_success = True
+        
+        for timer_value in valid_timers:
+            url = f"{self.base_url}/chats/{chat_id}/timer"
+            headers = {'Authorization': f'Bearer {self.token}', 'Content-Type': 'application/json'}
+            data = {"timer_seconds": timer_value}
+            
+            try:
+                response = requests.put(url, json=data, headers=headers, timeout=10)
+                success = response.status_code == 200
+                
+                if success:
+                    response_data = response.json()
+                    if response_data.get('timer_seconds') != timer_value:
+                        success = False
+                        
+                details = f"Timer {timer_value}s - Status: {response.status_code}"
+                if not success:
+                    try:
+                        error_data = response.json()
+                        details += f", Error: {error_data.get('detail', 'Unknown error')}"
+                    except:
+                        details += f", Response: {response.text[:100]}"
+                        
+                self.log_test(f"Set Timer to {timer_value} seconds", success, details)
+                if not success:
+                    timer_success = False
+                    
+            except Exception as e:
+                self.log_test(f"Set Timer to {timer_value} seconds", False, f"Exception: {str(e)}")
+                timer_success = False
+        
+        # Test invalid timer values
+        invalid_timers = [10, 30, 7200, -1, 999999]
+        for timer_value in invalid_timers:
+            url = f"{self.base_url}/chats/{chat_id}/timer"
+            headers = {'Authorization': f'Bearer {self.token}', 'Content-Type': 'application/json'}
+            data = {"timer_seconds": timer_value}
+            
+            try:
+                response = requests.put(url, json=data, headers=headers, timeout=10)
+                success = response.status_code == 400  # Should fail with 400
+                
+                details = f"Invalid timer {timer_value}s - Status: {response.status_code}"
+                self.log_test(f"Reject Invalid Timer {timer_value}s", success, details)
+                if not success:
+                    timer_success = False
+                    
+            except Exception as e:
+                self.log_test(f"Reject Invalid Timer {timer_value}s", False, f"Exception: {str(e)}")
+                timer_success = False
+        
+        return timer_success
+
+    def test_message_expiry_calculation(self):
+        """Test that messages get correct expires_at based on chat timer"""
+        # Get a chat to test with
+        success, response = self.run_test(
+            "Get Chats for Expiry Test",
+            "GET", 
+            "chats",
+            200
+        )
+        
+        if not success or len(response) == 0:
+            self.log_test("Message Expiry Test", False, "No chats available for testing")
+            return False
+            
+        chat_id = response[0]['chat_id']
+        
+        # Set timer to 5 seconds
+        url = f"{self.base_url}/chats/{chat_id}/timer"
+        headers = {'Authorization': f'Bearer {self.token}', 'Content-Type': 'application/json'}
+        data = {"timer_seconds": 5}
+        
+        try:
+            response = requests.put(url, json=data, headers=headers, timeout=10)
+            if response.status_code != 200:
+                self.log_test("Message Expiry Test", False, "Failed to set timer")
+                return False
+        except Exception as e:
+            self.log_test("Message Expiry Test", False, f"Timer setup failed: {str(e)}")
+            return False
+        
+        # Send a message and check its expires_at
+        message_url = f"{self.base_url}/chats/{chat_id}/messages"
+        message_headers = {'Authorization': f'Bearer {self.token}'}
+        message_data = {
+            "content": "Test message for expiry calculation",
+            "message_type": "text"
+        }
+        
+        try:
+            before_send = datetime.now()
+            response = requests.post(message_url, data=message_data, headers=message_headers, timeout=10)
+            after_send = datetime.now()
+            
+            if response.status_code != 200:
+                self.log_test("Message Expiry Calculation", False, f"Failed to send message: {response.status_code}")
+                return False
+                
+            message_data = response.json()
+            expires_at_str = message_data.get('expires_at')
+            
+            if not expires_at_str:
+                self.log_test("Message Expiry Calculation", False, "No expires_at field in message")
+                return False
+            
+            # Parse expires_at and check if it's approximately 5 seconds from now
+            from datetime import datetime, timezone
+            expires_at = datetime.fromisoformat(expires_at_str.replace('Z', '+00:00'))
+            expected_expiry = before_send.replace(tzinfo=timezone.utc) + timedelta(seconds=5)
+            
+            # Allow 2 second tolerance
+            time_diff = abs((expires_at - expected_expiry).total_seconds())
+            success = time_diff <= 2
+            
+            details = f"Expected ~5s expiry, got {time_diff:.1f}s difference"
+            self.log_test("Message Expiry Calculation", success, details)
+            return success
+            
+        except Exception as e:
+            self.log_test("Message Expiry Calculation", False, f"Exception: {str(e)}")
+            return False
+
+    def test_message_auto_deletion(self):
+        """Test automatic message deletion via MongoDB TTL"""
+        # Get a chat to test with
+        success, response = self.run_test(
+            "Get Chats for Auto-Delete Test",
+            "GET", 
+            "chats",
+            200
+        )
+        
+        if not success or len(response) == 0:
+            self.log_test("Message Auto-Deletion Test", False, "No chats available for testing")
+            return False
+            
+        chat_id = response[0]['chat_id']
+        
+        # Set timer to 5 seconds for quick testing
+        url = f"{self.base_url}/chats/{chat_id}/timer"
+        headers = {'Authorization': f'Bearer {self.token}', 'Content-Type': 'application/json'}
+        data = {"timer_seconds": 5}
+        
+        try:
+            response = requests.put(url, json=data, headers=headers, timeout=10)
+            if response.status_code != 200:
+                self.log_test("Message Auto-Deletion Test", False, "Failed to set timer")
+                return False
+        except Exception as e:
+            self.log_test("Message Auto-Deletion Test", False, f"Timer setup failed: {str(e)}")
+            return False
+        
+        # Send a test message
+        message_url = f"{self.base_url}/chats/{chat_id}/messages"
+        message_headers = {'Authorization': f'Bearer {self.token}'}
+        message_data = {
+            "content": "Test message for auto-deletion",
+            "message_type": "text"
+        }
+        
+        try:
+            response = requests.post(message_url, data=message_data, headers=message_headers, timeout=10)
+            if response.status_code != 200:
+                self.log_test("Message Auto-Deletion Test", False, f"Failed to send message: {response.status_code}")
+                return False
+                
+            sent_message = response.json()
+            message_id = sent_message.get('message_id')
+            
+            # Immediately check that message exists
+            get_url = f"{self.base_url}/chats/{chat_id}/messages"
+            response = requests.get(get_url, headers=message_headers, timeout=10)
+            
+            if response.status_code != 200:
+                self.log_test("Message Auto-Deletion Test", False, "Failed to get messages")
+                return False
+                
+            messages = response.json()
+            message_found = any(msg.get('message_id') == message_id for msg in messages)
+            
+            if not message_found:
+                self.log_test("Message Auto-Deletion Test", False, "Message not found immediately after sending")
+                return False
+            
+            self.log_test("Message Visible After Send", True, "Message found in chat")
+            
+            # Wait for message to expire (5 seconds + buffer for MongoDB TTL)
+            print("    Waiting 10 seconds for message auto-deletion...")
+            time.sleep(10)
+            
+            # Check if message is deleted
+            response = requests.get(get_url, headers=message_headers, timeout=10)
+            if response.status_code != 200:
+                self.log_test("Message Auto-Deletion Test", False, "Failed to get messages after wait")
+                return False
+                
+            messages_after = response.json()
+            message_still_exists = any(msg.get('message_id') == message_id for msg in messages_after)
+            
+            success = not message_still_exists
+            details = "Message deleted by TTL" if success else "Message still exists after expiry"
+            self.log_test("Message Auto-Deletion", success, details)
+            return success
+            
+        except Exception as e:
+            self.log_test("Message Auto-Deletion Test", False, f"Exception: {str(e)}")
+            return False
+
+    def test_disappearing_messages_end_to_end(self):
+        """Test complete disappearing messages flow"""
+        print("\n🔄 Testing Disappearing Messages End-to-End Flow...")
+        
+        # Test timer API
+        timer_success = self.test_disappearing_messages_timer_api()
+        
+        # Test message expiry calculation
+        expiry_success = self.test_message_expiry_calculation()
+        
+        # Test auto-deletion (this takes time)
+        deletion_success = self.test_message_auto_deletion()
+        
+        overall_success = timer_success and expiry_success and deletion_success
+        
+        details = f"Timer API: {'✅' if timer_success else '❌'}, " + \
+                 f"Expiry Calc: {'✅' if expiry_success else '❌'}, " + \
+                 f"Auto-Delete: {'✅' if deletion_success else '❌'}"
+        
+        self.log_test("Disappearing Messages E2E Flow", overall_success, details)
+        return overall_success
+
     def run_all_tests(self):
         """Run comprehensive test suite"""
         print("🚀 Starting SnapClone API Tests...")
