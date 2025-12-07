@@ -206,8 +206,83 @@ export default function HomePage() {
             </div>
           </ScrollArea>
           
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
+          {/* Global Search Bar */}
+          <div className="px-4 pt-4">
+            <div className="relative">
+              <Input
+                data-testid="global-search-input"
+                placeholder="🔍 Search users around the world..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  if (e.target.value.length > 2) {
+                    handleSearch();
+                  } else {
+                    setSearchResults([]);
+                  }
+                }}
+                className="w-full rounded-full pl-12 pr-4 py-6 text-base bg-secondary"
+              />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            </div>
+            
+            {/* Search Results Dropdown */}
+            {searchResults.length > 0 && searchQuery.length > 0 && (
+              <Card className="mt-2 glass-effect border-border/50 max-h-80 overflow-y-auto">
+                <CardContent className="p-2">
+                  <div className="space-y-2">
+                    {searchResults.map((result) => (
+                      <div 
+                        key={result.user_id} 
+                        className="flex items-center justify-between p-3 hover:bg-accent rounded-xl transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Avatar>
+                            <AvatarImage 
+                              src={
+                                result.profile_picture?.startsWith('http') 
+                                  ? result.profile_picture 
+                                  : `${process.env.REACT_APP_BACKEND_URL}${result.profile_picture}`
+                              } 
+                            />
+                            <AvatarFallback>{result.username[0].toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">{result.username}</p>
+                            <p className="text-xs text-muted-foreground">{result.email}</p>
+                          </div>
+                        </div>
+                        <Button
+                          data-testid={`add-friend-${result.user_id}`}
+                          onClick={() => {
+                            sendFriendRequest(result.user_id);
+                            setSearchResults([]);
+                            setSearchQuery('');
+                          }}
+                          size="sm"
+                          className="rounded-full"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            
+            {searchQuery.length > 2 && searchResults.length === 0 && (
+              <Card className="mt-2 glass-effect border-border/50">
+                <CardContent className="p-4 text-center">
+                  <p className="text-muted-foreground">No users found matching "{searchQuery}"</p>
+                  <p className="text-xs text-muted-foreground mt-1">Try a different name or email</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          <div className="space-y-6">
+            <div className="flex items-center justify-between px-6">
               <h2 className="text-xl font-heading font-bold">Messages</h2>
               <Dialog>
                 <DialogTrigger asChild>
