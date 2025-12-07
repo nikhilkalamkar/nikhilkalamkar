@@ -240,6 +240,26 @@ export default function ChatView() {
         >
           <Video size={20} />
         </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              className="rounded-full w-10 h-10 p-0 bg-gray-100 hover:bg-gray-200"
+              data-testid="chat-menu-btn"
+            >
+              <MoreVertical size={20} />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem 
+              onClick={blockUser}
+              className="text-red-600 cursor-pointer"
+              data-testid="block-user-btn"
+            >
+              <Ban className="mr-2" size={16} />
+              Block {friend.username}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {callActive && (
