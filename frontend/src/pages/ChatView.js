@@ -451,9 +451,15 @@ export default function ChatView() {
                   message.sender_id === user.user_id
                     ? 'bg-[#F5E618] text-black rounded-br-sm'
                     : 'bg-white text-black rounded-bl-sm shadow-sm'
-                }`}
+                } ${message.disappearing ? 'border-2 border-dashed border-orange-400' : ''}`}
                 data-testid={`message-${message.message_id}`}
               >
+                {message.disappearing && (
+                  <div className="bg-orange-100 px-3 py-1 flex items-center gap-2 text-xs font-bold text-orange-700">
+                    <Timer size={12} />
+                    Disappearing message • {message.disappear_after_seconds}s
+                  </div>
+                )}
                 {message.image_url && (
                   <img
                     src={message.image_url}
