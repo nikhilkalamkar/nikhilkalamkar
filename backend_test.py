@@ -1054,10 +1054,16 @@ class SnapCloneAPITester:
         return self.tests_passed == self.tests_run
 
 def main():
+    import sys
     tester = SnapCloneAPITester()
     
     try:
-        tester.run_all_tests()
+        # Check if we should run only image tests
+        if len(sys.argv) > 1 and sys.argv[1] == "--image-only":
+            tester.run_image_tests_only()
+        else:
+            tester.run_all_tests()
+            
         success = tester.print_summary()
         return 0 if success else 1
     except KeyboardInterrupt:
