@@ -496,6 +496,26 @@ export default function ChatView() {
           data-testid="image-input"
         />
         
+        {disappearingMode && (
+          <div className="mb-2 bg-orange-50 border border-orange-200 rounded-lg p-2 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Timer size={16} className="text-orange-600" />
+              <span className="text-sm font-medium text-orange-700">Disappearing mode ON</span>
+            </div>
+            <select
+              value={disappearTime}
+              onChange={(e) => setDisappearTime(Number(e.target.value))}
+              className="text-xs bg-white border border-orange-300 rounded px-2 py-1"
+              data-testid="disappear-time-select"
+            >
+              <option value={5}>5s</option>
+              <option value={10}>10s</option>
+              <option value={30}>30s</option>
+              <option value={60}>1min</option>
+            </select>
+          </div>
+        )}
+        
         {imagePreview && (
           <div className="mb-3 relative inline-block">
             <img
