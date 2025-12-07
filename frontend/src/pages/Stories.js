@@ -66,7 +66,7 @@ export default function Stories() {
             className="flex-shrink-0 cursor-pointer"
             data-testid="story-circle"
           >
-            <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-[#F5E618] via-[#EC4899] to-[#8B5CF6]">
+            <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-[rgb(37 99 235)] via-[#EC4899] to-[#8B5CF6]">
               <div className="w-full h-full rounded-full bg-white p-1">
                 <img
                   src={userStories.user_avatar || 'https://images.unsplash.com/photo-1675526607070-f5cbd71dde92?w=200'}

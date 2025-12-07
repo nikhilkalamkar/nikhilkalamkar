@@ -96,7 +96,7 @@ export default function Landing() {
         >
           <div className="text-center mb-8">
             <motion.div 
-              className="inline-flex items-center justify-center w-20 h-20 bg-[#F5E618] rounded-3xl mb-4 shadow-lg"
+              className="inline-flex items-center justify-center w-20 h-20 bg-[rgb(37 99 235)] rounded-3xl mb-4 shadow-lg"
               whileHover={{ scale: 1.05, rotate: 5 }}
             >
               <Camera size={40} className="text-black" strokeWidth={2.5} />
@@ -121,7 +121,7 @@ export default function Landing() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#F5E618] text-black font-bold rounded-full h-12 hover:scale-105 transition-transform shadow-lg"
+                className="w-full bg-[rgb(37 99 235)] text-black font-bold rounded-full h-12 hover:scale-105 transition-transform shadow-lg"
                 data-testid="verify-email-btn"
               >
                 {loading ? 'Verifying...' : 'Verify Email'}
@@ -151,7 +151,7 @@ export default function Landing() {
         >
           <div className="text-center mb-8">
             <motion.div 
-              className="inline-flex items-center justify-center w-20 h-20 bg-[#F5E618] rounded-3xl mb-4 shadow-lg"
+              className="inline-flex items-center justify-center w-20 h-20 bg-[rgb(37 99 235)] rounded-3xl mb-4 shadow-lg"
               whileHover={{ scale: 1.05, rotate: 5 }}
             >
               <Camera size={40} className="text-black" strokeWidth={2.5} />
@@ -180,7 +180,7 @@ export default function Landing() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#F5E618] text-black font-bold rounded-full h-12 hover:scale-105 transition-transform shadow-lg"
+                className="w-full bg-[rgb(37 99 235)] text-black font-bold rounded-full h-12 hover:scale-105 transition-transform shadow-lg"
                 data-testid="reset-password-btn"
               >
                 {loading ? 'Resetting...' : 'Reset Password'}

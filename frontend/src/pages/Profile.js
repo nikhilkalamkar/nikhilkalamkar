@@ -142,7 +142,7 @@ export default function Profile() {
                   <Camera size={32} className="text-white drop-shadow-lg" />
                 )}
               </div>
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-[#F5E618] rounded-full border-4 border-white flex items-center justify-center">
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-[rgb(37 99 235)] rounded-full border-4 border-white flex items-center justify-center">
                 <Upload size={14} className="text-black" />
               </div>
             </button>
@@ -156,7 +156,7 @@ export default function Profile() {
       <div className="px-6 py-6 space-y-3">
         <div className="bg-white rounded-2xl p-4 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-            <User size={24} className="text-[#F5E618]" />
+            <User size={24} className="text-[rgb(37 99 235)]" />
           </div>
           <div>
             <p className="text-sm text-gray-500">Username</p>

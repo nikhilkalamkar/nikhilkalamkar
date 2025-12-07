@@ -450,7 +450,7 @@ export default function ChatView() {
   if (!friend) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#F5E618] border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[rgb(37 99 235)] border-t-transparent" />
       </div>
     );
   }
@@ -490,7 +490,7 @@ export default function ChatView() {
 
             <Button
               onClick={() => setShowPermissionHelp(false)}
-              className="w-full bg-[#F5E618] text-black font-bold rounded-full h-12"
+              className="w-full bg-[rgb(37 99 235)] text-black font-bold rounded-full h-12"
             >
               Got it!
             </Button>
@@ -648,7 +648,7 @@ export default function ChatView() {
               <div
                 className={`max-w-[75%] rounded-2xl overflow-hidden ${
                   message.sender_id === user.user_id
-                    ? 'bg-[#F5E618] text-black rounded-br-sm'
+                    ? 'bg-[rgb(37 99 235)] text-black rounded-br-sm'
                     : 'bg-white text-black rounded-bl-sm shadow-sm'
                 } ${message.disappearing ? 'border-2 border-dashed border-orange-400' : ''} ${
                   message.sending ? 'opacity-70' : ''
@@ -781,7 +781,7 @@ export default function ChatView() {
           <Button
             type="submit"
             disabled={!newMessage.trim() && !selectedImage}
-            className="bg-[#F5E618] text-black rounded-full w-12 h-12 p-0 hover:scale-105 transition-transform disabled:opacity-50"
+            className="bg-[rgb(37 99 235)] text-black rounded-full w-12 h-12 p-0 hover:scale-105 transition-transform disabled:opacity-50"
             data-testid="send-message-btn"
           >
             <Send size={20} />

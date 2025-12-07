@@ -29,7 +29,7 @@ export default function BottomNav() {
               onClick={() => navigate(item.path)}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center justify-center w-14 h-14 bg-[#F5E618] rounded-full -mt-8 shadow-lg"
+              className="flex items-center justify-center w-14 h-14 bg-[rgb(37 99 235)] rounded-full -mt-8 shadow-lg"
               data-testid={`nav-${item.label.toLowerCase()}`}
             >
               <Icon size={28} className="text-black" strokeWidth={2.5} />
@@ -50,7 +50,7 @@ export default function BottomNav() {
           >
             <Icon 
               size={24} 
-              className={isActive ? 'text-[#F5E618]' : 'text-white'} 
+              className={isActive ? 'text-[rgb(37 99 235)]' : 'text-white'} 
               strokeWidth={2}
             />
           </motion.button>

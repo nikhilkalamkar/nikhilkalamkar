@@ -138,7 +138,7 @@ export default function Camera() {
       <div className="flex-1 flex items-center justify-center relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800">
           <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[#F5E618] rounded-full blur-3xl" />
+            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[rgb(37 99 235)] rounded-full blur-3xl" />
             <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-[#EC4899] rounded-full blur-3xl" />
           </div>
         </div>
@@ -157,7 +157,7 @@ export default function Camera() {
             <div className="flex gap-3 justify-center">
               <Button
                 onClick={handleCapture}
-                className="bg-[#F5E618] text-black font-bold rounded-full h-14 px-8 hover:scale-105 transition-transform shadow-2xl"
+                className="bg-[rgb(37 99 235)] text-black font-bold rounded-full h-14 px-8 hover:scale-105 transition-transform shadow-2xl"
                 data-testid="capture-btn"
               >
                 <ImageIcon className="mr-2" size={20} />
@@ -193,7 +193,7 @@ export default function Camera() {
               <Button
                 onClick={() => setType('snap')}
                 className={`flex-1 rounded-full font-bold ${
-                  type === 'snap' ? 'bg-[#F5E618] text-black' : 'bg-gray-100 text-gray-600'
+                  type === 'snap' ? 'bg-[rgb(37 99 235)] text-black' : 'bg-gray-100 text-gray-600'
                 }`}
                 data-testid="snap-type-btn"
               >
@@ -252,7 +252,7 @@ export default function Camera() {
             <Button
               onClick={handleSend}
               disabled={loading}
-              className="w-full bg-[#F5E618] text-black font-bold rounded-full h-12 hover:scale-105 transition-transform"
+              className="w-full bg-[rgb(37 99 235)] text-black font-bold rounded-full h-12 hover:scale-105 transition-transform"
               data-testid="send-btn"
             >
               {loading ? 'Sending...' : type === 'snap' ? 'Send Snap' : 'Post Story'}

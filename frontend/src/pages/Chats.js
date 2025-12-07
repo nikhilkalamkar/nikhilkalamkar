@@ -102,7 +102,7 @@ export default function Chats() {
           </h1>
           <Button
             onClick={() => setShowAddFriend(true)}
-            className="bg-[#F5E618] text-black rounded-full w-12 h-12 p-0"
+            className="bg-[rgb(37 99 235)] text-black rounded-full w-12 h-12 p-0"
             data-testid="add-friend-btn"
           >
             <UserPlus size={20} />
@@ -129,7 +129,7 @@ export default function Chats() {
               <div className="flex gap-2">
                 <Button
                   onClick={() => acceptFriendRequest(request.request_id)}
-                  className="bg-[#F5E618] text-black rounded-full h-9 px-4 text-sm font-bold hover:bg-[#F5E618]/90"
+                  className="bg-[rgb(37 99 235)] text-black rounded-full h-9 px-4 text-sm font-bold hover:bg-[rgb(37 99 235)]/90"
                   data-testid={`accept-request-btn-${request.request_id}`}
                 >
                   Accept
@@ -219,7 +219,7 @@ export default function Chats() {
                 </div>
                 <Button
                   onClick={() => sendFriendRequest(result.user_id)}
-                  className="bg-[#F5E618] text-black rounded-full h-9 px-4 text-sm font-bold"
+                  className="bg-[rgb(37 99 235)] text-black rounded-full h-9 px-4 text-sm font-bold"
                   data-testid={`send-request-btn-${result.user_id}`}
                 >
                   Add
