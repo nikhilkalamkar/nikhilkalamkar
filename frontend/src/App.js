@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import '@/App.css';
 import Landing from '@/pages/Landing';
@@ -15,6 +15,34 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
 
 export const AuthContext = React.createContext();
+
+function AppContent({ user, token, login, logout }) {
+  const location = useLocation();
+  const hideBottomNav = location.pathname.startsWith('/chat/');
+
+  if (!user) {
+    return (
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    );
+  }
+
+  return (
+    <>
+      <Routes>
+        <Route path="/" element={<Camera />} />
+        <Route path="/stories" element={<Stories />} />
+        <Route path="/chats" element={<Chats />} />
+        <Route path="/chat/:friendId" element={<ChatView />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+      {!hideBottomNav && <BottomNav />}
+    </>
+  );
+}
 
 function App() {
   const [user, setUser] = useState(null);
