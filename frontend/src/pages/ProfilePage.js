@@ -20,11 +20,14 @@ export default function ProfilePage() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [friends, setFriends] = useState([]);
+  const [friendsCount, setFriendsCount] = useState(0);
   const fileInputRef = useRef(null);
 
   // Fetch fresh user data when page loads
   useEffect(() => {
     fetchUser();
+    fetchFriends();
   }, []);
 
   // Update bio when user data changes
@@ -33,6 +36,18 @@ export default function ProfilePage() {
       setBio(user.bio);
     }
   }, [user]);
+
+  const fetchFriends = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/friends`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setFriends(response.data);
+      setFriendsCount(response.data.length);
+    } catch (error) {
+      console.error('Failed to fetch friends:', error);
+    }
+  };
   
   const handleLogout = () => {
     logout();
