@@ -564,7 +564,9 @@ export default function ChatView() {
                   message.sender_id === user.user_id
                     ? 'bg-[#F5E618] text-black rounded-br-sm'
                     : 'bg-white text-black rounded-bl-sm shadow-sm'
-                } ${message.disappearing ? 'border-2 border-dashed border-orange-400' : ''}`}
+                } ${message.disappearing ? 'border-2 border-dashed border-orange-400' : ''} ${
+                  message.sending ? 'opacity-70' : ''
+                }`}
                 data-testid={`message-${message.message_id}`}
               >
                 {message.disappearing && (
