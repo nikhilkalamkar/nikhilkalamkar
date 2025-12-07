@@ -16,7 +16,19 @@ export default function CreateStoryDialog({ onStoryCreated }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [createdStoryId, setCreatedStoryId] = useState(null);
-  const [Razorpay] = useRazorpay();
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+  
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => setRazorpayLoaded(true);
+    document.body.appendChild(script);
+    
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
   
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { 'image/*': [], 'video/*': [] },
