@@ -528,7 +528,7 @@ class SnapCloneAPITester:
                 return False
             
             # Parse expires_at and check if it's approximately 5 seconds from now
-            from datetime import datetime, timezone
+            from datetime import timezone
             expires_at = datetime.fromisoformat(expires_at_str.replace('Z', '+00:00'))
             expected_expiry = before_send.replace(tzinfo=timezone.utc) + timedelta(seconds=5)
             
