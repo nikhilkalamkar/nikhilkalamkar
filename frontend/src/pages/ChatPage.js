@@ -515,6 +515,41 @@ export default function ChatPage() {
           </Button>
         </div>
       </div>
+
+      {/* Delete Message Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent className="glass-effect">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Message</AlertDialogTitle>
+            <AlertDialogDescription>
+              Choose how you want to delete this message:
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-2 py-2">
+            <Button
+              onClick={handleDeleteForMe}
+              variant="outline"
+              className="w-full justify-start"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete for Me
+            </Button>
+            {selectedMessage && selectedMessage.sender_id === user?.user_id && (
+              <Button
+                onClick={handleDeleteForEveryone}
+                variant="outline"
+                className="w-full justify-start text-destructive hover:text-destructive"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete for Everyone
+              </Button>
+            )}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
