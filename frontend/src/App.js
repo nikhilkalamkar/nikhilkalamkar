@@ -38,6 +38,7 @@ function App() {
           <Route path="/story/:storyId" element={<PrivateRoute><StoryViewPage /></PrivateRoute>} />
           <Route path="/stories/user/:userId" element={<PrivateRoute><StoryViewerPage /></PrivateRoute>} />
           <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+          <Route path="/user/:userId" element={<PrivateRoute><UserProfilePage /></PrivateRoute>} />
           <Route path="/admin" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
           <Route path="/blocked-users" element={<PrivateRoute><BlockedUsersPage /></PrivateRoute>} />
           <Route path="/my-stories" element={<PrivateRoute><MyStoriesPage /></PrivateRoute>} />
