@@ -78,6 +78,27 @@ export default function MyStoriesPage() {
     setShowPromoteDialog(true);
   };
   
+  const handleDeleteClick = (story) => {
+    setStoryToDelete(story);
+    setShowDeleteDialog(true);
+  };
+  
+  const handleDelete = async () => {
+    if (!storyToDelete) return;
+    
+    try {
+      await axios.delete(`${API_URL}/stories/${storyToDelete.story_id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Story deleted successfully');
+      setShowDeleteDialog(false);
+      setStoryToDelete(null);
+      loadMyStories();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to delete story');
+    }
+  };
+  
   const handlePromote = async () => {
     if (!selectedStory || !razorpayLoaded) {
       toast.error('Payment system loading...');
