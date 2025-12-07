@@ -991,6 +991,14 @@ class SnapCloneAPITester:
         self.test_friend_request_flow()
         self.test_chat_functionality()
         
+        # CRITICAL: Message Deletion Testing (Current Focus)
+        print("\n" + "="*50)
+        print("🚨 CRITICAL MESSAGE DELETION TESTING")
+        print("="*50)
+        
+        # Test message deletion functionality
+        self.test_message_deletion_comprehensive()
+        
         # CRITICAL: Image Upload Testing (User's Main Concern)
         print("\n" + "="*50)
         print("🚨 CRITICAL IMAGE UPLOAD TESTING")
