@@ -337,20 +337,28 @@ async def update_profile(
 
 @api_router.get("/users/search")
 async def search_users(q: str, user_id: str = Depends(verify_token)):
+    logger.info(f"Search request: user_id={user_id}, query='{q}'")
+    
     blocked = await db.blocked_users.find({"blocker_id": user_id}, {"_id": 0}).to_list(1000)
     blocked_ids = [b['blocked_id'] for b in blocked]
+    logger.info(f"Blocked users for {user_id}: {len(blocked_ids)}")
+    
+    search_query = {"$and": [
+        {"user_id": {"$ne": user_id}},
+        {"user_id": {"$nin": blocked_ids}},
+        {"$or": [
+            {"username": {"$regex": q, "$options": "i"}},
+            {"email": {"$regex": q, "$options": "i"}}
+        ]}
+    ]}
+    logger.info(f"MongoDB search query: {search_query}")
     
     users = await db.users.find(
-        {"$and": [
-            {"user_id": {"$ne": user_id}},
-            {"user_id": {"$nin": blocked_ids}},
-            {"$or": [
-                {"username": {"$regex": q, "$options": "i"}},
-                {"email": {"$regex": q, "$options": "i"}}
-            ]}
-        ]},
+        search_query,
         {"_id": 0, "password_hash": 0}
     ).to_list(20)
+    
+    logger.info(f"Search results for '{q}': found {len(users)} users")
     return users
 
 @api_router.post("/friends/request")
