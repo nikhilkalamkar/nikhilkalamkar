@@ -13,12 +13,67 @@ import { toast } from 'sonner';
 const API_URL = process.env.REACT_APP_BACKEND_URL + '/api';
 
 export default function ProfilePage() {
-  const { user, logout } = useAuthStore();
+  const { user, logout, token, fetchUser } = useAuthStore();
   const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
+  const [bio, setBio] = useState(user?.bio || '');
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef(null);
   
   const handleLogout = () => {
     logout();
     navigate('/auth');
+  };
+
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    setSaving(true);
+    try {
+      const formData = new FormData();
+      formData.append('bio', bio);
+      if (selectedImage) {
+        formData.append('profile_picture', selectedImage);
+      }
+
+      await axios.put(`${API_URL}/users/me`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      // Refresh user data
+      await fetchUser();
+      
+      toast.success('Profile updated successfully!');
+      setIsEditing(false);
+      setSelectedImage(null);
+      setPreviewUrl(null);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to update profile');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setBio(user?.bio || '');
+    setSelectedImage(null);
+    setPreviewUrl(null);
   };
   
   return (
