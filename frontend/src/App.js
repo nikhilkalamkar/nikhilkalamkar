@@ -37,6 +37,7 @@ function App() {
           <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
           <Route path="/admin" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
           <Route path="/blocked-users" element={<PrivateRoute><BlockedUsersPage /></PrivateRoute>} />
+          <Route path="/my-stories" element={<PrivateRoute><MyStoriesPage /></PrivateRoute>} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-center" theme="dark" />
