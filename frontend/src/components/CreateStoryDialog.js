@@ -271,9 +271,9 @@ export default function CreateStoryDialog({ onStoryCreated }) {
                               : 'border-border hover:border-primary/50'
                           }`}
                         >
-                          <p className="text-xs text-muted-foreground">Basic</p>
-                          <p className="font-bold">₹50 each</p>
-                          <p className="text-xs text-muted-foreground">10k views</p>
+                          <p className="text-xs text-muted-foreground mb-1">Basic</p>
+                          <p className="font-bold text-lg">₹50<span className="text-xs font-normal">/day</span></p>
+                          <p className="text-xs text-muted-foreground">~10k views</p>
                         </button>
                         <button
                           data-testid="tier-premium"
@@ -284,9 +284,9 @@ export default function CreateStoryDialog({ onStoryCreated }) {
                               : 'border-border hover:border-primary/50'
                           }`}
                         >
-                          <p className="text-xs text-muted-foreground">Premium</p>
-                          <p className="font-bold">₹100 each</p>
-                          <p className="text-xs text-muted-foreground">20k views</p>
+                          <p className="text-xs text-muted-foreground mb-1">Premium</p>
+                          <p className="font-bold text-lg">₹100<span className="text-xs font-normal">/day</span></p>
+                          <p className="text-xs text-muted-foreground">~20k views</p>
                         </button>
                       </div>
                     </div>
