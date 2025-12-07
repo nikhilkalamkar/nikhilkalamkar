@@ -5,12 +5,28 @@ import { useChatStore } from '@/store/chatStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, Send, Image, Video, Smile, Phone, VideoIcon } from 'lucide-react';
+import { ArrowLeft, Send, Image, Video, Smile, Phone, VideoIcon, MoreVertical, Ban } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatTime } from '@/lib/utils';
 import axios from 'axios';
 import EmojiPicker from 'emoji-picker-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL + '/api';
 
