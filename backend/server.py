@@ -739,6 +739,8 @@ async def get_agora_token(channel: str, user_id: str = Depends(verify_token)):
 async def get_media(filename: str, request: Request):
     file_path = f"/app/uploads/{filename}"
     if not os.path.exists(file_path):
+        # Log missing file for monitoring
+        logger.warning(f"Media file not found: {filename}")
         raise HTTPException(status_code=404, detail="File not found")
     
     # Get file stats for caching
