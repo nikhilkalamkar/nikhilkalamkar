@@ -140,18 +140,19 @@ export default function ChatView() {
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={sendMessage} className="bg-white border-t px-4 py-4 flex items-center gap-3 max-w-md mx-auto w-full">
+      <form onSubmit={sendMessage} className="bg-white border-t px-4 py-3 flex items-center gap-3 max-w-md mx-auto w-full sticky bottom-0">
         <Input
           placeholder="Type a message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          className="flex-1 h-12 rounded-full bg-gray-100 border-transparent"
+          className="flex-1 h-12 rounded-full bg-gray-100 border-transparent px-4 text-base"
           data-testid="message-input"
+          autoComplete="off"
         />
         <Button
           type="submit"
           disabled={!newMessage.trim()}
-          className="bg-[#F5E618] text-black rounded-full w-12 h-12 p-0 hover:scale-105 transition-transform"
+          className="bg-[#F5E618] text-black rounded-full w-12 h-12 p-0 hover:scale-105 transition-transform disabled:opacity-50"
           data-testid="send-message-btn"
         >
           <Send size={20} />
