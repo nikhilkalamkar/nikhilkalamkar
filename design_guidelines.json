@@ -1,0 +1,150 @@
+{
+  "identity": {
+    "name": "E1",
+    "persona": "The Anti-AI Designer",
+    "vibe": "Electric, Ephemeral, Chaotic Good",
+    "archetype": "Electric & Neon"
+  },
+  "typography": {
+    "headings": {
+      "family": "Unbounded, sans-serif",
+      "weights": ["400", "700", "900"],
+      "usage": "Use for all major headings (h1-h3), branding, and impact numbers. Tight tracking (-0.02em)."
+    },
+    "body": {
+      "family": "Outfit, sans-serif",
+      "weights": ["300", "400", "500", "600"],
+      "usage": "Use for all UI text, chat messages, and inputs. Clean and geometric."
+    },
+    "mono": {
+      "family": "JetBrains Mono, monospace",
+      "usage": "Use for timestamps, transaction IDs, and technical details."
+    }
+  },
+  "colors": {
+    "palette": {
+      "background": "#050505",
+      "foreground": "#FAFAFA",
+      "primary": "#CCFF00",
+      "primary_foreground": "#000000",
+      "secondary": "#1A1A1A",
+      "secondary_foreground": "#FFFFFF",
+      "accent": "#7000FF",
+      "accent_foreground": "#FFFFFF",
+      "destructive": "#FF0055",
+      "surface": "#121212",
+      "border": "#262626",
+      "ring": "#CCFF00"
+    },
+    "gradients": {
+      "story_ring": "linear-gradient(45deg, #CCFF00, #7000FF)",
+      "premium_bg": "radial-gradient(circle at center, #1a1a1a 0%, #050505 100%)",
+      "glass": "rgba(18, 18, 18, 0.6)"
+    }
+  },
+  "layout": {
+    "spacing": {
+      "container_padding": "p-4 md:p-6",
+      "section_gap": "gap-8",
+      "touch_target": "min-h-[44px]"
+    },
+    "grid_system": {
+      "mobile": "grid-cols-1",
+      "tablet": "grid-cols-2",
+      "desktop": "grid-cols-12"
+    },
+    "z_index": {
+      "bottom_nav": 50,
+      "modal": 100,
+      "toast": 110,
+      "story_overlay": 90
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-primary text-primary-foreground hover:bg-primary/90 rounded-full font-bold uppercase tracking-wide shadow-[0_0_15px_rgba(204,255,0,0.3)] transition-all active:scale-95",
+      "secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full font-medium",
+      "ghost": "hover:bg-white/10 text-foreground rounded-full"
+    },
+    "cards": {
+      "base": "bg-surface border border-border rounded-2xl overflow-hidden",
+      "glass": "bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl"
+    },
+    "inputs": {
+      "default": "bg-secondary border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 px-4 transition-all"
+    },
+    "bottom_nav": {
+      "style": "fixed bottom-6 left-4 right-4 h-16 bg-black/80 backdrop-blur-2xl border border-white/10 rounded-full flex items-center justify-around shadow-2xl z-50"
+    }
+  },
+  "visual_enhancers": {
+    "radius": "rounded-2xl",
+    "shadows": {
+      "neon": "0 0 20px rgba(204, 255, 0, 0.15)",
+      "deep": "0 10px 30px -10px rgba(0, 0, 0, 0.5)"
+    },
+    "textures": {
+      "noise": "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E\")"
+    }
+  },
+  "motion": {
+    "libraries": ["framer-motion"],
+    "transitions": {
+      "default": { "type": "spring", "stiffness": 300, "damping": 30 },
+      "page": { "duration": 0.3, "ease": "easeInOut" },
+      "story_swipe": { "type": "spring", "stiffness": 200, "damping": 25 }
+    }
+  },
+  "image_urls": {
+    "profiles": [
+      {
+        "url": "https://images.unsplash.com/photo-1618698937393-8d7bb5f2d341?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "User Profile 1 - Edgy Style",
+        "category": "user_avatar"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1763749530598-081a259e5bf6?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "User Profile 2 - Neon Lighting",
+        "category": "user_avatar"
+      }
+    ],
+    "stories": [
+      {
+        "url": "https://images.unsplash.com/photo-1703124686929-ab5f6109e07d?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Story Content - Self Portrait",
+        "category": "story_content"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1714298634097-559998e60499?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Story Content - Urban Sunset",
+        "category": "story_content"
+      }
+    ],
+    "backgrounds": [
+      {
+        "url": "https://images.unsplash.com/photo-1764268602042-88b05a211378?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Abstract Neon Swirls",
+        "category": "promo_background"
+      }
+    ]
+  },
+  "instructions_to_main_agent": [
+    "1. SETUP: Install 'framer-motion', 'lucide-react', 'clsx', 'tailwind-merge' immediately.",
+    "2. FONTS: Add '@import url(\"https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Unbounded:wght@400;700;900&display=swap\");' to index.css.",
+    "3. THEME: Force DARK MODE. Do not implement a light mode toggle. The app is 'Night Life' themed.",
+    "4. LAYOUT: Use a mobile-first approach. The desktop view should be a centered mobile container (max-w-md) with a blurred background, mimicking a phone screen.",
+    "5. NAVIGATION: Build a custom 'FloatingDock' component for the bottom navigation using Glassmorphism.",
+    "6. STORIES: Implement a horizontal scroll container for stories at the top of the Home feed. Use the 'gradients.story_ring' for the unread indicator.",
+    "7. CHAT: Use 'ChatBubble' component. Sent messages = Primary Color (#CCFF00) with Black text. Received = Secondary Color (#1A1A1A) with White text.",
+    "8. PROMOTION: The 'Promote Story' flow must use the 'Abstract Neon Swirls' background image and feel premium/exclusive.",
+    "9. TESTING: Add 'data-testid' to ALL interactive elements (buttons, inputs, story circles). Format: 'kebab-case' (e.g., 'login-submit-btn', 'story-item-0').",
+    "10. IMAGES: Use the provided image URLs for placeholders. NEVER use generic placeholders like 'via.placeholder.com'."
+  ],
+  "universal_guidelines": [
+    "Do not use gradients for text unless it's a very large headline.",
+    "Avoid pure black (#000000). Use #050505 for backgrounds to reduce eye strain.",
+    "Use 24px-32px padding inside cards.",
+    "All transitions must be 'ease-out' or 'spring'. No linear animations.",
+    "Input fields must have a height of at least 48px (touch target safe)."
+  ]
+}
