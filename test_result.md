@@ -230,3 +230,40 @@ agent_communication:
       - Backend endpoint functionality
       - WebSocket real-time sync
       - Automatic message deletion (may need to wait or manually verify with DB queries)
+  
+  - agent: "testing"
+    message: |
+      BACKEND TESTING COMPLETED - DISAPPEARING MESSAGES FEATURE
+      
+      ✅ COMPREHENSIVE TESTING RESULTS:
+      
+      1. Timer API Endpoint Testing:
+         - PUT /api/chats/{chat_id}/timer endpoint working correctly
+         - All valid timer values (5, 60, 3600, 86400, 0 seconds) accepted with 200 OK
+         - All invalid timer values (10, 30, 7200, -1, 999999) properly rejected with 400 Bad Request
+         - API correctly returns updated timer_seconds in response
+      
+      2. Message Expiry Calculation:
+         - Messages correctly receive expires_at timestamp based on chat's disappearing_timer
+         - Verified 5-second timer produces expires_at exactly 5 seconds from message creation
+         - Timer calculation is precise (0.0s difference in test)
+      
+      3. MongoDB TTL Auto-Deletion:
+         - TTL indexes successfully created on messages.expires_at with expireAfterSeconds=0
+         - Messages automatically deleted by MongoDB after expiry time
+         - Tested with 5-second timer: message visible immediately, deleted after 10 seconds
+         - Auto-deletion working as expected
+      
+      4. End-to-End Flow:
+         - Complete user registration and friend request flow working
+         - Chat creation and messaging working
+         - Timer setting, message sending, and auto-deletion all working together
+      
+      BACKEND IMPLEMENTATION STATUS: ✅ FULLY WORKING
+      - All core disappearing messages functionality implemented correctly
+      - Timer API validation working properly
+      - Message expiry calculation accurate
+      - MongoDB TTL auto-deletion functioning
+      - No critical issues found in backend implementation
+      
+      NOTE: Frontend UI testing and WebSocket sync testing not performed as per testing protocol (backend focus only)
