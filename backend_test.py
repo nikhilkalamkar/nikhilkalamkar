@@ -2,7 +2,7 @@ import requests
 import sys
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class SnapCloneAPITester:
     def __init__(self, base_url="https://snapchat-clone-24.preview.emergentagent.com/api"):
