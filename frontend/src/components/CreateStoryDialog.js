@@ -174,15 +174,47 @@ export default function CreateStoryDialog({ onStoryCreated }) {
               </Button>
               
               {createdStoryId && (
-                <Button
-                  data-testid="promote-story-button"
-                  onClick={handlePromote}
-                  variant="outline"
-                  className="w-full rounded-full h-12 font-bold uppercase tracking-wide border-accent text-accent hover:bg-accent hover:text-accent-foreground"
-                >
-                  <DollarSign className="w-5 h-5 mr-2" />
-                  Promote Story (₹500)
-                </Button>
+                <>
+                  <div className="space-y-2 py-2">
+                    <p className="text-sm font-semibold">Boost your story:</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => setSelectedTier('basic')}
+                        className={`p-3 rounded-xl border-2 transition-all ${
+                          selectedTier === 'basic'
+                            ? 'border-primary bg-primary/10'
+                            : 'border-border hover:border-primary/50'
+                        }`}
+                      >
+                        <p className="text-xs text-muted-foreground">Basic</p>
+                        <p className="font-bold">₹50</p>
+                        <p className="text-xs text-muted-foreground">10k views</p>
+                      </button>
+                      <button
+                        onClick={() => setSelectedTier('premium')}
+                        className={`p-3 rounded-xl border-2 transition-all ${
+                          selectedTier === 'premium'
+                            ? 'border-primary bg-primary/10'
+                            : 'border-border hover:border-primary/50'
+                        }`}
+                      >
+                        <p className="text-xs text-muted-foreground">Premium</p>
+                        <p className="font-bold">₹100</p>
+                        <p className="text-xs text-muted-foreground">20k views</p>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <Button
+                    data-testid="promote-story-button"
+                    onClick={handlePromote}
+                    variant="outline"
+                    className="w-full rounded-full h-12 font-bold uppercase tracking-wide border-accent text-accent hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <DollarSign className="w-5 h-5 mr-2" />
+                    Promote Story (₹{selectedTier === 'basic' ? '50' : '100'})
+                  </Button>
+                </>
               )}
               
               <Button
