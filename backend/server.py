@@ -444,7 +444,7 @@ async def send_message(chat_id: str, content: str = Form(""), message_type: str 
 async def create_story(media: UploadFile = File(...), user_id: str = Depends(verify_token)):
     file_ext = media.filename.split('.')[-1]
     file_name = f"{uuid.uuid4()}.{file_ext}"
-    file_path = f"/tmp/{file_name}"
+    file_path = f"/app/uploads/{file_name}"
     async with aiofiles.open(file_path, 'wb') as f:
         content = await media.read()
         await f.write(content)
