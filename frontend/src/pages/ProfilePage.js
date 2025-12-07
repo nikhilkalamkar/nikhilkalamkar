@@ -163,7 +163,13 @@ export default function ProfilePage() {
                 
                 <div className="text-center w-full">
                   <h2 className="text-2xl font-heading font-bold">{user?.username}</h2>
-                  <p className="text-muted-foreground">{user?.email}</p>
+                  <div className="flex justify-center gap-4 mt-2 mb-1">
+                    <div className="text-center">
+                      <p className="text-xl font-bold">{friendsCount}</p>
+                      <p className="text-xs text-muted-foreground">Friends</p>
+                    </div>
+                  </div>
+                  <p className="text-muted-foreground text-sm">{user?.email}</p>
                 </div>
                 
                 <div className="w-full pt-4">
