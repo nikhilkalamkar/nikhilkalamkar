@@ -425,12 +425,11 @@ class SnapCloneAPITester:
         timer_success = True
         
         for timer_value in valid_timers:
-            url = f"{self.base_url}/chats/{chat_id}/timer"
-            headers = {'Authorization': f'Bearer {self.token}', 'Content-Type': 'application/json'}
-            data = {"timer_seconds": timer_value}
+            url = f"{self.base_url}/chats/{chat_id}/timer?timer_seconds={timer_value}"
+            headers = {'Authorization': f'Bearer {self.token}'}
             
             try:
-                response = requests.put(url, json=data, headers=headers, timeout=10)
+                response = requests.put(url, headers=headers, timeout=10)
                 success = response.status_code == 200
                 
                 if success:
