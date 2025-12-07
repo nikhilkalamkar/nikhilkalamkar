@@ -284,6 +284,32 @@ async def get_current_user(user_id: str = Depends(verify_token)):
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+@api_router.get("/users/search")
+async def search_users(q: str, user_id: str = Depends(verify_token)):
+    logger.info(f"Search request: user_id={user_id}, query='{q}'")
+    
+    blocked = await db.blocked_users.find({"blocker_id": user_id}, {"_id": 0}).to_list(1000)
+    blocked_ids = [b['blocked_id'] for b in blocked]
+    logger.info(f"Blocked users for {user_id}: {len(blocked_ids)}")
+    
+    search_query = {"$and": [
+        {"user_id": {"$ne": user_id}},
+        {"user_id": {"$nin": blocked_ids}},
+        {"$or": [
+            {"username": {"$regex": q, "$options": "i"}},
+            {"email": {"$regex": q, "$options": "i"}}
+        ]}
+    ]}
+    logger.info(f"MongoDB search query: {search_query}")
+    
+    users = await db.users.find(
+        search_query,
+        {"_id": 0, "password_hash": 0}
+    ).to_list(20)
+    
+    logger.info(f"Search results for '{q}': found {len(users)} users")
+    return users
+
 @api_router.get("/users/{target_user_id}")
 async def get_user_by_id(target_user_id: str, user_id: str = Depends(verify_token)):
     """Get another user's profile"""
