@@ -172,6 +172,42 @@ export default function ChatPage() {
       toast.error('Failed to update timer');
     }
   };
+
+  const handleDeleteForMe = async () => {
+    if (!selectedMessage) return;
+    
+    try {
+      await axios.delete(`${API_URL}/messages/${selectedMessage.message_id}/delete-for-me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Remove message from local state
+      await fetchMessages(chatId, token);
+      toast.success('Message deleted');
+      setShowDeleteDialog(false);
+      setSelectedMessage(null);
+    } catch (error) {
+      toast.error('Failed to delete message');
+    }
+  };
+
+  const handleDeleteForEveryone = async () => {
+    if (!selectedMessage) return;
+    
+    try {
+      await axios.delete(`${API_URL}/messages/${selectedMessage.message_id}/delete-for-everyone`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Update message in local state
+      await fetchMessages(chatId, token);
+      toast.success('Message deleted for everyone');
+      setShowDeleteDialog(false);
+      setSelectedMessage(null);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to delete message');
+    }
+  };
   
   const chatMessages = messages[chatId] || [];
   
