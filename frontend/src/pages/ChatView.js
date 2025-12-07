@@ -188,6 +188,18 @@ export default function ChatView() {
     }
   };
 
+  const blockUser = async () => {
+    try {
+      await axios.post(`${API}/friends/block/${friendId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success(`${friend.username} has been blocked`);
+      navigate('/chats');
+    } catch (error) {
+      toast.error('Failed to block user');
+    }
+  };
+
   if (!friend) {
     return (
       <div className="min-h-screen flex items-center justify-center">
