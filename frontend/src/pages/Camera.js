@@ -127,6 +127,7 @@ export default function Camera() {
             <DialogTitle className="text-2xl font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>
               Send Your Snap
             </DialogTitle>
+            <DialogDescription>Choose to send a snap to a friend or post a story for everyone.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             {selectedImage && (
