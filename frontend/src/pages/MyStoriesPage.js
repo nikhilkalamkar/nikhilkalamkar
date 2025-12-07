@@ -379,30 +379,9 @@ export default function MyStoriesPage() {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent className="glass-effect max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-heading text-xl">Delete Story</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this story? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              data-testid="confirm-delete-button"
-              onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Delete Story
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent className="glass-effect max-w-md">
-          <AlertDialogHeader>
             <AlertDialogTitle className="font-heading text-xl">Delete Story?</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this story? This action cannot be undone.
+              Are you sure you want to delete this story? This action cannot be undone and the story will be removed immediately.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -412,6 +391,7 @@ export default function MyStoriesPage() {
               onClick={handleDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
+              <Trash2 className="w-4 h-4 mr-2" />
               Delete Story
             </AlertDialogAction>
           </AlertDialogFooter>
