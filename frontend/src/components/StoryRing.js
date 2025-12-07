@@ -12,7 +12,7 @@ export default function StoryRing({ user, stories, index }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.1 }}
       data-testid={`story-ring-${user.user_id}`}
-      onClick={() => navigate(`/story/${stories[0]?.story_id}`)}
+      onClick={() => navigate(`/stories/user/${user.user_id}`)}
       className="flex flex-col items-center gap-2 cursor-pointer"
     >
       <div className={`p-0.5 rounded-full ${hasUnread ? 'story-ring' : 'border-2 border-border'}`}>
