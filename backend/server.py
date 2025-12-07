@@ -627,10 +627,28 @@ async def get_media(filename: str):
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="File not found")
     
+    # Determine proper media type based on file extension
+    file_ext = filename.split('.')[-1].lower()
+    media_type_map = {
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'png': 'image/png',
+        'gif': 'image/gif',
+        'webp': 'image/webp',
+        'bmp': 'image/bmp',
+        'svg': 'image/svg+xml',
+        'mp4': 'video/mp4',
+        'mov': 'video/quicktime',
+        'avi': 'video/x-msvideo',
+        'webm': 'video/webm',
+        'mkv': 'video/x-matroska',
+    }
+    media_type = media_type_map.get(file_ext, 'application/octet-stream')
+    
     async with aiofiles.open(file_path, 'rb') as f:
         content = await f.read()
     
-    return StreamingResponse(io.BytesIO(content), media_type="application/octet-stream")
+    return StreamingResponse(io.BytesIO(content), media_type=media_type)
 
 @app.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: str):
