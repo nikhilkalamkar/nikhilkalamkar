@@ -8,14 +8,6 @@
 }
 
 /* Hide "Made with Emergent" watermark */
-[class*="emergent"],
-[class*="watermark"],
-div[style*="position: fixed"][style*="bottom"],
-div[style*="position: absolute"][style*="bottom"] {
-    display: none !important;
-}
-
-/* More specific selector to hide external watermarks */
-body > div:not(#root) {
+#emergent-badge {
     display: none !important;
 }
