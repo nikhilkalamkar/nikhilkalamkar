@@ -89,18 +89,33 @@ export default function ChatView() {
     if (!newMessage.trim() && !selectedImage) return;
 
     try {
-      await axios.post(`${API}/messages`, {
+      console.log('Sending message:', { 
+        hasText: !!newMessage, 
+        hasImage: !!selectedImage,
+        imageSize: selectedImage ? selectedImage.length : 0 
+      });
+      
+      const response = await axios.post(`${API}/messages`, {
         recipient_id: friendId,
         text: newMessage || null,
         image_url: selectedImage || null
       }, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 30000
       });
+      
+      console.log('Message sent successfully:', response.data);
       setNewMessage('');
       clearImage();
       fetchMessages();
+      toast.success('Message sent!');
     } catch (error) {
-      toast.error('Failed to send message');
+      console.error('Failed to send message:', error.response?.data || error.message);
+      const errorMsg = error.response?.data?.detail || error.message || 'Failed to send message';
+      toast.error(errorMsg);
     }
   };
 
