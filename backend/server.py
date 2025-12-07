@@ -389,7 +389,7 @@ async def send_message(chat_id: str, content: str = Form(""), message_type: str 
     if media:
         file_ext = media.filename.split('.')[-1].lower()
         file_name = f"{uuid.uuid4()}.{file_ext}"
-        file_path = f"/tmp/{file_name}"
+        file_path = f"/app/uploads/{file_name}"
         async with aiofiles.open(file_path, 'wb') as f:
             content_file = await media.read()
             await f.write(content_file)
