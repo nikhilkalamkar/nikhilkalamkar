@@ -1,0 +1,273 @@
+import { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/store/authStore';
+import { useChatStore } from '@/store/chatStore';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ArrowLeft, Send, Image, Video, Smile, Phone, VideoIcon } from 'lucide-react';
+import { toast } from 'sonner';
+import { formatTime } from '@/lib/utils';
+import axios from 'axios';
+import EmojiPicker from 'emoji-picker-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL + '/api';
+
+export default function ChatPage() {
+  const { chatId } = useParams();
+  const { user, token } = useAuthStore();
+  const { messages, fetchMessages, sendMessage, notifyScreenshot } = useChatStore();
+  const [chatData, setChatData] = useState(null);
+  const [messageText, setMessageText] = useState('');
+  const [selectedMedia, setSelectedMedia] = useState(null);
+  const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (token && chatId) {
+      loadChat();
+      fetchMessages(chatId, token);
+    }
+  }, [chatId, token]);
+  
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages[chatId]]);
+  
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden' && chatId) {
+        notifyScreenshot(chatId);
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [chatId]);
+  
+  const loadChat = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/chats`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const chat = response.data.find(c => c.chat_id === chatId);
+      setChatData(chat);
+    } catch (error) {
+      console.error('Failed to load chat:', error);
+    }
+  };
+  
+  const handleSend = async () => {
+    if (!messageText.trim() && !selectedMedia) return;
+    
+    await sendMessage(chatId, messageText, selectedMedia ? 'media' : 'text', selectedMedia, token);
+    setMessageText('');
+    setSelectedMedia(null);
+  };
+  
+  const handleMediaSelect = (e, type) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedMedia(file);
+      toast.success(`${type} selected`);
+    }
+  };
+  
+  const handleCall = async (type) => {
+    try {
+      const response = await axios.get(`${API_URL}/token/agora?channel=${chatId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success(`${type} call initiated`);
+    } catch (error) {
+      toast.error('Call failed to initiate');
+    }
+  };
+  
+  const chatMessages = messages[chatId] || [];
+  
+  return (
+    <div className="h-screen flex flex-col bg-background">
+      <header className="bg-surface border-b border-border px-4 py-3 flex items-center gap-3">
+        <Button
+          data-testid="back-button"
+          onClick={() => navigate('/')}
+          variant="ghost"
+          size="icon"
+          className="rounded-full"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+        
+        <Avatar className="w-10 h-10">
+          <AvatarImage src={chatData?.other_user?.profile_picture} />
+          <AvatarFallback>{chatData?.other_user?.username?.[0]?.toUpperCase()}</AvatarFallback>
+        </Avatar>
+        
+        <div className="flex-1">
+          <p className="font-semibold">{chatData?.other_user?.username}</p>
+          <p className="text-xs text-muted-foreground">{chatData?.other_user?.online_status}</p>
+        </div>
+        
+        <Button
+          data-testid="audio-call-button"
+          onClick={() => handleCall('Audio')}
+          variant="ghost"
+          size="icon"
+          className="rounded-full"
+        >
+          <Phone className="w-5 h-5" />
+        </Button>
+        <Button
+          data-testid="video-call-button"
+          onClick={() => handleCall('Video')}
+          variant="ghost"
+          size="icon"
+          className="rounded-full"
+        >
+          <VideoIcon className="w-5 h-5" />
+        </Button>
+      </header>
+      
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3" data-testid="messages-container">
+        {chatMessages.map((message) => {
+          const isSent = message.sender_id === user?.user_id;
+          return (
+            <div
+              key={message.message_id}
+              data-testid={`message-${message.message_id}`}
+              className={`flex ${isSent ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[75%] rounded-2xl px-4 py-2 ${
+                  isSent ? 'chat-bubble-sent' : 'chat-bubble-received'
+                }`}
+              >
+                {message.media_url && (
+                  <div className="mb-2">
+                    {message.message_type === 'image' ? (
+                      <img
+                        src={message.media_url}
+                        alt="Message media"
+                        className="rounded-lg max-w-full"
+                      />
+                    ) : message.message_type === 'video' ? (
+                      <video controls className="rounded-lg max-w-full">
+                        <source src={message.media_url} />
+                      </video>
+                    ) : null}
+                  </div>
+                )}
+                <p className="break-words">{message.content}</p>
+                <p className={`text-xs mt-1 font-mono ${isSent ? 'text-black/60' : 'text-white/60'}`}>
+                  {formatTime(message.created_at)}
+                </p>
+                {message.is_screenshot && (
+                  <p className="text-xs text-destructive mt-1">Screenshot detected</p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+        <div ref={messagesEndRef} />
+      </div>
+      
+      <div className="border-t border-border p-4 bg-surface">
+        {selectedMedia && (
+          <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
+            <span>{selectedMedia.name}</span>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setSelectedMedia(null)}
+            >
+              Remove
+            </Button>
+          </div>
+        )}
+        
+        <div className="flex items-center gap-2">
+          <label htmlFor="image-upload">
+            <Button
+              data-testid="upload-image-button"
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              asChild
+            >
+              <span>
+                <Image className="w-5 h-5" />
+                <input
+                  id="image-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleMediaSelect(e, 'Image')}
+                  className="hidden"
+                />
+              </span>
+            </Button>
+          </label>
+          
+          <label htmlFor="video-upload">
+            <Button
+              data-testid="upload-video-button"
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              asChild
+            >
+              <span>
+                <Video className="w-5 h-5" />
+                <input
+                  id="video-upload"
+                  type="file"
+                  accept="video/*"
+                  onChange={(e) => handleMediaSelect(e, 'Video')}
+                  className="hidden"
+                />
+              </span>
+            </Button>
+          </label>
+          
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                data-testid="emoji-button"
+                variant="ghost"
+                size="icon"
+                className="rounded-full"
+              >
+                <Smile className="w-5 h-5" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <EmojiPicker
+                onEmojiClick={(emojiData) => setMessageText(prev => prev + emojiData.emoji)}
+                theme="dark"
+              />
+            </PopoverContent>
+          </Popover>
+          
+          <Input
+            data-testid="message-input"
+            value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+            placeholder="Type a message..."
+            className="flex-1 rounded-full bg-secondary border-transparent"
+          />
+          
+          <Button
+            data-testid="send-button"
+            onClick={handleSend}
+            size="icon"
+            className="rounded-full neon-shadow"
+          >
+            <Send className="w-5 h-5" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
