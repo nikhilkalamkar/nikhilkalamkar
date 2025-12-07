@@ -94,7 +94,7 @@ export default function CreateStoryDialog({ onStoryCreated }) {
         key: response.data.key,
         amount: response.data.amount,
         currency: 'INR',
-        name: 'SnapClone',
+        name: 'ishukart',
         description: 'Story Promotion',
         order_id: response.data.order_id,
         handler: async (paymentResponse) => {
