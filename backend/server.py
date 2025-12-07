@@ -519,10 +519,10 @@ async def create_promotion_order(story_id: str, promotion_req: PromotionRequest,
     if not story:
         raise HTTPException(status_code=404, detail="Story not found")
     
-    # Define promotion tiers
+    # Define promotion tiers (amount in paise, views are estimates)
     promotion_tiers = {
-        "basic": {"amount": 5000, "views": 10000, "name": "Basic (10k views)"},
-        "premium": {"amount": 10000, "views": 20000, "name": "Premium (20k views)"}
+        "basic": {"amount": 5000, "views": 10000, "name": "Basic - ₹50/day (10k views)", "duration_days": 1},
+        "premium": {"amount": 10000, "views": 20000, "name": "Premium - ₹100/day (20k views)", "duration_days": 1}
     }
     
     tier = promotion_req.tier.lower()
