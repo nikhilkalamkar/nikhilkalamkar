@@ -33,6 +33,8 @@ export default function ChatView() {
   const [disappearTime, setDisappearTime] = useState(3);
   const [viewedMessages, setViewedMessages] = useState(new Set());
   const [messageCountdowns, setMessageCountdowns] = useState({});
+  const [screenshotAttempt, setScreenshotAttempt] = useState(false);
+  const [contentBlurred, setContentBlurred] = useState(false);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const localVideoRef = useRef(null);
