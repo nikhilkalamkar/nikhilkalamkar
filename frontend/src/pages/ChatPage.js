@@ -142,6 +142,19 @@ export default function ChatPage() {
     }
   };
   
+  const handleTimerChange = async (newTimer) => {
+    try {
+      await axios.put(`${API_URL}/chats/${chatId}/timer?timer_seconds=${newTimer}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setDisappearTimer(newTimer);
+      const label = timerOptions.find(opt => opt.value === newTimer)?.label || 'Unknown';
+      toast.success(`Disappearing messages set to: ${label}`);
+    } catch (error) {
+      toast.error('Failed to update timer');
+    }
+  };
+  
   const chatMessages = messages[chatId] || [];
   
   return (
