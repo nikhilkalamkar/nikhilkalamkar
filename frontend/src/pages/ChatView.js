@@ -161,6 +161,51 @@ export default function ChatView() {
     });
   }, [messages]);
 
+  useEffect(() => {
+    // Detect screenshot (works on some browsers)
+    const handleKeyDown = (e) => {
+      // Detect Windows/Linux screenshot shortcuts
+      if ((e.key === 'PrintScreen') || 
+          (e.shiftKey && e.metaKey && e.key === '3') || // Mac screenshot
+          (e.shiftKey && e.metaKey && e.key === '4')) {  // Mac screenshot area
+        notifyScreenshot();
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      // Detect when user switches away (possible screenshot)
+      if (document.hidden) {
+        // User might be taking screenshot
+        setTimeout(() => {
+          if (!document.hidden) {
+            notifyScreenshot();
+          }
+        }, 100);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [friendId, token]);
+
+  const notifyScreenshot = async () => {
+    if (!friendId || !token) return;
+    
+    try {
+      await axios.post(`${API}/screenshot/${friendId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.warning('📸 Screenshot detected! Your friend will be notified.');
+    } catch (error) {
+      console.error('Failed to send screenshot notification:', error);
+    }
+  };
+
   const startCall = async (type) => {
     try {
       // Check if browser supports getUserMedia
