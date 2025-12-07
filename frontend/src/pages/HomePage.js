@@ -274,7 +274,7 @@ export default function HomePage() {
             {searchQuery.length > 2 && searchResults.length === 0 && (
               <Card className="mt-2 glass-effect border-border/50">
                 <CardContent className="p-4 text-center">
-                  <p className="text-muted-foreground">No users found matching "{searchQuery}"</p>
+                  <p className="text-muted-foreground">No users found matching &ldquo;{searchQuery}&rdquo;</p>
                   <p className="text-xs text-muted-foreground mt-1">Try a different name or email</p>
                 </CardContent>
               </Card>
