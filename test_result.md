@@ -101,3 +101,132 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+user_problem_statement: "Build a Snapchat clone called 'ishukart' with real-time chat, stories, disappearing messages, and user management features"
+
+backend:
+  - task: "Disappearing Messages Timer Setting"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Implemented disappearing messages feature with the following:
+          1. Added 'disappearing_timer' field to Chat model (default 24 hours)
+          2. Created PUT endpoint /api/chats/{chat_id}/timer to update timer settings
+          3. Modified send_message function to calculate expires_at based on chat's disappearing_timer
+          4. Timer options: 5 seconds, 1 minute, 1 hour, 24 hours, or off (0 = 30 days)
+          5. Added MongoDB TTL index on expires_at field for automatic message deletion
+          6. WebSocket event 'timer_updated' to sync timer changes between users
+          
+  - task: "TTL Index for Automatic Message Deletion"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Added MongoDB TTL (Time-To-Live) indexes for automatic document deletion:
+          1. messages.expires_at with expireAfterSeconds=0
+          2. stories.expires_at with expireAfterSeconds=0
+          Modified startup function to drop and recreate indexes to avoid conflicts
+
+frontend:
+  - task: "Disappearing Messages Timer UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/ChatPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Implemented UI for disappearing messages:
+          1. Added Clock icon button in chat header with dropdown menu
+          2. Timer options: 5 seconds, 1 minute, 1 hour, 24 hours, Off
+          3. Current selection shown with checkmark
+          4. Loads current timer setting when chat opens
+          5. Displays toast notification when timer is changed
+          6. Listens to WebSocket 'timer_updated' event to sync between users
+
+  - task: "WebSocket Timer Sync"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/store/chatStore.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Added WebSocket handler for 'timer_updated' event in chatStore.
+          When one user changes the timer, the other user receives a notification
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: true
+
+test_plan:
+  current_focus:
+    - "Disappearing Messages Timer Setting"
+    - "Disappearing Messages Timer UI"
+    - "TTL Index for Automatic Message Deletion"
+    - "WebSocket Timer Sync"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      I have completed the implementation of the disappearing messages feature as requested by the user.
+      
+      IMPLEMENTATION SUMMARY:
+      Backend Changes:
+      - Added 'disappearing_timer' field to Chat model
+      - Created PUT /api/chats/{chat_id}/timer endpoint
+      - Modified message creation to use chat's timer setting for expires_at calculation
+      - Added MongoDB TTL indexes for automatic deletion
+      - WebSocket support for real-time timer sync
+      
+      Frontend Changes:
+      - Added Clock icon button with dropdown menu in chat header
+      - Timer options: 5sec, 1min, 1hr, 24hr, Off
+      - Real-time sync via WebSocket when other user changes timer
+      - Toast notifications for timer changes
+      
+      TEST SCENARIOS NEEDED:
+      1. Register two users and create a friend request/chat between them
+      2. User 1: Change disappearing timer to 5 seconds
+      3. User 1: Send a message
+      4. Verify message appears for User 2
+      5. Wait 5-10 seconds and refresh/reload messages
+      6. Verify message is deleted automatically
+      7. User 2: Change timer to "Off" 
+      8. Verify User 1 sees notification of timer change
+      9. Test with different timer values (1 min, 1 hour, 24 hours)
+      10. Verify UI shows current timer setting with checkmark
+      
+      CREDENTIALS:
+      - App URL: https://snapchat-clone-24.preview.emergentagent.com
+      - Can register new test users via signup page
+      - Users need to send/accept friend requests before chatting
+      
+      Please test the full end-to-end flow including:
+      - UI interaction (timer selection)
+      - Backend endpoint functionality
+      - WebSocket real-time sync
+      - Automatic message deletion (may need to wait or manually verify with DB queries)
