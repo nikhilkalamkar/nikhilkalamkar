@@ -46,6 +46,10 @@ function App() {
           <Route path="/admin" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
           <Route path="/blocked-users" element={<PrivateRoute><BlockedUsersPage /></PrivateRoute>} />
           <Route path="/my-stories" element={<PrivateRoute><MyStoriesPage /></PrivateRoute>} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsAndConditionsPage />} />
+          <Route path="/about" element={<AboutUsPage />} />
+          <Route path="/contact" element={<ContactUsPage />} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-center" theme="dark" />
