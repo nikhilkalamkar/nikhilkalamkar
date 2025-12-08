@@ -12,6 +12,10 @@ import UserProfilePage from '@/pages/UserProfilePage';
 import AdminPage from '@/pages/AdminPage';
 import BlockedUsersPage from '@/pages/BlockedUsersPage';
 import MyStoriesPage from '@/pages/MyStoriesPage';
+import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage';
+import TermsAndConditionsPage from '@/pages/TermsAndConditionsPage';
+import AboutUsPage from '@/pages/AboutUsPage';
+import ContactUsPage from '@/pages/ContactUsPage';
 import './App.css';
 
 function PrivateRoute({ children }) {
